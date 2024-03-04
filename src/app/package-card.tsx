@@ -52,10 +52,10 @@ export function PackageCard() {
   return (
     <section className="px-8 pt-60">
       <div className="container mx-auto mb-24 text-center">
-        <Typography variant="h3" color="blue-gray">
+        <Typography placeholder=""  variant="h3" color="blue-gray">
           Các Gói Dịch Vụ
         </Typography>
-        <Typography
+        <Typography placeholder="" 
           variant="h6"
           className="mx-auto mt-2 w-full px-4 !text-gray-500 lg:w-6/12 lg:px-8"
         >
