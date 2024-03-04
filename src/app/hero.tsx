@@ -37,7 +37,7 @@ function Hero() {
               nhớ trong ngày sinh nhật của mình.
             </Typography>
             <div className="mb-0 flex justify-center gap-4 lg:justify-start">
-              <Button placeholder="Click me"  onClick={navigate} color="blue">
+              <Button onClick={navigate} color="blue">
                 Đặt lịch
               </Button>
               {/* <Button color="gray" variant="outlined">

@@ -114,7 +114,6 @@ export function Navbar() {
             </ul>
             <div className="mr-5 hidden items-center gap-4 lg:flex">
               <Button
-                placeholder="Click me"
                 onClick={() => router.push("/authen")}
                 type="primary"
                 size="large"
@@ -155,12 +154,12 @@ export function Navbar() {
                 ))}
               </ul>
               <div className="mb-4 mt-6 flex items-center gap-4">
-                <Button placeholder="Click me">Log in</Button>
+                <Button>Log in</Button>
                 <a
                   href="https://www.material-tailwind.com/blocks"
                   target="_blank"
                 >
-                  <Button placeholder="" color="gray">
+                  <Button color="gray">
                     blocks
                   </Button>
                 </a>

@@ -39,7 +39,7 @@ export function PackageCard({ img, tag, title, desc, label }: CourseCardProps) {
         <Typography placeholder=""  className="mb-6 font-normal !text-gray-500">
           {desc}
         </Typography>
-        <Button placeholder="Click me" >{label}</Button>
+        <Button>{label}</Button>
       </CardBody>
     </Card>
   );
