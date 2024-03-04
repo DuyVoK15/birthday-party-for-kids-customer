@@ -454,7 +454,7 @@ const Page = () => {
   );
 };
 
-export default () => {
+export default function Authen () {
   return (
     <ProConfigProvider dark>
       <Page />
