@@ -19,6 +19,7 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button, Typography } from "antd";
+import Image from "next/image";
 
 const NAV_MENU = [
   {
@@ -83,7 +84,7 @@ export function Navbar() {
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 ml-5">
-              <img style={{width: 35, height: 35, borderRadius: 10}} src="/image/icon.png" alt="logo"/>
+              <Image style={{width: 35, height: 35, borderRadius: 10}} src="/image/icon.png" alt="logo"/>
               <h3 className="font-bold text-blue-900">LOVEKIDS</h3>
             </div>
 
