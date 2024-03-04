@@ -3,7 +3,6 @@ import React from "react";
 import FeedbackCard from "@/components/feedback-card";
 import { Typography } from "@material-tailwind/react";
 
-
 const FEEDBACKS = [
   {
     feedback:
@@ -32,20 +31,26 @@ export function StudentsFeedback() {
   return (
     <section className="px-8 py-36">
       <div className="container mx-auto">
-        <div className="mb-16 flex flex-col items-center w-full">
-          <Typography placeholder=""  variant="h2" color="blue-gray" className="mb-2">
+        <div className="mb-16 flex w-full flex-col items-center">
+          <Typography
+            placeholder=""
+            variant="h2"
+            color="blue-gray"
+            className="mb-2"
+          >
             What Our Students Are Saying
           </Typography>
-          <Typography placeholder="" 
+          <Typography
+            placeholder=""
             variant="lead"
-            className="mb-10 max-w-3xl lg:text-center !text-gray-500"
+            className="mb-10 max-w-3xl !text-gray-500 lg:text-center"
           >
             Our mission is to empower individuals with the knowledge and skills
             they need to succeed in the world of web development. But don&apos;t
             just take our word for it.
           </Typography>
         </div>
-        <div className="grid gap-x-8 gap-y-12 lg:px-32 grid-cols-1 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-3 lg:px-32">
           {FEEDBACKS.map((props, key) => (
             <FeedbackCard key={key} {...props} />
           ))}
@@ -54,6 +59,5 @@ export function StudentsFeedback() {
     </section>
   );
 }
-
 
 export default StudentsFeedback;
