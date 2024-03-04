@@ -20,7 +20,6 @@ axiosClient.interceptors.request.use((config: any) => {
   const accessToken = localStorage.getItem(APP_CONSTANTS.ACCESS_TOKEN);
   console.log("<AxiosClient> ACCESSTOKEN: ", accessToken);
   if (accessToken) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     customHeaders.Authorization = `Bearer ${accessToken}`;
   } else {
     console.log("<AxiosClient> ACCESS TOKEN FAILED!");
@@ -28,7 +27,6 @@ axiosClient.interceptors.request.use((config: any) => {
 
   return {
     ...config,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     headers: {
       ...customHeaders, // auto attach token
       ...config.headers, // but you can override for some requests
