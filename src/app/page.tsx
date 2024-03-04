@@ -13,14 +13,14 @@ import TrustedCompany from "./trusted-companies";
 import { ThemeProvider } from "@mui/material";
 import theme from "./theme";
 
-export default function Campaign() {
+export default function RootApplication() {
   return (
     <>
 
       <Hero />
       {/* <OutImpressiveStats /> */}
       {/* <CoursesCategories /> */}
-      <ExploreCourses />
+      {/* <ExploreCourses /> */}
       {/* <Testimonial />
       <Events />
       <StudentsFeedback />

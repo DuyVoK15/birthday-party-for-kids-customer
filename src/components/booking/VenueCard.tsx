@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardContent, CardMedia, Typography } from "@mui/material";
 import "./VenueCard.css";
 import Link from "next/link";
-const VenueCard = ({ venue }) => {
+const VenueCard = ({ venue } : { venue: any }) => {
   const { VenueName, VenueImgUrl, Location, Capacity, Status } = venue;
 
   return (

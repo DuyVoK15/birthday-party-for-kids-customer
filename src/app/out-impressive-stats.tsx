@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { Typography } from "@mui/material";
 import {
   DocumentTextIcon,
   PlayCircleIcon,
@@ -10,6 +9,7 @@ import {
 } from "@heroicons/react/24/solid";
 
 import StatsCard from "@/components/stats-card";
+import { Typography } from "@material-tailwind/react";
 
 
 const STATS = [
