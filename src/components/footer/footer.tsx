@@ -19,18 +19,24 @@ const CURRENT_YEAR = new Date().getFullYear();
 
 export function Footer() {
   return (
-    <footer className="px-8 pt-24 pb-8">
-      <div className="container max-w-6xl flex flex-col mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-3 !w-full ">
-          <div className="flex col-span-2 items-center gap-10 mb-10 lg:mb-0 md:gap-36">
+    <footer className="px-8 pb-8 pt-24">
+      <div className="container mx-auto flex max-w-6xl flex-col">
+        <div className="grid !w-full grid-cols-1 lg:grid-cols-3 ">
+          <div className="col-span-2 mb-10 flex items-center gap-10 md:gap-36 lg:mb-0">
             {LINKS.map(({ title, items }) => (
               <ul key={title}>
-                <Typography variant="h6" color="blue-gray" className="mb-4">
+                <Typography
+                  placeholder=""
+                  variant="h6"
+                  color="blue-gray"
+                  className="mb-4"
+                >
                   {title}
                 </Typography>
                 {items.map((link) => (
                   <li key={link}>
                     <Typography
+                      placeholder=""
                       as="a"
                       href="#"
                       className="py-1 font-normal !text-gray-700 transition-colors hover:!text-gray-900"
@@ -43,39 +49,55 @@ export function Footer() {
             ))}
           </div>
           <div className="">
-            <Typography variant="h6" className="mb-3 text-left">
+            <Typography placeholder="" variant="h6" className="mb-3 text-left">
               Subscribe
             </Typography>
-            <Typography className="!text-gray-500 font-normal mb-4 text-base">
+            <Typography
+              placeholder=""
+              className="mb-4 text-base font-normal !text-gray-500"
+            >
               Get access to subscriber exclusive deals and be the first who gets
               informed about fresh sales.
             </Typography>
-            <Typography variant="small" className="font-medium mb-2 text-left">
+            <Typography
+              placeholder=""
+              variant="small"
+              className="mb-2 text-left font-medium"
+            >
               Your Email
             </Typography>
-            <div className="flex mb-3 flex-col lg:flex-row items-start gap-4">
+            <div className="mb-3 flex flex-col items-start gap-4 lg:flex-row">
               <div className="w-full">
                 {/* @ts-ignore */}
-                <Input label="Email" color="gray" />
-                <Typography className="font-medium mt-3 !text-sm !text-gray-500 text-left">
+                <Input placeholder="" label="Email" color="gray" />
+                <Typography
+                  placeholder=""
+                  className="mt-3 text-left !text-sm font-medium !text-gray-500"
+                >
                   I agree the{" "}
                   <a
                     href="#"
-                    className="font-bold underline hover:text-gray-900 transition-colors"
+                    className="font-bold underline transition-colors hover:text-gray-900"
                   >
                     Terms and Conditions{" "}
                   </a>
                 </Typography>
               </div>
-              <Button color="gray" className="w-full lg:w-fit" size="md">
+              <Button
+                placeholder=""
+                color="gray"
+                className="w-full lg:w-fit"
+                size="md"
+              >
                 Gửi
               </Button>
             </div>
           </div>
         </div>
         <Typography
+          placeholder=""
           color="blue-gray"
-          className="md:text-center mt-16 font-normal !text-gray-700"
+          className="mt-16 font-normal !text-gray-700 md:text-center"
         >
           &copy; {CURRENT_YEAR} Made with{" "}
           <a href="https://www.material-tailwind.com" target="_blank">

@@ -12,8 +12,8 @@ interface CourseCardProps {
 
 export function PackageCard({ img, tag, title, desc, label }: CourseCardProps) {
   return (
-    <Card className="package-card border">
-      <CardHeader className="h-64">
+    <Card placeholder=""  className="package-card border">
+      <CardHeader placeholder=""  className="h-64">
         <Image
           width={768}
           height={768}
@@ -22,9 +22,9 @@ export function PackageCard({ img, tag, title, desc, label }: CourseCardProps) {
           className="h-full w-full scale-[1.1] object-cover"
         />
       </CardHeader>
-      <CardBody>
+      <CardBody placeholder="" >
         <div className="flex items-center gap-2">
-          <Typography color="blue" className="font-normal text-gray-500">
+          <Typography placeholder=""  color="blue" className="font-normal text-gray-500">
             {tag}
           </Typography>
         </div>
@@ -32,14 +32,14 @@ export function PackageCard({ img, tag, title, desc, label }: CourseCardProps) {
           href="#"
           className="text-blue-gray-900 transition-colors hover:text-purple-600"
         >
-          <Typography className="mb-2 normal-case">
+          <Typography placeholder=""  className="mb-2 normal-case">
             {title}
           </Typography>
         </a>
-        <Typography className="mb-6 font-normal !text-gray-500">
+        <Typography placeholder=""  className="mb-6 font-normal !text-gray-500">
           {desc}
         </Typography>
-        <Button>{label}</Button>
+        <Button placeholder="Click me" >{label}</Button>
       </CardBody>
     </Card>
   );

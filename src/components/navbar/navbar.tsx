@@ -78,13 +78,18 @@ export function Navbar() {
     <div className="sticky top-4 z-10 px-10">
       <div className="container mx-auto">
         <MTNavbar
+          placeholder=""
           blurred
           color="white"
           className="relative z-50 mt-6 border-0 py-3 pl-0 pr-0"
         >
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 ml-5">
-              <Image style={{width: 35, height: 35, borderRadius: 10}} src="/image/icon.png" alt="logo"/>
+            <div className="ml-5 flex items-center space-x-2">
+              <Image
+                style={{ width: 35, height: 35, borderRadius: 10 }}
+                src="/image/icon.png"
+                alt="logo"
+              />
               <h3 className="font-bold text-blue-900">LOVEKIDS</h3>
             </div>
 
@@ -107,8 +112,15 @@ export function Navbar() {
                 );
               })}
             </ul>
-            <div className="hidden items-center gap-4 lg:flex mr-5">
-              <Button onClick={() => router.push("/authen")} type="primary" size="large">Log In</Button>
+            <div className="mr-5 hidden items-center gap-4 lg:flex">
+              <Button
+                placeholder="Click me"
+                onClick={() => router.push("/authen")}
+                type="primary"
+                size="large"
+              >
+                Log In
+              </Button>
               {/* <a
                 href="https://www.material-tailwind.com/blocks"
                 target="_blank"
@@ -119,6 +131,7 @@ export function Navbar() {
               </a> */}
             </div>
             <IconButton
+              placeholder=""
               variant="text"
               color="gray"
               onClick={handleOpen}
@@ -142,12 +155,14 @@ export function Navbar() {
                 ))}
               </ul>
               <div className="mb-4 mt-6 flex items-center gap-4">
-                <Button>Log in</Button>
+                <Button placeholder="Click me">Log in</Button>
                 <a
                   href="https://www.material-tailwind.com/blocks"
                   target="_blank"
                 >
-                  <Button color="gray">blocks</Button>
+                  <Button placeholder="" color="gray">
+                    blocks
+                  </Button>
                 </a>
               </div>
             </div>

@@ -22,22 +22,22 @@ function Hero() {
       />
       <div className="container mx-auto mt-28">
         <div className="grid grid-cols-12 text-center lg:text-left">
-          <Card className="col-span-full rounded-xl border border-white bg-white/90 p-8 py-10 shadow-lg shadow-black/10 backdrop-blur-sm backdrop-saturate-200 xl:col-span-7">
-            <Typography
+          <Card placeholder=""  className="col-span-full rounded-xl border border-white bg-white/90 p-8 py-10 shadow-lg shadow-black/10 backdrop-blur-sm backdrop-saturate-200 xl:col-span-7">
+            <Typography placeholder="" 
               variant="h1"
               color="blue-gray"
               className="text-3xl !leading-snug lg:max-w-3xl lg:text-5xl"
             >
               Đặt tiệc sinh nhật cho trẻ em với LoveKids!
             </Typography>
-            <Typography variant="lead" className="mb-10 mt-6 !text-gray-900">
+            <Typography placeholder=""  variant="lead" className="mb-10 mt-6 !text-gray-900">
               LoveKids mang đến cho trẻ em một trải nghiệm tiệc sinh nhật tuyệt
               vời với các hoạt động vui nhộn, trò chơi thú vị và quà tặng ý
               nghĩa. Chúng tôi cam kết mang đến cho các bé những kỷ niệm đáng
               nhớ trong ngày sinh nhật của mình.
             </Typography>
             <div className="mb-0 flex justify-center gap-4 lg:justify-start">
-              <Button onClick={navigate} color="blue">
+              <Button placeholder="Click me"  onClick={navigate} color="blue">
                 Đặt lịch
               </Button>
               {/* <Button color="gray" variant="outlined">
