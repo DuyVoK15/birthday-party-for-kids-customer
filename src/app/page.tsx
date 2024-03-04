@@ -20,7 +20,7 @@ export default function RootApplication() {
       <Hero />
       {/* <OutImpressiveStats /> */}
       {/* <CoursesCategories /> */}
-      {/* <ExploreCourses /> */}
+      <ExploreCourses />
       {/* <Testimonial />
       <Events />
       <StudentsFeedback />
