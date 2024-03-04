@@ -24,7 +24,7 @@ export function PackageCard({ img, tag, title, desc, label }: CourseCardProps) {
       </CardHeader>
       <CardBody placeholder="" >
         <div className="flex items-center gap-2">
-          <Typography placeholder=""  color="blue" className="font-normal text-gray-500">
+          <Typography color="blue" className="font-normal text-gray-500">
             {tag}
           </Typography>
         </div>
@@ -32,11 +32,11 @@ export function PackageCard({ img, tag, title, desc, label }: CourseCardProps) {
           href="#"
           className="text-blue-gray-900 transition-colors hover:text-purple-600"
         >
-          <Typography placeholder=""  className="mb-2 normal-case">
+          <Typography className="mb-2 normal-case">
             {title}
           </Typography>
         </a>
-        <Typography placeholder=""  className="mb-6 font-normal !text-gray-500">
+        <Typography className="mb-6 font-normal !text-gray-500">
           {desc}
         </Typography>
         <Button>{label}</Button>
