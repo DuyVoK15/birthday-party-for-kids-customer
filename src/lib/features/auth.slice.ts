@@ -4,6 +4,12 @@ import { AxiosError } from "axios";
 import { authService } from "../service/auth.service";
 import { REGISTER_RES_DATA } from "@/dtos/auth.dtos";
 import { APP_CONSTANTS } from "@/enums/app";
+import {
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signInWithPopup,
+} from "firebase/auth";
+import { auth } from "@/firebase/firebaseConfig";
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -44,6 +50,24 @@ export const login = createAsyncThunk(
       const response = await authService.login(param);
 
       return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      console.log(axiosError?.response?.data);
+      return rejectWithValue(axiosError.response?.data);
+    }
+  },
+);
+
+export const loginWithGoogle = createAsyncThunk(
+  "auth/loginWithGoogle",
+  async (_, { rejectWithValue }) => {
+    try {
+      const provider = new GoogleAuthProvider();
+      signInWithPopup(auth, provider);
+
+      onAuthStateChanged(auth, (currentUser) => {
+        return currentUser;
+      });
     } catch (error) {
       const axiosError = error as AxiosError;
       console.log(axiosError?.response?.data);

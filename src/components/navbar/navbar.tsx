@@ -86,6 +86,8 @@ export function Navbar() {
           <div className="flex items-center justify-between">
             <div className="ml-5 flex items-center space-x-2">
               <Image
+              width={35}
+              height={35}
                 style={{ width: 35, height: 35, borderRadius: 10 }}
                 src="/image/icon.png"
                 alt="logo"

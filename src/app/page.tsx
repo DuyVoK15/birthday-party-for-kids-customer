@@ -12,7 +12,7 @@ import StudentsFeedback from "./students-feedback";
 import TrustedCompany from "./trusted-companies";
 import { ThemeProvider } from "@mui/material";
 import theme from "./theme";
-
+import "./globals.css";
 export default function RootApplication() {
   return (
     <>

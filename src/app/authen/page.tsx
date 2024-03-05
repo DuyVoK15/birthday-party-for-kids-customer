@@ -1,6 +1,13 @@
 "use client";
+import { LOGIN_GOOGLE_RES } from "@/dtos/auth.dtos";
 import { APP_CONSTANTS } from "@/enums/app";
-import { getUserInfo, login, register } from "@/lib/features/auth.slice";
+import { auth } from "@/firebase/firebaseConfig";
+import {
+  getUserInfo,
+  login,
+  loginWithGoogle,
+  register,
+} from "@/lib/features/auth.slice";
 import { useAppDispatch } from "@/lib/hooks";
 import { REGISTER_PARAM } from "@/models/auth.param";
 import {
@@ -23,6 +30,7 @@ import {
 } from "@ant-design/pro-components";
 import { Button, Divider, Space, Tabs, message, theme } from "antd";
 import axios from "axios";
+import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
@@ -85,6 +93,23 @@ const Page = () => {
       }
     });
   };
+  const [user, setUser] = useState<User | null>(null)
+  const handleLoginWithGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      signInWithPopup(auth, provider);
+    } catch (error) {
+      
+    }
+  };
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user: User | null) => {
+      console.log(JSON.stringify(user, null, 2));
+      setUser(user)
+    })
+    return () => unsub()
+  },[user])
   const fetchUserInfo = async () => {
     await dispatch(getUserInfo()).then((res) => {
       console.log(JSON.stringify(res, null, 2));
@@ -117,7 +142,7 @@ const Page = () => {
           backdropFilter: "blur(4px)",
           borderRadius: 10,
         }}
-        subTitle="Đăng nhập để có trải nghiệm tốt hơn!"
+        subTitle={user ? `Xin chào, ${user?.displayName}` : `Đăng nhập để có trải nghiệm tốt hơn!`}
         submitter={{
           searchConfig: {
             submitText: loginType === "Login" ? "Đăng nhập" : "Đăng ký",
@@ -201,7 +226,7 @@ const Page = () => {
                   borderRadius: "50%",
                 }}
               >
-                <GoogleOutlined style={{ ...iconStyles, color: "#FF6A10" }} />
+                <GoogleOutlined onClick={handleLoginWithGoogle} style={{ ...iconStyles, color: "#FF6A10" }} />
               </div>
               {/* <div
                 style={{
@@ -454,10 +479,10 @@ const Page = () => {
   );
 };
 
-export default function Authen () {
+export default function Authen() {
   return (
     <ProConfigProvider dark>
       <Page />
     </ProConfigProvider>
   );
-};
+}

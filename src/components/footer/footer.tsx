@@ -1,4 +1,5 @@
-import { Typography, Button, Input } from "@material-tailwind/react";
+import { Typography, Button } from "@material-tailwind/react";
+import { Input } from "antd";
 
 const LINKS = [
   {
@@ -48,7 +49,7 @@ export function Footer() {
               </ul>
             ))}
           </div>
-          <div className="">
+          <div className="mt-10">
             <Typography placeholder="" variant="h6" className="mb-3 text-left">
               Subscribe
             </Typography>
@@ -67,9 +68,9 @@ export function Footer() {
               Your Email
             </Typography>
             <div className="mb-3 flex flex-col items-start gap-4 lg:flex-row">
-              <div className="w-full">
+              <div className="w-full justify-center">
                 {/* @ts-ignore */}
-                <Input placeholder="" label="Email" color="gray" />
+                <Input placeholder="email ..." size="large" color="gray" />
                 <Typography
                   placeholder=""
                   className="mt-3 text-left !text-sm font-medium !text-gray-500"
