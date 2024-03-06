@@ -23,6 +23,7 @@ import {
   TextField,
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
+import AuthGuard from "../AuthGuard";
 
 const data = [
   {
@@ -232,129 +233,214 @@ export default function Booking() {
   };
 
   return (
-    <div className="container mx-auto mt-10">
-      <Box sx={{ width: "100%" }}>
-        <Typography className="mb-5" variant="h4">
-          Các bước tạo bữa tiệc
-        </Typography>
-        <Stepper activeStep={activeStep}>
-          {steps.map((label, index) => {
-            const stepProps: { completed?: boolean } = {};
-            const labelProps: {
-              optional?: React.ReactNode;
-            } = {};
-            if (isStepOptional(index)) {
-              labelProps.optional = (
-                <Typography variant="caption">Optional</Typography>
+    <AuthGuard>
+      <div className="container mx-auto mt-10">
+        <Box sx={{ width: "100%" }}>
+          <Typography className="mb-5" variant="h4">
+            Các bước tạo bữa tiệc
+          </Typography>
+          <Stepper activeStep={activeStep}>
+            {steps.map((label, index) => {
+              const stepProps: { completed?: boolean } = {};
+              const labelProps: {
+                optional?: React.ReactNode;
+              } = {};
+              if (isStepOptional(index)) {
+                labelProps.optional = (
+                  <Typography variant="caption">Optional</Typography>
+                );
+              }
+              if (isStepSkipped(index)) {
+                stepProps.completed = false;
+              }
+              return (
+                <Step key={label} {...stepProps}>
+                  <StepLabel {...labelProps}>{label}</StepLabel>
+                </Step>
               );
-            }
-            if (isStepSkipped(index)) {
-              stepProps.completed = false;
-            }
-            return (
-              <Step key={label} {...stepProps}>
-                <StepLabel {...labelProps}>{label}</StepLabel>
-              </Step>
-            );
-          })}
-        </Stepper>
-        {activeStep === steps.length ? (
-          <React.Fragment>
-            <Container maxWidth="sm">
-              <Typography
-                variant="h4"
-                sx={{ mt: 2, mb: 1, textAlign: "center" }}
-              >
-                Đặt bữa tiệc thành công! Hãy kiểm tra thông tin đặt tiệc của bạn
-                ở mục Booking!
-              </Typography>
-            </Container>
+            })}
+          </Stepper>
+          {activeStep === steps.length ? (
+            <React.Fragment>
+              <Container maxWidth="sm">
+                <Typography
+                  variant="h4"
+                  sx={{ mt: 2, mb: 1, textAlign: "center" }}
+                >
+                  Đặt bữa tiệc thành công! Hãy kiểm tra thông tin đặt tiệc của
+                  bạn ở mục Booking!
+                </Typography>
+              </Container>
 
-            <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-              <Box sx={{ flex: "1 1 auto" }} />
-              <Button onClick={handleReset}>OK</Button>
-            </Box>
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            {activeStep + 1 === 1 ? (
-              <>
-                <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
-                  Chọn một ngày
-                </Typography>
-                <DatePicker
-                  format="YYYY-MM-DD HH:mm:ss"
-                  // disabledDate={disabledDate}
-                  // disabledTime={disabledDateTime}
-                  showTime={{ defaultValue: dayjs("00:00:00", "HH:mm:ss") }}
-                  onChange={onChange}
-                />
-                {isShowVenues && (
-                  <>
-                    <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
-                      Chọn địa điểm
-                    </Typography>
-                    <div className="mt-0">
-                      <VenueList venues={data} />
-                    </div>
-                  </>
-                )}
-              </>
-            ) : activeStep + 1 === 2 ? (
-              <>
-                <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
-                  Chọn gói dịch vụ
-                </Typography>
-                <PackageList packages={packageData} />
-              </>
-            ) : activeStep + 1 === 3 ? (
-              <>
-                <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
-                  Chọn chủ đề
-                </Typography>
-                <ThemeList themes={themeData} />
-              </>
-            ) : activeStep + 1 === 4 ? (
-              <>
-                {/* <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
+              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+                <Box sx={{ flex: "1 1 auto" }} />
+                <Button onClick={handleReset}>OK</Button>
+              </Box>
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              {activeStep + 1 === 1 ? (
+                <>
+                  <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
+                    Chọn một ngày
+                  </Typography>
+                  <DatePicker
+                    format="YYYY-MM-DD HH:mm:ss"
+                    // disabledDate={disabledDate}
+                    // disabledTime={disabledDateTime}
+                    showTime={{ defaultValue: dayjs("00:00:00", "HH:mm:ss") }}
+                    onChange={onChange}
+                  />
+                  {isShowVenues && (
+                    <>
+                      <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
+                        Chọn địa điểm
+                      </Typography>
+                      <div className="mt-0">
+                        <VenueList venues={data} />
+                      </div>
+                    </>
+                  )}
+                </>
+              ) : activeStep + 1 === 2 ? (
+                <>
+                  <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
+                    Chọn gói dịch vụ
+                  </Typography>
+                  <PackageList packages={packageData} />
+                </>
+              ) : activeStep + 1 === 3 ? (
+                <>
+                  <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
+                    Chọn chủ đề
+                  </Typography>
+                  <ThemeList themes={themeData} />
+                </>
+              ) : activeStep + 1 === 4 ? (
+                <>
+                  {/* <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
                   Điền thông tin
                 </Typography> */}
+                  <Container maxWidth="sm">
+                    <Paper className="mt-10 p-10">
+                      <Typography variant="h5" gutterBottom>
+                        Điền thông tin
+                      </Typography>
+                      <form>
+                        <Grid container spacing={3}>
+                          <Grid item xs={12}>
+                            <TextField label="Tên của bé" fullWidth required />
+                          </Grid>
+                          <Grid item xs={12}>
+                            <TextField
+                              label="Tuổi của bé"
+                              type="date"
+                              fullWidth
+                              InputLabelProps={{
+                                shrink: true,
+                              }}
+                              required
+                            />
+                          </Grid>
+                          <Grid item xs={12}>
+                            <TextField
+                              label="Email"
+                              type="email"
+                              fullWidth
+                              required
+                            />
+                          </Grid>
+                          <Grid item xs={12}>
+                            <TextField
+                              label="Số điện thoại"
+                              type="tel"
+                              fullWidth
+                              required
+                            />
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Button
+                              type="submit"
+                              variant="contained"
+                              color="inherit"
+                              fullWidth
+                            >
+                              Submit
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      </form>
+                    </Paper>
+                  </Container>
+                </>
+              ) : activeStep + 1 === 5 ? (
                 <Container maxWidth="sm">
-                  <Paper className="p-10 mt-10">
-                    <Typography variant="h5" gutterBottom>
-                      Điền thông tin
+                  <Paper className="mt-10 p-10">
+                    <Typography variant="h5" className="mb-5" gutterBottom>
+                      Xác nhận và thanh toán
                     </Typography>
                     <form>
                       <Grid container spacing={3}>
                         <Grid item xs={12}>
-                          <TextField label="Tên của bé" fullWidth required />
+                          <Typography variant="body1">
+                            Tên của bé: <strong>Nguyễn Thị Giáo Làng</strong>
+                          </Typography>
                         </Grid>
                         <Grid item xs={12}>
-                          <TextField
-                            label="Tuổi của bé"
-                            type="date"
-                            fullWidth
-                            InputLabelProps={{
-                              shrink: true,
-                            }}
-                            required
-                          />
+                          <Typography variant="body1">
+                            Tuổi của bé: <strong>40 tuổi</strong>
+                          </Typography>
                         </Grid>
                         <Grid item xs={12}>
-                          <TextField
-                            label="Email"
-                            type="email"
-                            fullWidth
-                            required
-                          />
+                          <Typography variant="body1">
+                            Đặt ngày:{" "}
+                            <strong>12-01-2024 vào lúc 18:00:00</strong>
+                          </Typography>
                         </Grid>
                         <Grid item xs={12}>
-                          <TextField
-                            label="Số điện thoại"
-                            type="tel"
-                            fullWidth
-                            required
-                          />
+                          <Typography variant="body1">
+                            Gói dịch vụ:{" "}
+                            <strong>Gói tiệc sinh nhật BASIC 1</strong>
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Typography variant="body1">
+                            Chủ đề:{" "}
+                            <strong>Chủ đề Công chúa ngủ trong rừng</strong>
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Typography variant="body1">
+                            Tổng số tiền: <strong>2.000.000 VNĐ</strong>
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <FormControl>
+                            <FormLabel id="demo-row-radio-buttons-group-label">
+                              Chọn phương thức thanh toán
+                            </FormLabel>
+                            <RadioGroup
+                              row
+                              aria-labelledby="demo-row-radio-buttons-group-label"
+                              name="row-radio-buttons-group"
+                            >
+                              <FormControlLabel
+                                value="Momo"
+                                control={<Radio />}
+                                label="Momo"
+                              />
+                              <FormControlLabel
+                                value="Paypal"
+                                control={<Radio />}
+                                label="Paypal"
+                              />
+                              <FormControlLabel
+                                value="Tiền mặt"
+                                control={<Radio />}
+                                label="Tiền mặt"
+                              />
+                            </RadioGroup>
+                          </FormControl>
                         </Grid>
                         <Grid item xs={12}>
                           <Button
@@ -363,126 +449,44 @@ export default function Booking() {
                             color="inherit"
                             fullWidth
                           >
-                            Submit
+                            Thanh toán
                           </Button>
                         </Grid>
                       </Grid>
                     </form>
                   </Paper>
                 </Container>
-              </>
-            ) : activeStep + 1 === 5 ? (
-              <Container maxWidth="sm">
-                <Paper className="p-10 mt-10">
-                  <Typography variant="h5" className="mb-5" gutterBottom>
-                    Xác nhận và thanh toán
+              ) : (
+                <>
+                  <Typography sx={{ mt: 2, mb: 1 }}>
+                    Step {activeStep + 1}
                   </Typography>
-                  <form>
-                    <Grid container spacing={3}>
-                      <Grid item xs={12}>
-                        <Typography variant="body1">
-                          Tên của bé: <strong>Nguyễn Thị Giáo Làng</strong>
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Typography variant="body1">
-                          Tuổi của bé: <strong>40 tuổi</strong>
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Typography variant="body1">
-                          Đặt ngày: <strong>12-01-2024 vào lúc 18:00:00</strong>
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Typography variant="body1">
-                          Gói dịch vụ:{" "}
-                          <strong>Gói tiệc sinh nhật BASIC 1</strong>
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Typography variant="body1">
-                          Chủ đề:{" "}
-                          <strong>Chủ đề Công chúa ngủ trong rừng</strong>
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Typography variant="body1">
-                          Tổng số tiền: <strong>2.000.000 VNĐ</strong>
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <FormControl>
-                          <FormLabel id="demo-row-radio-buttons-group-label">
-                            Chọn phương thức thanh toán
-                          </FormLabel>
-                          <RadioGroup
-                            row
-                            aria-labelledby="demo-row-radio-buttons-group-label"
-                            name="row-radio-buttons-group"
-                          >
-                            <FormControlLabel
-                              value="Momo"
-                              control={<Radio />}
-                              label="Momo"
-                            />
-                            <FormControlLabel
-                              value="Paypal"
-                              control={<Radio />}
-                              label="Paypal"
-                            />
-                            <FormControlLabel
-                              value="Tiền mặt"
-                              control={<Radio />}
-                              label="Tiền mặt"
-                            />
-                          </RadioGroup>
-                        </FormControl>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          color="inherit"
-                          fullWidth
-                        >
-                          Thanh toán
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </form>
-                </Paper>
-              </Container>
-            ) : (
-              <>
-                <Typography sx={{ mt: 2, mb: 1 }}>
-                  Step {activeStep + 1}
-                </Typography>
-              </>
-            )}
-
-            <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-              <Button
-                color="inherit"
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                sx={{ mr: 1 }}
-              >
-                Back
-              </Button>
-              <Box sx={{ flex: "1 1 auto" }} />
-              {isStepOptional(activeStep) && (
-                <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
-                  Skip
-                </Button>
+                </>
               )}
-              <Button onClick={handleNext}>
-                {activeStep === steps.length - 1 ? "Finish" : "Next"}
-              </Button>
-            </Box>
-          </React.Fragment>
-        )}
-      </Box>
-    </div>
+
+              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+                <Button
+                  color="inherit"
+                  disabled={activeStep === 0}
+                  onClick={handleBack}
+                  sx={{ mr: 1 }}
+                >
+                  Back
+                </Button>
+                <Box sx={{ flex: "1 1 auto" }} />
+                {isStepOptional(activeStep) && (
+                  <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
+                    Skip
+                  </Button>
+                )}
+                <Button onClick={handleNext}>
+                  {activeStep === steps.length - 1 ? "Finish" : "Next"}
+                </Button>
+              </Box>
+            </React.Fragment>
+          )}
+        </Box>
+      </div>
+    </AuthGuard>
   );
 }
