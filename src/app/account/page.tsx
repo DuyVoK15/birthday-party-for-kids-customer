@@ -82,7 +82,7 @@ const Account = () => {
       });
     };
     fetchUserInfo();
-  }, [userInfo]);
+  }, []);
 
   return (
     <AuthGuard>
