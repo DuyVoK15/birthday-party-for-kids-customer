@@ -84,7 +84,7 @@ export function Navbar() {
     router.refresh();
   };
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
-  const userInfo = useAppSelector((state) => state.auth.userInfo);
+  const userInfo = useAppSelector((state) => state.auth.userInfo?.data);
   useEffect(() => {
     const fetchLoadAuthState = async () => {
       await dispatch(loadAuthState());

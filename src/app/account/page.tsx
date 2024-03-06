@@ -73,7 +73,7 @@ const Account = () => {
   // Dispatch Redux
   const dispatch = useAppDispatch();
 
-  const userInfo = useAppSelector((state) => state.auth.userInfo);
+  const userInfo = useAppSelector((state) => state.auth.userInfo?.data);
 
   useEffect(() => {
     const fetchUserInfo = async () => {

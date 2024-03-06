@@ -22,7 +22,7 @@ import LogoutVariant from "mdi-material-ui/LogoutVariant";
 import AccountOutline from "mdi-material-ui/AccountOutline";
 import MessageOutline from "mdi-material-ui/MessageOutline";
 import HelpCircleOutline from "mdi-material-ui/HelpCircleOutline";
-import { USERINFO_RESPONSE } from "@/dtos/auth.dtos";
+import { USERINFO, USERINFO_RESPONSE } from "@/dtos/auth.dtos";
 
 // ** Styled Components
 const BadgeContentSpan = styled("span")(({ theme }) => ({
@@ -35,7 +35,7 @@ const BadgeContentSpan = styled("span")(({ theme }) => ({
 
 interface UserDropdownProps {
   handleLogout: () => void;
-  userInfo: USERINFO_RESPONSE | null;
+  userInfo: USERINFO | undefined;
 }
 const UserDropdown: FC<UserDropdownProps> = ({ userInfo, handleLogout }) => {
   // ** States

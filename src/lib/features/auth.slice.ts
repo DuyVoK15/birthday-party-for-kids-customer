@@ -93,6 +93,7 @@ export const logout = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       localStorage.removeItem(APP_CONSTANTS.ACCESS_TOKEN);
+      return null;
     } catch (error: any) {
       const axiosError = error as AxiosError;
       console.log("<Collab_logout>: ", error);

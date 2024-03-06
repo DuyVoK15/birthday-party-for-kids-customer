@@ -12,7 +12,7 @@ export interface REGISTER_RESPONSE {
   message: string;
   data: REGISTER_RES_DATA | null;
 }
-export interface USERINFO_RESPONSE {
+export type USERINFO = {
   id: number;
   username: string;
   password: string;
@@ -37,6 +37,9 @@ export interface USERINFO_RESPONSE {
   accountNonLocked: boolean;
   credentialsNonExpired: boolean;
   active: boolean;
+};
+export interface USERINFO_RESPONSE {
+  data: USERINFO;
 }
 export interface LOGIN_GOOGLE_RES {
   uid: string;
