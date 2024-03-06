@@ -3,6 +3,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import authReducer from "../lib/features/auth.slice";
+import appReducer from "../lib/features/app.slice";
 export const store = configureStore({
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware({
@@ -12,6 +13,7 @@ export const store = configureStore({
   },
   reducer: {
     auth: authReducer,
+    app: appReducer,
   },
 });
 
