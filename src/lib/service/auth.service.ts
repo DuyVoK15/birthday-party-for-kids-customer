@@ -24,7 +24,7 @@ export const authService = {
     return axiosClient.post(url);
   },
   getUserInfo: (): Promise<AxiosResponse<USERINFO_RESPONSE>> => {
-    const url = "/api/account/test";
+    const url = "/api/account/information";
 
     return axiosClient.get(url);
   },
