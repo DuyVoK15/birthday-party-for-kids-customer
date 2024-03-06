@@ -7,6 +7,7 @@ import theme from "./theme";
 import StyledComponentsRegistry from "@/lib/AntdRegistry";
 import StoreProvider from "./StoreProvider";
 import MessageProvider from "./MessageProvider";
+import AuthProvider from "./AuthProvider";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -39,11 +40,13 @@ export default function RootLayout({
         <body className={roboto.className}>
           <MessageProvider>
             <StoreProvider>
-              <StyledComponentsRegistry>
-                <Navbar />
-                {children}
-                <Footer />
-              </StyledComponentsRegistry>
+              <AuthProvider>
+                <StyledComponentsRegistry>
+                  <Navbar />
+                  {children}
+                  <Footer />
+                </StyledComponentsRegistry>
+              </AuthProvider>
               {/* <FixedPlugin /> */}
             </StoreProvider>
           </MessageProvider>
