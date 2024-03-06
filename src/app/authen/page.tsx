@@ -8,7 +8,7 @@ import {
   loginWithGoogle,
   register,
 } from "@/lib/features/auth.slice";
-import { useAppDispatch } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { REGISTER_PARAM } from "@/models/auth.param";
 import {
   AlipayOutlined,
@@ -30,10 +30,17 @@ import {
 } from "@ant-design/pro-components";
 import { Button, Divider, Space, Tabs, message, theme } from "antd";
 import axios from "axios";
-import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup } from "firebase/auth";
+import {
+  GoogleAuthProvider,
+  User,
+  onAuthStateChanged,
+  signInWithPopup,
+} from "firebase/auth";
 import { useRouter } from "next/navigation";
 import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
+import AuthGuard from "../AuthGuard";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 type LoginType = "Login" | "Register";
 
@@ -69,11 +76,14 @@ const Page = () => {
       console.log(JSON.stringify(res, null, 2));
       if (res?.meta?.requestStatus === "fulfilled") {
         success("Đăng ký thành công!");
+        setLoginType("Login");
       } else {
         error("Đăng ký thất bại!");
       }
     });
   };
+
+  const pathName = useAppSelector((state) => state.app.pathName);
   type LoginRes = {
     token: string;
   };
@@ -87,29 +97,40 @@ const Page = () => {
         localStorage.setItem(APP_CONSTANTS.ACCESS_TOKEN, data?.token);
         fetchUserInfo();
         success("Đăng nhập thành công!");
-        router.push("/");
+        router.push(pathName);
       } else {
         error("Đăng nhập thất bại!");
       }
     });
   };
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<User | null>(null);
   const handleLoginWithGoogle = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      signInWithPopup(auth, provider);
-    } catch (error) {
-      
-    }
+      const response = await signInWithPopup(auth, provider);
+      const accessToken = await response.user.getIdToken(true);
+      const result = await dispatch(loginWithGoogle(accessToken)).then(
+        (res) => {
+          if (res?.meta?.requestStatus === "fulfilled") {
+            success("Đăng nhập thành công!");
+            fetchUserInfo();
+            router.push(pathName);
+          } else {
+            error("Đăng nhập thất bại!");
+          }
+        },
+      );
+    } catch (error) {}
   };
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user: User | null) => {
       console.log(JSON.stringify(user, null, 2));
-      setUser(user)
-    })
-    return () => unsub()
-  },[user])
+      setUser(user);
+    });
+    return () => unsub();
+  }, [user]);
+
   const fetchUserInfo = async () => {
     await dispatch(getUserInfo()).then((res) => {
       console.log(JSON.stringify(res, null, 2));
@@ -142,7 +163,7 @@ const Page = () => {
           backdropFilter: "blur(4px)",
           borderRadius: 10,
         }}
-        subTitle={user ? `Xin chào, ${user?.displayName}` : `Đăng nhập để có trải nghiệm tốt hơn!`}
+        subTitle={`Đăng nhập để có trải nghiệm tốt hơn!`}
         submitter={{
           searchConfig: {
             submitText: loginType === "Login" ? "Đăng nhập" : "Đăng ký",
@@ -226,7 +247,10 @@ const Page = () => {
                   borderRadius: "50%",
                 }}
               >
-                <GoogleOutlined onClick={handleLoginWithGoogle} style={{ ...iconStyles, color: "#FF6A10" }} />
+                <GoogleOutlined
+                  onClick={handleLoginWithGoogle}
+                  style={{ ...iconStyles, color: "#FF6A10" }}
+                />
               </div>
               {/* <div
                 style={{
