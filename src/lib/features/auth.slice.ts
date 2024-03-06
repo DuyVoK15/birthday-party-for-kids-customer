@@ -92,7 +92,7 @@ export const logout = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
-      await localStorage.removeItem(APP_CONSTANTS.ACCESS_TOKEN);
+      localStorage.removeItem(APP_CONSTANTS.ACCESS_TOKEN);
     } catch (error: any) {
       const axiosError = error as AxiosError;
       console.log("<Collab_logout>: ", error);
@@ -101,17 +101,17 @@ export const logout = createAsyncThunk(
   },
 );
 
-export const collab_loadAuthState = createAsyncThunk(
+export const loadAuthState = createAsyncThunk(
   "auth/loadAuthState",
   async (_, { rejectWithValue }) => {
     try {
-      const accessToken = await localStorage.getItem(
-        APP_CONSTANTS.ACCESS_TOKEN,
+      const isAuthenticated = Boolean(
+        localStorage.getItem(APP_CONSTANTS.ACCESS_TOKEN),
       );
       //   const roleId = await localStorage.getItem(APP_CONSTANTS.ROLE_ID);
 
       return {
-        isAuthenticated: false,
+        isAuthenticated: isAuthenticated,
         roleId: -1,
       };
     } catch (error) {
@@ -127,6 +127,30 @@ export const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(login.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.isAuthenticated = true;
+        // state.isAuthenticated = true;
+        // state.role = action.payload.data.account.roleId;
+        state.loading = false;
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(loginWithGoogle.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(loginWithGoogle.fulfilled, (state, action) => {
+        state.isAuthenticated = true;
+        // state.isAuthenticated = true;
+        // state.role = action.payload.data.account.roleId;
+        state.loading = false;
+      })
+      .addCase(loginWithGoogle.rejected, (state, action) => {
+        state.loading = false;
+      })
       .addCase(register.pending, (state) => {
         state.loading = true;
       })
@@ -149,6 +173,29 @@ export const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(getUserInfo.rejected, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(loadAuthState.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(loadAuthState.fulfilled, (state, action) => {
+        state.isAuthenticated = action.payload.isAuthenticated;
+        // state.isAuthenticated = true;
+        // state.role = action.payload.data.account.roleId;
+        state.loading = false;
+      })
+      .addCase(loadAuthState.rejected, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(logout.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(logout.fulfilled, (state, action) => {
+        state.isAuthenticated = false;
+        state.userInfo = null;
+        state.loading = false;
+      })
+      .addCase(logout.rejected, (state, action) => {
         state.loading = false;
       });
   },
