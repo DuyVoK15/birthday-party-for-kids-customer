@@ -17,9 +17,13 @@ import {
   BookOpenIcon,
 } from "@heroicons/react/24/solid";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import { Button, Typography } from "antd";
 import Image from "next/image";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { getUserInfo, logout } from "@/lib/features/auth.slice";
+import { APP_CONSTANTS } from "@/enums/app";
+import UserDropdown from "./UserDropdown";
 
 const NAV_MENU = [
   {
@@ -73,7 +77,26 @@ export function Navbar() {
       () => window.innerWidth >= 960 && setOpen(false),
     );
   }, []);
+  // Dispatch
+  const dispatch = useAppDispatch();
+  const handleLogout = async () => {
+    await dispatch(logout());
+    router.refresh();
+  };
+  const isAuthenticated = Boolean(
+    localStorage.getItem(APP_CONSTANTS.ACCESS_TOKEN),
+  );
+  const userInfo = useAppSelector((state) => state.auth.userInfo);
 
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      await dispatch(getUserInfo()).then((res) => {
+        console.log(JSON.stringify(res, null, 2));
+      });
+    };
+    fetchUserInfo();
+  }, [userInfo]);
+  
   return (
     <div className="sticky top-4 z-10 px-10">
       <div className="container mx-auto">
@@ -86,8 +109,8 @@ export function Navbar() {
           <div className="flex items-center justify-between">
             <div className="ml-5 flex items-center space-x-2">
               <Image
-              width={35}
-              height={35}
+                width={35}
+                height={35}
                 style={{ width: 35, height: 35, borderRadius: 10 }}
                 src="/image/icon.png"
                 alt="logo"
@@ -115,13 +138,21 @@ export function Navbar() {
               })}
             </ul>
             <div className="mr-5 hidden items-center gap-4 lg:flex">
-              <Button
-                onClick={() => router.push("/authen")}
-                type="primary"
-                size="large"
-              >
-                Log In
-              </Button>
+              {pathName !== "/authen" &&
+                (!isAuthenticated ? (
+                  <Button
+                    onClick={() => router.push("/authen")}
+                    type="primary"
+                    size="large"
+                  >
+                    Log In
+                  </Button>
+                ) : (
+                  <div className="flex items-center gap-6">
+                    <UserDropdown handleLogout={handleLogout} userInfo={userInfo} />
+                  </div>
+                ))}
+
               {/* <a
                 href="https://www.material-tailwind.com/blocks"
                 target="_blank"
@@ -161,9 +192,7 @@ export function Navbar() {
                   href="https://www.material-tailwind.com/blocks"
                   target="_blank"
                 >
-                  <Button color="gray">
-                    blocks
-                  </Button>
+                  <Button color="gray">blocks</Button>
                 </a>
               </div>
             </div>
