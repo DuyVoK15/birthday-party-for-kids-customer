@@ -82,7 +82,7 @@ const UserDropdown: FC<UserDropdownProps> = ({ userInfo, handleLogout }) => {
           alt="Image"
           onClick={handleDropdownOpen}
           sx={{ width: 40, height: 40 }}
-          src={userInfo?.avatarUrl || "/images/avatars/1.png"}
+          src={userInfo?.avatarUrl || "/image/icon.png"}
         />
       </Badge>
       <Menu
@@ -101,8 +101,8 @@ const UserDropdown: FC<UserDropdownProps> = ({ userInfo, handleLogout }) => {
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             >
               <Avatar
-                alt="John Doe"
-                src={userInfo?.avatarUrl || "/images/avatars/1.png"}
+                alt="Avatar"
+                src={userInfo?.avatarUrl || "/image/icon.png"}
                 sx={{ width: "2.5rem", height: "2.5rem" }}
               />
             </Badge>
@@ -139,10 +139,16 @@ const UserDropdown: FC<UserDropdownProps> = ({ userInfo, handleLogout }) => {
             Profile
           </Box>
         </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+        <MenuItem
+          sx={{ p: 0 }}
+          onClick={() => {
+            router.push("/inquiry");
+            handleDropdownClose();
+          }}
+        >
           <Box sx={styles}>
             <EmailOutline sx={{ marginRight: 2 }} />
-            Inbox
+            Inquiry
           </Box>
         </MenuItem>
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>

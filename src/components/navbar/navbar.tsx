@@ -21,7 +21,7 @@ import { redirect, usePathname, useRouter } from "next/navigation";
 import { Button, Typography } from "antd";
 import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { getUserInfo, logout } from "@/lib/features/auth.slice";
+import { getUserInfo, loadAuthState, logout } from "@/lib/features/auth.slice";
 import { APP_CONSTANTS } from "@/enums/app";
 import UserDropdown from "./UserDropdown";
 
@@ -83,11 +83,14 @@ export function Navbar() {
     await dispatch(logout());
     router.refresh();
   };
-  const isAuthenticated = Boolean(
-    localStorage.getItem(APP_CONSTANTS.ACCESS_TOKEN),
-  );
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const userInfo = useAppSelector((state) => state.auth.userInfo);
-
+  useEffect(() => {
+    const fetchLoadAuthState = async () => {
+      await dispatch(loadAuthState());
+    };
+    fetchLoadAuthState();
+  }, [isAuthenticated]);
   useEffect(() => {
     const fetchUserInfo = async () => {
       await dispatch(getUserInfo()).then((res) => {
@@ -95,8 +98,8 @@ export function Navbar() {
       });
     };
     fetchUserInfo();
-  }, [userInfo]);
-  
+  }, []);
+
   return (
     <div className="sticky top-4 z-10 px-10">
       <div className="container mx-auto">
@@ -149,7 +152,10 @@ export function Navbar() {
                   </Button>
                 ) : (
                   <div className="flex items-center gap-6">
-                    <UserDropdown handleLogout={handleLogout} userInfo={userInfo} />
+                    <UserDropdown
+                      handleLogout={handleLogout}
+                      userInfo={userInfo}
+                    />
                   </div>
                 ))}
 
