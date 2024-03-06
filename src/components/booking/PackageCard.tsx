@@ -26,7 +26,7 @@ const PackageCard = ({ packageInfo }: { packageInfo: any }) => {
             Price: {Price} VND
           </Typography>
         </CardContent>
-      </Card>{" "}
+      </Card>
     </Link>
   );
 };
