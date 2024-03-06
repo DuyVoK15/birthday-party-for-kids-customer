@@ -2,7 +2,7 @@ import { LOGIN_PARAM, REGISTER_PARAM } from "@/models/auth.param";
 import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 import { authService } from "../service/auth.service";
-import { REGISTER_RES_DATA } from "@/dtos/auth.dtos";
+import { REGISTER_RES_DATA, USERINFO_RESPONSE } from "@/dtos/auth.dtos";
 import { APP_CONSTANTS } from "@/enums/app";
 import {
   GoogleAuthProvider,
@@ -14,7 +14,7 @@ import { auth } from "@/firebase/firebaseConfig";
 interface AuthState {
   isAuthenticated: boolean;
   role: number;
-  userInfo: any;
+  userInfo: USERINFO_RESPONSE | null;
   dataRegister: REGISTER_RES_DATA;
   loading: boolean;
   error: string;
@@ -60,17 +60,14 @@ export const login = createAsyncThunk(
 
 export const loginWithGoogle = createAsyncThunk(
   "auth/loginWithGoogle",
-  async (_, { rejectWithValue }) => {
+  async (accessToken: string, { rejectWithValue }) => {
     try {
-      const provider = new GoogleAuthProvider();
-      signInWithPopup(auth, provider);
-
-      onAuthStateChanged(auth, (currentUser) => {
-        return currentUser;
-      });
+      const response = await authService.loginWithGoogle(accessToken);
+      localStorage.setItem(APP_CONSTANTS.ACCESS_TOKEN, response?.data?.token);
+      // localStorage.setItem(AppConstants.USER, JSON.stringify(result.data.data.account));
+      return response.data;
     } catch (error) {
       const axiosError = error as AxiosError;
-      console.log(axiosError?.response?.data);
       return rejectWithValue(axiosError.response?.data);
     }
   },
@@ -82,7 +79,7 @@ export const getUserInfo = createAsyncThunk(
     try {
       const response = await authService.getUserInfo();
 
-      return response.data.data;
+      return response.data;
     } catch (error) {
       const axiosError = error as AxiosError;
       console.log(axiosError?.response?.data);
@@ -91,10 +88,11 @@ export const getUserInfo = createAsyncThunk(
   },
 );
 
-export const collab_logout = createAsyncThunk(
+export const logout = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
+      await localStorage.removeItem(APP_CONSTANTS.ACCESS_TOKEN);
     } catch (error: any) {
       const axiosError = error as AxiosError;
       console.log("<Collab_logout>: ", error);
@@ -139,6 +137,18 @@ export const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(register.rejected, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(getUserInfo.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getUserInfo.fulfilled, (state, action) => {
+        state.userInfo = action.payload;
+        // state.isAuthenticated = true;
+        // state.role = action.payload.data.account.roleId;
+        state.loading = false;
+      })
+      .addCase(getUserInfo.rejected, (state, action) => {
         state.loading = false;
       });
   },
