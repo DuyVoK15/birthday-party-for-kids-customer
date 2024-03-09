@@ -12,6 +12,7 @@ export interface REGISTER_RESPONSE {
   message: string;
   data: REGISTER_RES_DATA | null;
 }
+
 export type USERINFO = {
   id: number;
   username: string;
@@ -38,9 +39,13 @@ export type USERINFO = {
   credentialsNonExpired: boolean;
   active: boolean;
 };
+
 export interface USERINFO_RESPONSE {
+  status: string;
+  message: string;
   data: USERINFO;
 }
+
 export interface LOGIN_GOOGLE_RES {
   uid: string;
   email: string;

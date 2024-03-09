@@ -14,7 +14,7 @@ export const authService = {
   login: (
     payload: LOGIN_PARAM,
   ): Promise<AxiosResponse<REGISTER_RESPONSE>> => {
-    const url = "/api/account/authenticate";
+    const url = "/api/account/customer/authenticate";
 
     return axiosClient.post(url, { ...payload });
   },

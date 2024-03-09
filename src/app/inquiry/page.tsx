@@ -104,21 +104,21 @@ const Inquiry: React.FC = () => {
 
   const columns = [
     {
-      title: "Username",
+      title: "Inquiry Code",
       dataIndex: "username",
-      width: "25%",
+      width: "10%",
       editable: true,
     },
     {
       title: "Question",
       dataIndex: "question",
-      width: "15%",
+      width: "45%",
       editable: true,
     },
     {
       title: "Reply",
       dataIndex: "reply",
-      width: "40%",
+      width: "45%",
       editable: true,
     }
   ];

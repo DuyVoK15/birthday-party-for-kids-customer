@@ -5,7 +5,7 @@ import axios from "axios";
 // } from 'axios-auth-refresh';
 
 const axiosClient = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: "https://booking-birthday.azurewebsites.net",
   headers: {
     "content-type": "application/json",
     "Access-Control-Allow-Origin": "*",

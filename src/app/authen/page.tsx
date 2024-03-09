@@ -85,7 +85,13 @@ const Page = () => {
 
   const pathName = useAppSelector((state) => state.app.pathName);
   type LoginRes = {
-    token: string;
+    data: {
+      token: string;
+      role: {
+        id: number;
+        name: string;
+      };
+    };
   };
   const handleLoginAccount = async (param: any) => {
     await dispatch(
@@ -94,7 +100,7 @@ const Page = () => {
       console.log(JSON.stringify(res, null, 2));
       if (res?.meta?.requestStatus === "fulfilled") {
         const data = res?.payload as LoginRes;
-        localStorage.setItem(APP_CONSTANTS.ACCESS_TOKEN, data?.token);
+        localStorage.setItem(APP_CONSTANTS.ACCESS_TOKEN, data?.data?.token);
         fetchUserInfo();
         success("Đăng nhập thành công!");
         router.push(pathName);

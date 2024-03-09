@@ -288,7 +288,7 @@ export default function Booking() {
                     format="YYYY-MM-DD HH:mm:ss"
                     // disabledDate={disabledDate}
                     // disabledTime={disabledDateTime}
-                    showTime={{ defaultValue: dayjs("00:00:00", "HH:mm:ss") }}
+                    // showTime={{ defaultValue: dayjs("00:00:00", "HH:mm:ss") }}
                     onChange={onChange}
                   />
                   {isShowVenues && (

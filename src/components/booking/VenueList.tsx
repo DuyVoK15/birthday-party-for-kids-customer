@@ -1,6 +1,6 @@
-import React from 'react';
-import { Grid } from '@mui/material';
-import VenueCard from './VenueCard';
+import React from "react";
+import { Grid } from "@mui/material";
+import VenueCard from "./VenueCard";
 
 const VenueList = ({ venues }: { venues: any }) => {
   return (
