@@ -1,6 +1,7 @@
 import { INQUIRY } from "@/dtos/inquiry.dtos";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { inquiryService } from "../service/inquiry.service";
+import { inquiryService } from "../../service/inquiry.service";
+import { getAllInquiryByAuthor } from "../action/inquiry.action";
 
 interface InquiryState {
   inquiryList: INQUIRY[] | [];
@@ -10,18 +11,6 @@ const initialState: InquiryState = {
   inquiryList: [],
   loading: false,
 };
-
-export const getAllInquiryByAuthor = createAsyncThunk(
-  "inquiry/getAllInquiryByAuthor",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await inquiryService.getAllInquiryByAuthor();
-      return response?.data?.data;
-    } catch (error) {
-      console.log(error);
-    }
-  },
-);
 
 export const inquirySlice = createSlice({
   name: "inquiry",
