@@ -122,6 +122,19 @@ export const loadAuthState = createAsyncThunk(
   },
 );
 
+export const updateAvatar = createAsyncThunk(
+  "auth/updateAvatar",
+  async (imgSrc: File | null, { rejectWithValue }) => {
+    try {
+      const response = await authService.updateAvatar(imgSrc);
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      return rejectWithValue(axiosError.response?.data);
+    }
+  },
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,

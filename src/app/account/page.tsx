@@ -28,8 +28,10 @@ import Button, { ButtonProps } from "@mui/material/Button";
 // ** Icons Imports
 import Close from "@ant-design/icons/CloseOutlined";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { getUserInfo } from "@/lib/features/auth.slice";
+import { getUserInfo, updateAvatar } from "@/lib/features/auth.slice";
 import AuthGuard from "../AuthGuard";
+import { Avatar, Flex } from "antd";
+import { UserOutlined } from "@ant-design/icons";
 
 const ImgStyled = styled("img")(({ theme }) => ({
   width: 120,
@@ -58,14 +60,15 @@ const ResetButtonStyled = styled(Button)<ButtonProps>(({ theme }) => ({
 }));
 const Account = () => {
   const [openAlert, setOpenAlert] = useState<boolean>(true);
-  const [imgSrc, setImgSrc] = useState<string>("/image/icon.png");
+  const [imgSrc, setImgSrc] = useState<string>("");
+  const [imgFile, setImgFile] = useState<File | null>(null);
 
   const onChange = (file: ChangeEvent) => {
     const reader = new FileReader();
     const { files } = file.target as HTMLInputElement;
     if (files && files.length !== 0) {
       reader.onload = () => setImgSrc(reader.result as string);
-
+      setImgFile(files[0]);
       reader.readAsDataURL(files[0]);
     }
   };
@@ -75,14 +78,24 @@ const Account = () => {
 
   const userInfo = useAppSelector((state) => state.auth.userInfo?.data);
 
+  const fetchUserInfo = async () => {
+    await dispatch(getUserInfo()).then((res) => {
+      console.log(JSON.stringify(res, null, 2));
+    });
+  };
+
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      await dispatch(getUserInfo()).then((res) => {
-        console.log(JSON.stringify(res, null, 2));
-      });
-    };
     fetchUserInfo();
   }, []);
+
+  const updateAvatarU = async () => {
+    await dispatch(updateAvatar(imgFile)).then(async (res) => {
+      setImgSrc("");
+      setImgFile(null);
+      await fetchUserInfo();
+      console.log(JSON.stringify(res, null, 2));
+    });
+  };
 
   return (
     <AuthGuard>
@@ -92,18 +105,28 @@ const Account = () => {
             <Grid container spacing={7}>
               <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <ImgStyled
-                    className="shadow-md"
-                    src={userInfo?.avatarUrl || imgSrc}
-                    alt="Profile Pic"
-                  />
-                  <Box>
+                  <Flex vertical gap={5}>
+                    <Avatar
+                      src={userInfo?.avatarUrl}
+                      srcSet={imgSrc}
+                      shape="square"
+                      size={128}
+                      icon={<UserOutlined />}
+                    />
+                    {imgFile !== null && (
+                      <Button onClick={updateAvatarU} variant="contained">
+                        Upload
+                      </Button>
+                    )}
+                  </Flex>
+
+                  <Box sx={{ ml: 5 }}>
                     <ButtonStyled
                       component="label"
-                      variant="contained"
+                      variant="outlined"
                       htmlFor="account-settings-upload-image"
                     >
-                      Upload New Photo
+                      Choose PHOTO
                       <input
                         hidden
                         type="file"
@@ -115,13 +138,13 @@ const Account = () => {
                     <ResetButtonStyled
                       color="error"
                       variant="outlined"
-                      onClick={() => setImgSrc("/images/avatars/1.png")}
+                      onClick={() => {
+                        setImgSrc("");
+                        setImgFile(null);
+                      }}
                     >
                       Reset
                     </ResetButtonStyled>
-                    <Typography variant="body2" sx={{ marginTop: 5 }}>
-                      Allowed PNG or JPEG. Max size of 800K.
-                    </Typography>
                   </Box>
                 </Box>
               </Grid>
