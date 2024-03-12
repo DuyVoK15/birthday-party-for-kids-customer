@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import authReducer from "../lib/features/auth.slice";
 import appReducer from "../lib/features/app.slice";
 import inquiryReducer from "../lib/features/slice/inquirty.slice";
+import venueReducer from "../lib/features/slice/venue.slice";
 
 export const store = configureStore({
   middleware: (getDefaultMiddleware) => {
@@ -17,6 +18,7 @@ export const store = configureStore({
     auth: authReducer,
     app: appReducer,
     inquiryReducer,
+    venueReducer,
   },
 });
 

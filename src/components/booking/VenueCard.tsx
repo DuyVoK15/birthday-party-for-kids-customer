@@ -1,35 +1,81 @@
 import React from "react";
-import { Card, CardContent, CardMedia, Typography } from "@mui/material";
 import "./VenueCard.css";
 import Link from "next/link";
-const VenueCard = ({ venue } : { venue: any }) => {
-  const { VenueName, VenueImgUrl, Location, Capacity, Status } = venue;
+import { blue } from "@ant-design/colors";
+import {
+  Avatar,
+  Card,
+  Divider,
+  Flex,
+  Popover,
+  Space,
+  Tag,
+  Typography,
+} from "antd";
+import Meta from "antd/es/card/Meta";
+import { ClockCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import { VenueResponse } from "@/dtos/venue.dtos";
+const VenueCard = ({ venue }: { venue: VenueResponse }) => {
+  const {
+    venueName,
+    venueImgUrl,
+    location,
+    active,
+    capacity,
+    id,
+    slotInVenueList,
+    venueDescription,
+  } = venue;
 
   return (
-    <Link href={"#"}>
-      <Card className="venue-card">
-        <CardMedia
-          component="img"
-          height="140"
-          image={VenueImgUrl}
-          alt={VenueName}
-        />
-        <CardContent>
-          <Typography variant="h6" component="div">
-            {VenueName}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {Location}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Capacity: {Capacity}
-          </Typography>
-          <Typography display={"flex"} variant="body1" color="text.secondary">
-            Status: <Typography variant="body1" color={Status === 'Đã có người đặt' ? "error.main" : "success.main"}>{Status}</Typography>
-          </Typography>
-        </CardContent>
-      </Card>
-    </Link>
+    <Card className="shadow-md" style={{ marginTop: 16 }}>
+      <Meta
+        avatar={<Avatar shape="square" size={256} src={venueImgUrl} />}
+        title={venueName}
+        description={
+          <Space direction="vertical">
+            <div>Capacity: {capacity}</div>
+            <div>Location: {location}</div>
+            <div style={{ width: 700 }}>
+              <Popover
+                content={<div style={{ width: 900 }}>{venueDescription}</div>}
+              >
+                <Flex style={{ width: "100%" }} gap={3}>
+                  <PlusCircleOutlined style={{ color: blue[5] }} />
+                  <span className="text-blue-500">Description</span>
+                </Flex>
+              </Popover>
+            </div>
+
+            <Flex vertical gap={5}>
+              <Typography.Title level={5}>Time Slots:</Typography.Title>
+              <Space direction="horizontal">
+                {slotInVenueList.map((slot, index: number) =>
+                  slot?.status === true ? (
+                    <Tag
+                      key={index}
+                      icon={<ClockCircleOutlined />}
+                      color="red"
+                    >
+                      In Use
+                    </Tag>
+                  ) : (
+                    <Tag
+                      key={index}
+                      icon={<ClockCircleOutlined />}
+                      color="blue"
+                    >
+                      {slot?.slotObject?.timeStart} -{" "}
+                      {slot?.slotObject?.timeEnd}
+                    </Tag>
+                  ),
+                )}
+              </Space>
+            </Flex>
+          </Space>
+        }
+      />
+    </Card>
   );
 };
 

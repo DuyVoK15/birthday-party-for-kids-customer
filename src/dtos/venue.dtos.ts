@@ -1,86 +1,28 @@
-const VENUES_LIST = [
-  {
-    venueId: 1,
-    venueName: "Quận 1",
-    partyDated: {
-      id: 1,
-      date: "08-03-2024",
-      slot: [
-        {
-          id: 1,
-          timeStart: "07:00",
-          timeEnd: "10:100",
-          status: "NONE",
-        },
-        {
-          id: 2,
-          timeStart: "11:00",
-          timeEnd: "14:100",
-          status: "BOOKED",
-        },
-        {
-          id: 3,
-          timeStart: "15:00",
-          timeEnd: "18:100",
-          status: "NONE",
-        },
-      ],
-    },
-  },
-  {
-    venueId: 2,
-    venueName: "Quận 2",
-    partyDated: {
-      id: 2,
-      date: "08-03-2024",
-      slot: [
-        {
-          id: 1,
-          timeStart: "07:00",
-          timeEnd: "10:100",
-          status: "NONE",
-        },
-        {
-          id: 2,
-          timeStart: "11:00",
-          timeEnd: "14:100",
-          status: "BOOKED",
-        },
-        {
-          id: 3,
-          timeStart: "15:00",
-          timeEnd: "18:100",
-          status: "NONE",
-        },
-      ],
-    },
-  },
-  {
-    id: 3,
-    venueName: "Quận 3",
-    partyDated: {
-      id: 2,
-      date: "08-03-2024",
-      slot: [
-        {
-          id: 1,
-          timeStart: "07:00",
-          timeEnd: "10:100",
-          status: "NONE",
-        },
-        {
-          id: 2,
-          timeStart: "11:00",
-          timeEnd: "14:100",
-          status: "BOOKED",
-        },
-        {
-          id: 3,
-          timeStart: "15:00",
-          timeEnd: "18:100",
-          status: "NONE",
-        },
-      ],
-    },
-  },
-];
+export interface SlotOnjectResponse {
+  id: number;
+  timeStart: string;
+  timeEnd: string;
+  validTimeRange: boolean;
+  active: boolean;
+}
+export interface SlotInVenueResponse {
+  id: number;
+  active: boolean;
+  status: boolean;
+  slotObject: SlotOnjectResponse;
+}
+export interface VenueResponse {
+  id: number;
+  venueName: string;
+  venueDescription: string;
+  venueImgUrl: string;
+  location: string;
+  capacity: number;
+  slotInVenueList: SlotInVenueResponse[] | [];
+  active: boolean;
+}
+export interface VenueCheckSlotByDateResponse {
+  status: string;
+  message: string;
+  data: VenueResponse[] | [];
+}

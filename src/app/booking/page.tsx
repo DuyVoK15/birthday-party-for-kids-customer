@@ -6,7 +6,7 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { DatePicker, DatePickerProps, Space } from "antd";
+import { DatePicker, DatePickerProps, Space, Spin } from "antd";
 import VenueList from "@/components/booking/VenueList";
 import PackageList from "@/components/booking/PackageList";
 import ThemeList from "@/components/booking/ThemeList";
@@ -24,65 +24,84 @@ import {
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import AuthGuard from "../AuthGuard";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { getAllVenueCheckSlotByDate } from "@/lib/features/action/venue.action";
 
 const data = [
   {
-    VenueName: "Kid Palace Quận 1 TP.HCM",
-    VenueImgUrl: "/image/kids-palace.jpeg",
-    Location: "123 Đường ABC, Quận 1, TP.HCM",
-    Capacity: 100,
-    Status: "Trống lịch",
+    venueName: "Kid Palace Quận 1 TP.HCM",
+    venueImgUrl: "/image/kids-palace.jpeg",
+    location: "123 Đường ABC, Quận 1, TP.HCM",
+    capacity: 100,
+    status: "Trống lịch",
+    description:
+      "Kid Palace Quận 1 TP.HCM là một trung tâm giáo dục và giải trí cho trẻ em. Với không gian rộng rãi và đầy màu sắc, đây là nơi lý tưởng cho các buổi tiệc và sự kiện dành cho trẻ em. Cơ sở này có sức chứa lên đến 100 người và hiện đang có lịch trống.",
   },
   {
-    VenueName: "Kid Palace Quận 2 TP.HCM",
-    VenueImgUrl: "/image/kids-palace.jpeg",
-    Location: "456 Đường XYZ, Quận 2, TP.HCM",
-    Capacity: 50,
-    Status: "Trống lịch",
+    venueName: "Kid Palace Quận 2 TP.HCM",
+    venueImgUrl: "/image/kids-palace.jpeg",
+    location: "456 Đường XYZ, Quận 2, TP.HCM",
+    capacity: 50,
+    status: "Trống lịch",
+    description:
+      "Kid Palace Quận 2 TP.HCM là một điểm đến thú vị cho trẻ em ở khu vực. Với không gian nhỏ hơn so với cơ sở ở Quận 1 nhưng vẫn rất thú vị. Hiện tại, cơ sở này có sức chứa 50 người và có lịch trống cho các sự kiện.",
   },
   {
-    VenueName: "Kid Palace Quận 3 TP.HCM",
-    VenueImgUrl: "/image/kids-palace.jpeg",
-    Location: "789 Đường LMN, Quận 3, TP.HCM",
-    Capacity: 20,
-    Status: "Đã có người đặt",
+    venueName: "Kid Palace Quận 3 TP.HCM",
+    venueImgUrl: "/image/kids-palace.jpeg",
+    location: "789 Đường LMN, Quận 3, TP.HCM",
+    capacity: 20,
+    status: "Đã có người đặt",
+    description:
+      "Kid Palace Quận 3 TP.HCM là một điểm đến phổ biến cho các buổi tiệc và sinh nhật cho trẻ em. Hiện cơ sở này đã có người đặt và không còn lịch trống cho đến thời điểm hiện tại.",
   },
   {
-    VenueName: "Kid Palace Quận 4 TP.HCM",
-    VenueImgUrl: "/image/kids-palace.jpeg",
-    Location: "321 Đường PQR, Quận 4, TP.HCM",
-    Capacity: 30,
-    Status: "Trống lịch",
+    venueName: "Kid Palace Quận 4 TP.HCM",
+    venueImgUrl: "/image/kids-palace.jpeg",
+    location: "321 Đường PQR, Quận 4, TP.HCM",
+    capacity: 30,
+    status: "Trống lịch",
+    description:
+      "Kid Palace Quận 4 TP.HCM là một điểm đến tuyệt vời cho các hoạt động giáo dục và giải trí cho trẻ em. Cơ sở này có sức chứa 30 người và hiện đang có lịch trống.",
   },
   {
-    VenueName: "Kid Palace Quận 5 TP.HCM",
-    VenueImgUrl: "/image/kids-palace.jpeg",
-    Location: "654 Đường UVW, Quận 5, TP.HCM",
-    Capacity: 80,
-    Status: "Đã có người đặt",
+    venueName: "Kid Palace Quận 5 TP.HCM",
+    venueImgUrl: "/image/kids-palace.jpeg",
+    location: "654 Đường UVW, Quận 5, TP.HCM",
+    capacity: 80,
+    status: "Đã có người đặt",
+    description:
+      "Kid Palace Quận 5 TP.HCM là một trung tâm giáo dục và giải trí cho trẻ em nổi tiếng ở khu vực. Cơ sở này có sức chứa 80 người và hiện đã có người đặt sử dụng cho một sự kiện.",
   },
   {
-    VenueName: "Kid Palace Quận 6 TP.HCM",
-    VenueImgUrl: "/image/kids-palace.jpeg",
-    Location: "654 Đường UVW, Quận 5, TP.HCM",
-    Capacity: 80,
-    Status: "Đã có người đặt",
+    venueName: "Kid Palace Quận 6 TP.HCM",
+    venueImgUrl: "/image/kids-palace.jpeg",
+    location: "654 Đường UVW, Quận 5, TP.HCM",
+    capacity: 80,
+    status: "Đã có người đặt",
+    description:
+      "Kid Palace Quận 6 TP.HCM là một điểm đến phổ biến cho các buổi tiệc và sinh nhật cho trẻ em. Cơ sở này có sức chứa 80 người và hiện đã có người đặt sử dụng cho một sự kiện.",
   },
   {
-    VenueName: "Kid Palace Quận 7 TP.HCM",
-    VenueImgUrl: "/image/kids-palace.jpeg",
-    Location: "654 Đường UVW, Quận 5, TP.HCM",
-    Capacity: 80,
-    Status: "Đã có người đặt",
+    venueName: "Kid Palace Quận 7 TP.HCM",
+    venueImgUrl: "/image/kids-palace.jpeg",
+    location: "654 Đường UVW, Quận 5, TP.HCM",
+    capacity: 80,
+    status: "Đã có người đặt",
+    description:
+      "Kid Palace Quận 7 TP.HCM là một điểm đến thú vị cho trẻ em ở khu vực. Cơ sở này có sức chứa 80 người và hiện đã có người đặt sử dụng cho một sự kiện.",
   },
   {
-    VenueName: "Kid Palace Quận 8 TP.HCM",
-    VenueImgUrl: "/image/kids-palace.jpeg",
-    Location: "654 Đường UVW, Quận 5, TP.HCM",
-    Capacity: 80,
-    Status: "Đã có người đặt",
+    venueName: "Kid Palace Quận 8 TP.HCM",
+    venueImgUrl: "/image/kids-palace.jpeg",
+    location: "654 Đường UVW, Quận 5, TP.HCM",
+    capacity: 80,
+    status: "Đã có người đặt",
+    description:
+      "Kid Palace Quận 8 TP.HCM là một điểm đến thú vị cho trẻ em và gia đình. Cơ sở này có sức chứa 80 người và hiện đã có người đặt sử dụng cho một sự kiện.",
   },
 ];
+
 const packageData = [
   {
     PackageImgUrl: "/image/package-basic-1.png",
@@ -227,10 +246,28 @@ export default function Booking() {
   };
 
   const [isShowVenues, setIsShowVenues] = React.useState(false);
+  const [dateQuery, setDateQuery] = React.useState("");
   const onChange: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
-    setIsShowVenues(true);
+    var datePart = dateString.split(" ")[0];
+    setDateQuery(datePart);
   };
+
+  // Dispatch API
+  const dispatch = useAppDispatch();
+  const venueCheckSlotByDateList = useAppSelector(
+    (state) => state.venueReducer.venueCheckSlotByDateList,
+  );
+  const loading = useAppSelector(
+    (state) => state.venueReducer.loading,
+  );
+  const fetchVenueCheckSlotByDate = async () => {
+    await dispatch(getAllVenueCheckSlotByDate(dateQuery));
+  };
+
+  // ** Hook
+  React.useEffect(() => {
+    fetchVenueCheckSlotByDate();
+  }, [dateQuery]);
 
   return (
     <AuthGuard>
@@ -285,22 +322,21 @@ export default function Booking() {
                     Chọn một ngày
                   </Typography>
                   <DatePicker
-                    format="YYYY-MM-DD HH:mm:ss"
+                    format="YYYY-MM-DD"
                     // disabledDate={disabledDate}
                     // disabledTime={disabledDateTime}
                     // showTime={{ defaultValue: dayjs("00:00:00", "HH:mm:ss") }}
                     onChange={onChange}
                   />
-                  {isShowVenues && (
-                    <>
-                      <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
-                        Chọn địa điểm
-                      </Typography>
-                      <div className="mt-0">
-                        <VenueList venues={data} />
-                      </div>
-                    </>
-                  )}
+
+                  <>
+                    <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
+                      Chọn địa điểm
+                    </Typography>
+                    <div className="mt-0">
+                      <VenueList loading={loading} venues={venueCheckSlotByDateList} />
+                    </div>
+                  </>
                 </>
               ) : activeStep + 1 === 2 ? (
                 <>
