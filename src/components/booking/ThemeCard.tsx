@@ -1,30 +1,31 @@
 import React from "react";
 import { Card, CardContent, CardMedia, Typography } from "@mui/material";
 import "./ThemeCard.css";
+import "@/app/globals.css"
 import Link from "next/link";
-const ThemeCard = ({ theme } : {theme: any}) => {
-  const { ThemeName, ThemeImgUrl, ThemeDescription } = theme;
+import { ThemeDataResponse } from "@/dtos/response/theme.response";
+const ThemeCard = ({ theme }: { theme: ThemeDataResponse }) => {
+  const { themeName, themeDescription, themeImgUrl } = theme;
 
   return (
-    <Link href={"#"}>
-      <Card className="theme-card">
+      <Card className="package-card">
         <CardMedia
           component="img"
-          height="140px"
-          image={ThemeImgUrl}
-          alt={ThemeName}
-          style={{objectFit: 'cover'}}
+          height={300}
+          width={'100%'}
+          image={themeImgUrl}
+          alt={themeName}
+          style={{ objectFit: "cover" }}
         />
         <CardContent>
           <Typography variant="h6" component="div">
-            {ThemeName}
+            {themeName}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {ThemeDescription}
+            {themeDescription}
           </Typography>
         </CardContent>
       </Card>
-    </Link>
   );
 };
 
