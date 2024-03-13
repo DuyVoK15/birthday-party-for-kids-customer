@@ -248,7 +248,7 @@ export default function Booking() {
   const [isShowVenues, setIsShowVenues] = React.useState(false);
   const [dateQuery, setDateQuery] = React.useState("");
   const onChange: DatePickerProps["onChange"] = (date, dateString) => {
-    var datePart = dateString.split(" ")[0];
+    const datePart = dateString.slice(0, 10);
     setDateQuery(datePart);
   };
 
@@ -257,9 +257,7 @@ export default function Booking() {
   const venueCheckSlotByDateList = useAppSelector(
     (state) => state.venueReducer.venueCheckSlotByDateList,
   );
-  const loading = useAppSelector(
-    (state) => state.venueReducer.loading,
-  );
+  const loading = useAppSelector((state) => state.venueReducer.loading);
   const fetchVenueCheckSlotByDate = async () => {
     await dispatch(getAllVenueCheckSlotByDate(dateQuery));
   };
@@ -334,7 +332,10 @@ export default function Booking() {
                       Chọn địa điểm
                     </Typography>
                     <div className="mt-0">
-                      <VenueList loading={loading} venues={venueCheckSlotByDateList} />
+                      <VenueList
+                        loading={loading}
+                        venues={venueCheckSlotByDateList}
+                      />
                     </div>
                   </>
                 </>
