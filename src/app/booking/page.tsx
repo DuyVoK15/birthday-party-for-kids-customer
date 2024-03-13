@@ -246,9 +246,9 @@ export default function Booking() {
   };
 
   const [isShowVenues, setIsShowVenues] = React.useState(false);
-  const [dateQuery, setDateQuery] = React.useState("");
+  const [dateQuery, setDateQuery] = React.useState<string>("");
   const onChange: DatePickerProps["onChange"] = (date, dateString) => {
-    const datePart = dateString.slice(0, 10);
+    const datePart: string = dateString.slice(0, 10);
     setDateQuery(datePart);
   };
 
@@ -264,7 +264,9 @@ export default function Booking() {
 
   // ** Hook
   React.useEffect(() => {
-    fetchVenueCheckSlotByDate();
+    if (dateQuery !== "") {
+      fetchVenueCheckSlotByDate();
+    }
   }, [dateQuery]);
 
   return (
