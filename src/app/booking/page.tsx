@@ -248,7 +248,8 @@ export default function Booking() {
   const [isShowVenues, setIsShowVenues] = React.useState(false);
   const [dateQuery, setDateQuery] = React.useState<string>("");
   const onChange: DatePickerProps["onChange"] = (date, dateString) => {
-    const datePart: string = dateString.slice(0, 10);
+    const datePart: string = dateString.substring(0, 10);
+    console.log(datePart);
     setDateQuery(datePart);
   };
 
