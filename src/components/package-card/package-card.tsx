@@ -2,44 +2,39 @@ import { Card, CardBody, CardHeader } from "@material-tailwind/react";
 import Image from "next/image";
 import "./package-card.css";
 import { Button, Typography } from "antd";
-interface CourseCardProps {
-  img: string;
-  tag: string;
-  title: string;
-  desc: string;
-  label: string;
-}
+import { PackageDataResponse } from "@/dtos/response/package.response";
 
-export function PackageCard({ img, tag, title, desc, label }: CourseCardProps) {
+export function PackageCard({ pkg }: { pkg: PackageDataResponse }) {
   return (
-    <Card placeholder=""  className="package-card border">
-      <CardHeader placeholder=""  className="h-64">
+    <Card placeholder="" className="package-card border">
+      <CardHeader placeholder="" className="h-64">
         <Image
           width={768}
           height={768}
-          src={img}
-          alt={title}
+          src={pkg?.packageImgUrl}
+          alt={pkg?.packageName}
           className="h-full w-full scale-[1.1] object-cover"
         />
       </CardHeader>
-      <CardBody placeholder="" >
+      <CardBody className="p-4 pb-6" placeholder="">
         <div className="flex items-center gap-2">
-          <Typography color="blue" className="font-normal text-gray-500">
-            {tag}
+          <Typography.Title
+            level={4}
+            color="blue"
+            className="mt-0 font-normal text-gray-500"
+          >
+            {pkg?.packageName}
+          </Typography.Title>
+        </div>
+        <div>
+          <Typography className="mb-6 font-normal !text-gray-500">
+            {pkg?.packageDescription}
           </Typography>
         </div>
-        <a
-          href="#"
-          className="text-blue-gray-900 transition-colors hover:text-purple-600"
-        >
-          <Typography className="mb-2 normal-case">
-            {title}
-          </Typography>
-        </a>
-        <Typography className="mb-6 font-normal !text-gray-500">
-          {desc}
-        </Typography>
-        <Button>{label}</Button>
+
+        <Button type="default" size="large" danger>
+          {pkg?.pricing?.toLocaleString() + " VNĐ"}
+        </Button>
       </CardBody>
     </Card>
   );

@@ -1,7 +1,13 @@
 "use client";
 
-import { Typography } from "@material-tailwind/react";
-import CourseCard from "@/components/package-card/package-card";
+import CourseCard, {
+  PackageCard,
+} from "@/components/package-card/package-card";
+import { getAllPackage } from "@/lib/features/action/package.action";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { Typography } from "antd";
+import { useEffect } from "react";
+const { Title } = Typography;
 
 const COURSES = [
   {
@@ -48,28 +54,43 @@ const COURSES = [
   },
 ];
 
-export function PackageCard() {
+export function PackageCards() {
+  // ** Disptach API
+  const dispatch = useAppDispatch();
+  const packageList = useAppSelector(
+    (state) => state.packageReducer.packageList,
+  );
+  const fetchAllPackage = async () => {
+    await dispatch(getAllPackage()).then((res) => {
+      console.log(JSON.stringify(res, null, 2));
+    });
+  };
+
+  useEffect(() => {
+    fetchAllPackage();
+  }, []);
+
   return (
-    <section className="px-8 pt-60">
-      <div className="container mx-auto mb-24 text-center">
-        <Typography placeholder=""  variant="h3" color="blue-gray">
-          Các Gói Dịch Vụ
-        </Typography>
-        <Typography placeholder="" 
-          variant="h6"
-          className="mx-auto mt-2 w-full px-4 !text-gray-500 lg:w-6/12 lg:px-8"
+    <section className="px-8">
+      <div className="text-center">
+        <Title level={1} color="blue-gray">
+          Các gói dịch vụ bữa tiệc
+        </Title>
+        <Title
+          level={5}
+          className="mx-auto w-full px-4 !text-gray-500 lg:w-6/12 lg:px-8"
         >
-          Các gói dịch vụ dưới đây áp dụng toàn bộ cho các chi nhánh trên toàn
-          quốc
-        </Typography>
+          Các địa điểm cung cấp các gói dịch vu có sẵn của bữa tiệc, khách hàng
+          được quyền nâng cấp thêm các dịch vụ{" "}
+        </Title>
       </div>
-      <div className="container mx-auto grid grid-cols-1 gap-x-10 gap-y-24 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-14">
-        {COURSES.map((props, idx) => (
-          <CourseCard key={idx} {...props} />
+      <div className="container mx-auto mt-12 grid grid-cols-1 gap-x-10 gap-y-24 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-14">
+        {packageList.map((item, idx) => (
+          <PackageCard key={idx} pkg={item} />
         ))}
       </div>
     </section>
   );
 }
 
-export default PackageCard;
+export default PackageCards;

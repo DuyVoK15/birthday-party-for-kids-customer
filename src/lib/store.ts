@@ -7,6 +7,7 @@ import appReducer from "../lib/features/app.slice";
 import inquiryReducer from "../lib/features/slice/inquirty.slice";
 import venueReducer from "../lib/features/slice/venue.slice";
 import themeReducer from "../lib/features/slice/theme.slice";
+import packageReducer from "../lib/features/slice/package.slice";
 
 export const store = configureStore({
   middleware: (getDefaultMiddleware) => {
@@ -21,6 +22,7 @@ export const store = configureStore({
     inquiryReducer,
     venueReducer,
     themeReducer,
+    packageReducer,
   },
 });
 

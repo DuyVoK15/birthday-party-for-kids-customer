@@ -17,8 +17,8 @@ function Hero() {
         height={1200}
         src="https://png.pngtree.com/background/20230317/original/pngtree-birthday-party-balloon-decoration-background-picture-image_2149091.jpg"
         alt="bg-img"
-        className="absolute inset-0 h-[780px] w-full rounded-b-[100px]"
-        // className="absolute inset-0 ml-auto w-[920px] h-[780px] rounded-bl-[100px] object-cover object-center"
+        className="absolute inset-0 h-[780px] w-full"
+        // className="absolute inset-0 ml-auto w-[920px] h-[780px] rounded-bl-[100px] object-cover object-center"  rounded-b-[100px]
       />
       <div className="container mx-auto mt-28">
         <div className="grid grid-cols-12 text-center lg:text-left">
@@ -37,7 +37,7 @@ function Hero() {
               nhớ trong ngày sinh nhật của mình.
             </Typography>
             <div className="mb-0 flex justify-center gap-4 lg:justify-start">
-              <Button onClick={navigate} color="blue">
+              <Button type="primary" size="large" onClick={navigate} color="blue">
                 Đặt lịch
               </Button>
               {/* <Button color="gray" variant="outlined">
