@@ -6,7 +6,7 @@ import React from "react";
 
 const ThemeCard = ({ theme }: { theme: ThemeDataResponse }) => {
   return (
-    <Card placeholder="" className="package-card border">
+    <Card className="package-card border">
       <Image
         width={"100%"}
         height={300}
