@@ -1,20 +1,20 @@
-import { INQUIRY } from "@/dtos/inquiry.dtos";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { inquiryService } from "../../service/inquiry.service";
-import { getAllInquiryByAuthor } from "../action/inquiry.action";
-import { VenueCheckSlotByDateResponse, VenueResponse } from "@/dtos/venue.dtos";
+import { createSlice } from "@reduxjs/toolkit";
+import {
+  VenueArrayResponse,
+  VenueDataResponse,
+} from "@/dtos/response/venue.response";
 import {
   getAllVenue,
   getAllVenueCheckSlotByDate,
 } from "../action/venue.action";
 
-interface VenueState {
-  venueCheckSlotByDateResponse: VenueCheckSlotByDateResponse;
-  venueCheckSlotByDateList: VenueResponse[] | [];
-  venueList: VenueResponse[] | [];
+interface State {
+  venueCheckSlotByDateResponse: VenueArrayResponse;
+  venueCheckSlotByDateList: VenueDataResponse[] | [];
+  venueList: VenueDataResponse[] | [];
   loading: boolean;
 }
-const initialState: VenueState = {
+const initialState: State = {
   venueCheckSlotByDateResponse: {
     status: "",
     message: "",

@@ -14,7 +14,7 @@ import {
 } from "antd";
 import Meta from "antd/es/card/Meta";
 import { ClockCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import { VenueResponse } from "@/dtos/venue.dtos";
+import { VenueResponse } from "@/dtos/response/venue.response";
 const VenueCard = ({
   venue,
   itemtSelected,

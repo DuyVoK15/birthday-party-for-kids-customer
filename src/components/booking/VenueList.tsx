@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import VenueCard from "./VenueCard";
 import { Flex, Spin } from "antd";
-import { VenueResponse } from "@/dtos/venue.dtos";
+import { VenueResponse } from "@/dtos/response/venue.response";
 import { useBookingContext } from "@/context/BookingContext";
 import { useAppDispatch } from "@/lib/hooks";
 import { getAllThemeInVenueByVenueId } from "@/lib/features/action/theme.action";
