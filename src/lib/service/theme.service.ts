@@ -26,4 +26,12 @@ export const themeService = {
     const url = `/api/theme/delete/${id}`;
     return axiosClient.delete(url);
   },
+  getAllThemeInVenue: (): Promise<AxiosResponse<any>> => {
+    const url = `/api/themeInVenue/get-all-theme-in-venue`;
+    return axiosClient.get(url);
+  },
+  getAllThemeInVenueById: (id: number): Promise<AxiosResponse<any>> => {
+    const url = `/api/themeInVenue/get-theme-in-venue-id/${id}`;
+    return axiosClient.get(url);
+  },
 };

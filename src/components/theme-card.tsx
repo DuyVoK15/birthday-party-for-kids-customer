@@ -4,13 +4,17 @@ import { CardBody, CardHeader } from "@material-tailwind/react";
 import { Button, Card, Image, Typography } from "antd";
 import React from "react";
 
-const ThemeCard = ({ theme }: { theme: ThemeDataResponse }) => {
+const ThemeCard = ({
+  theme,
+}: {
+  theme: any;
+}) => {
   return (
     <Card className="package-card border">
       <Image
         width={"100%"}
         height={300}
-        src={theme?.themeImgUrl}
+        src={theme?.themeImgUrl || ""}
         alt={theme?.themeName}
         className="object-cover"
         style={{ borderRadius: 16 }}
@@ -20,7 +24,7 @@ const ThemeCard = ({ theme }: { theme: ThemeDataResponse }) => {
           <Typography.Title
             level={4}
             color="blue"
-            className="mt-2 font-medium text-gray-500 text-center"
+            className="mt-2 text-center font-medium text-gray-500"
           >
             {theme?.themeName}
           </Typography.Title>

@@ -70,7 +70,7 @@ export function ThemeCards() {
     <section className="px-8">
       <div className="text-center">
         <Title level={1} color="blue-gray">
-          Tổng hợp các chủ đề trang chi cho bữa tiệc
+          Tổng hợp các chủ đề trang trí cho bữa tiệc
         </Title>
         <Title
           level={5}
@@ -81,7 +81,7 @@ export function ThemeCards() {
         </Title>
       </div>
       <div className="container mx-auto grid grid-cols-1 gap-x-10 gap-y-24 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-14">
-        {themeList.map((theme, idx) => (
+        {themeList?.map((theme, idx) => (
           <ThemeCard key={idx} theme={theme} />
         ))}
       </div>

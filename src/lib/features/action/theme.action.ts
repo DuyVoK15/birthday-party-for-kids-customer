@@ -1,4 +1,5 @@
 import { themeService } from "@/lib/service/theme.service";
+import { venueService } from "@/lib/service/venue.service";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 
@@ -63,6 +64,48 @@ export const deleteTheme = createAsyncThunk(
   async (id: number, { rejectWithValue }) => {
     try {
       const response = await themeService.deleteTheme(id);
+      return response.data;
+    } catch (error: any) {
+      const axiosError = error as AxiosError;
+      console.log(axiosError);
+      return rejectWithValue(axiosError.response?.data);
+    }
+  },
+);
+
+export const getAllThemeInVenue = createAsyncThunk(
+  "theme/getAllThemeInVenue",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await themeService.getAllThemeInVenue();
+      return response.data;
+    } catch (error: any) {
+      const axiosError = error as AxiosError;
+      console.log(axiosError);
+      return rejectWithValue(axiosError.response?.data);
+    }
+  },
+);
+
+export const getAllThemeInVenueById = createAsyncThunk(
+  "theme/getAllThemeInVenueById",
+  async (id: number, { rejectWithValue }) => {
+    try {
+      const response = await themeService.getAllThemeInVenueById(id);
+      return response.data;
+    } catch (error: any) {
+      const axiosError = error as AxiosError;
+      console.log(axiosError);
+      return rejectWithValue(axiosError.response?.data);
+    }
+  },
+);
+
+export const getAllThemeInVenueByVenueId = createAsyncThunk(
+  "theme/getAllThemeInVenueByVenueId",
+  async (id: number, { rejectWithValue }) => {
+    try {
+      const response = await venueService.getAllThemeInVenueByVenueId(id);
       return response.data;
     } catch (error: any) {
       const axiosError = error as AxiosError;

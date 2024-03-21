@@ -3,6 +3,9 @@ import {
   createTheme,
   deleteTheme,
   getAllTheme,
+  getAllThemeInVenue,
+  getAllThemeInVenueById,
+  getAllThemeInVenueByVenueId,
   getThemeById,
   updateTheme,
 } from "../action/theme.action";
@@ -15,6 +18,8 @@ interface AuthState {
   themeReponse: ThemeResponse;
   themeList: ThemeDataResponse[] | [];
   themeById: any;
+  themeInVenueList: any;
+  themeInVenueByVenueId: any;
   createTheme: any;
   updateTheme: any;
   loading: boolean;
@@ -27,6 +32,8 @@ const initialState: AuthState = {
     data: [],
   },
   themeList: [],
+  themeInVenueList: [],
+  themeInVenueByVenueId: null,
   themeById: null,
   createTheme: null,
   updateTheme: null,
@@ -91,6 +98,37 @@ export const themeSlice = createSlice({
         state.loading = false;
       })
       .addCase(deleteTheme.rejected, (state, action) => {
+        state.loading = false;
+      }) //
+      .addCase(getAllThemeInVenue.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getAllThemeInVenue.fulfilled, (state, action) => {
+        state.themeInVenueList = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(getAllThemeInVenue.rejected, (state, action) => {
+        state.loading = false;
+      }) //
+      .addCase(getAllThemeInVenueById.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getAllThemeInVenueById.fulfilled, (state, action) => {
+        state.themeInVenueList = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(getAllThemeInVenueById.rejected, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(getAllThemeInVenueByVenueId.pending, (state, action) => {
+        state.loading = true;
+        state.themeInVenueList = [];
+      })
+      .addCase(getAllThemeInVenueByVenueId.fulfilled, (state, action) => {
+        state.themeInVenueList = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(getAllThemeInVenueByVenueId.rejected, (state, action) => {
         state.loading = false;
       });
     //

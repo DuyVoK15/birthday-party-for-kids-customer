@@ -1,3 +1,9 @@
+export interface ThemeInVenueDataResponse {
+  id: number;
+  active: boolean;
+  theme: ThemeDataResponse;
+}
+
 export interface ThemeDataResponse {
   id: number;
   themeName: string;
@@ -6,19 +12,13 @@ export interface ThemeDataResponse {
   active: boolean;
 }
 
-// Theme In Venue
-export interface ThemeInVenueDataResponse {
-  id: number;
-  active: boolean;
-  themeObject: ThemeDataResponse;
-}
-export interface ThemeInVenueResponse {
+export interface ThemeResponse {
   status: string;
   message: string;
   data: ThemeInVenueDataResponse[] | [];
 }
 
-export interface ThemeInVenueObjectResponse {
+export interface ThemeObjectResponse {
   status: string;
   message: string;
   data: ThemeInVenueDataResponse;
