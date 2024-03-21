@@ -1,8 +1,5 @@
-import { ThemeDataResponse } from "@/dtos/response/theme.response";
-import { VenueResponse } from "@/dtos/response/venue.response";
-import { CardBody, CardHeader } from "@material-tailwind/react";
+import { CardBody } from "@material-tailwind/react";
 import { Button, Card, Image, Typography } from "antd";
-import React from "react";
 
 const ThemeCard = ({
   theme,
