@@ -245,6 +245,9 @@ export default function Booking() {
     (state) => state.serviceReducer.serviceList,
   );
   const loading = useAppSelector((state) => state.venueReducer.loading);
+  const loadingCreatePartyBooking = useAppSelector(
+    (state) => state.partyBookingReducer.loading,
+  );
 
   const fetchVenueCheckSlotByDate = async () => {
     await dispatch(getAllVenueCheckSlotByDate(dateQuery));
@@ -500,7 +503,9 @@ export default function Booking() {
     <AuthGuard>
       <div className="container mx-auto mt-10">
         <Box sx={{ width: "100%" }}>
-          <Typography.Title className="mb-5">Các bước tạo bữa tiệc</Typography.Title>
+          <Typography.Title className="mb-5">
+            Các bước tạo bữa tiệc
+          </Typography.Title>
           <Stepper activeStep={activeStep}>
             {steps.map((label, index) => {
               const stepProps: { completed?: boolean } = {};
@@ -741,7 +746,11 @@ export default function Booking() {
                   </Button>
                 )}
                 {activeStep + 1 !== 5 && (
-                  <Button type="primary" onClick={handleNext}>
+                  <Button
+                    loading={loadingCreatePartyBooking}
+                    type="primary"
+                    onClick={handleNext}
+                  >
                     {activeStep === steps.length - 1 ? "Finish" : "Next"}
                   </Button>
                 )}

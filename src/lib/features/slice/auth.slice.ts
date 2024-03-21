@@ -1,15 +1,9 @@
 import { LOGIN_PARAM, REGISTER_PARAM } from "@/models/auth.param";
-import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
-import { authService } from "../service/auth.service";
-import { REGISTER_RES_DATA, USERINFO_RESPONSE } from "@/dtos/auth.dtos";
+import { authService } from "../../service/auth.service";
+import { REGISTER_RES_DATA, USERINFO_RESPONSE } from "@/dtos/response/auth.response";
 import { APP_CONSTANTS } from "@/enums/app";
-import {
-  GoogleAuthProvider,
-  onAuthStateChanged,
-  signInWithPopup,
-} from "firebase/auth";
-import { auth } from "@/firebase/firebaseConfig";
 
 interface AuthState {
   isAuthenticated: boolean;

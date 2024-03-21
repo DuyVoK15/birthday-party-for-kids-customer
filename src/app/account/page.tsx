@@ -28,7 +28,7 @@ import Button, { ButtonProps } from "@mui/material/Button";
 // ** Icons Imports
 import Close from "@ant-design/icons/CloseOutlined";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { getUserInfo, updateAvatar } from "@/lib/features/auth.slice";
+import { getUserInfo, updateAvatar } from "@/lib/features/slice/auth.slice";
 import AuthGuard from "../AuthGuard";
 import { Avatar, Flex } from "antd";
 import { UserOutlined } from "@ant-design/icons";

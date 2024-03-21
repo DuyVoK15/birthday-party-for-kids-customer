@@ -21,7 +21,7 @@ import { redirect, usePathname, useRouter } from "next/navigation";
 import { Button, Typography } from "antd";
 import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { getUserInfo, loadAuthState, logout } from "@/lib/features/auth.slice";
+import { getUserInfo, loadAuthState, logout } from "@/lib/features/slice/auth.slice";
 import { APP_CONSTANTS } from "@/enums/app";
 import UserDropdown from "./UserDropdown";
 

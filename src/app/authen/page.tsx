@@ -1,5 +1,5 @@
 "use client";
-import { LOGIN_GOOGLE_RES } from "@/dtos/auth.dtos";
+import { LOGIN_GOOGLE_RES } from "@/dtos/response/auth.response";
 import { APP_CONSTANTS } from "@/enums/app";
 import { auth } from "@/firebase/firebaseConfig";
 import {
@@ -7,7 +7,7 @@ import {
   login,
   loginWithGoogle,
   register,
-} from "@/lib/features/auth.slice";
+} from "@/lib/features/slice/auth.slice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { REGISTER_PARAM } from "@/models/auth.param";
 import {

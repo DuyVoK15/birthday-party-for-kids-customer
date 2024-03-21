@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import axiosClient from "./axiosClient";
 import { LOGIN_PARAM, REGISTER_PARAM } from "@/models/auth.param";
-import { REGISTER_RESPONSE, USERINFO_RESPONSE } from "@/dtos/auth.dtos";
+import { REGISTER_RESPONSE, USERINFO_RESPONSE } from "@/dtos/response/auth.response";
 
 export const authService = {
   register: (

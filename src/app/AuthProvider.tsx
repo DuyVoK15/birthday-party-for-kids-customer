@@ -1,5 +1,5 @@
 "use client";
-import { loadAuthState } from "@/lib/features/auth.slice";
+import { loadAuthState } from "@/lib/features/slice/auth.slice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import React, { FC, useEffect } from "react";
 

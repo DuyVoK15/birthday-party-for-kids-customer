@@ -22,7 +22,7 @@ import LogoutVariant from "mdi-material-ui/LogoutVariant";
 import AccountOutline from "mdi-material-ui/AccountOutline";
 import MessageOutline from "mdi-material-ui/MessageOutline";
 import HelpCircleOutline from "mdi-material-ui/HelpCircleOutline";
-import { USERINFO, USERINFO_RESPONSE } from "@/dtos/auth.dtos";
+import { USERINFO, USERINFO_RESPONSE } from "@/dtos/response/auth.response";
 
 // ** Styled Components
 const BadgeContentSpan = styled("span")(({ theme }) => ({

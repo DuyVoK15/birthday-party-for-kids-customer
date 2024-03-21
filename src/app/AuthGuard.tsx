@@ -1,7 +1,7 @@
 "use client";
 import { APP_CONSTANTS } from "@/enums/app";
-import { setPathName } from "@/lib/features/app.slice";
-import { loadAuthState } from "@/lib/features/auth.slice";
+import { setPathName } from "@/lib/features/slice/app.slice";
+import { loadAuthState } from "@/lib/features/slice/auth.slice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { redirect, usePathname, useRouter } from "next/navigation";
 import React, { FC, ReactNode, useEffect } from "react";
