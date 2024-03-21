@@ -14,7 +14,7 @@ export interface PackageDataResponse {
   packageServiceList: PackageServiceDataResponse[] | [];
   active: boolean;
 }
-export interface PackageResponse {
+export interface PackageArrayResponse {
   status: string;
   message: string;
   data: PackageDataResponse[] | [];

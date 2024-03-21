@@ -1,10 +1,9 @@
 import { AxiosResponse } from "axios";
 import axiosClient from "./axiosClient";
-import { PackageResponse } from "@/dtos/response/package.response";
-import { AnyIfEmpty } from "react-redux";
+import { PackageArrayResponse } from "@/dtos/response/package.response";
 
 export const packageService = {
-  getAllPackage: (): Promise<AxiosResponse<PackageResponse>> => {
+  getAllPackage: (): Promise<AxiosResponse<PackageArrayResponse>> => {
     const url = `/api/package/get-all`;
     return axiosClient.get(url);
   },

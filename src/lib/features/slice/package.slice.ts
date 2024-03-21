@@ -5,13 +5,13 @@ import {
   getPackageById,
 } from "../action/package.action";
 import {
+  PackageArrayResponse,
   PackageDataResponse,
   PackageInVenueDataResponse,
-  PackageResponse,
 } from "@/dtos/response/package.response";
 
 interface AuthState {
-  packageReponse: PackageResponse;
+  packageReponse: PackageArrayResponse;
   packageList: PackageDataResponse[] | [];
   packageById: any;
   packageInVenueList: PackageInVenueDataResponse[] | [];
