@@ -1,13 +1,17 @@
 import { AxiosResponse } from "axios";
 import axiosClient from "./axiosClient";
-import { ThemeResponse } from "@/dtos/response/theme.response";
+import {
+  ThemeArrayResponse,
+  ThemeInVenueArrayResponse,
+  ThemeObjectResponse,
+} from "@/dtos/response/theme.response";
 
 export const themeService = {
-  getAllTheme: (): Promise<AxiosResponse<ThemeResponse>> => {
+  getAllTheme: (): Promise<AxiosResponse<ThemeArrayResponse>> => {
     const url = `/api/theme/get-all`;
     return axiosClient.get(url);
   },
-  getThemeById: (id: number): Promise<AxiosResponse<any>> => {
+  getThemeById: (id: number): Promise<AxiosResponse<ThemeObjectResponse>> => {
     const url = `/api/theme/get-id/${id}`;
     return axiosClient.get(url);
   },
@@ -26,11 +30,15 @@ export const themeService = {
     const url = `/api/theme/delete/${id}`;
     return axiosClient.delete(url);
   },
-  getAllThemeInVenue: (): Promise<AxiosResponse<any>> => {
+  getAllThemeInVenue: (): Promise<
+    AxiosResponse<ThemeInVenueArrayResponse>
+  > => {
     const url = `/api/themeInVenue/get-all-theme-in-venue`;
     return axiosClient.get(url);
   },
-  getAllThemeInVenueById: (id: number): Promise<AxiosResponse<any>> => {
+  getAllThemeInVenueById: (
+    id: number,
+  ): Promise<AxiosResponse<ThemeInVenueArrayResponse>> => {
     const url = `/api/themeInVenue/get-theme-in-venue-id/${id}`;
     return axiosClient.get(url);
   },

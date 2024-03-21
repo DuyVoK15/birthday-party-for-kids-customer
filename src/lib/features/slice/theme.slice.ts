@@ -10,12 +10,12 @@ import {
   updateTheme,
 } from "../action/theme.action";
 import {
+  ThemeArrayResponse,
   ThemeDataResponse,
-  ThemeResponse,
 } from "@/dtos/response/theme.response";
 
-interface AuthState {
-  themeReponse: ThemeResponse;
+interface State {
+  themeReponse: ThemeArrayResponse;
   themeList: ThemeDataResponse[] | [];
   themeById: any;
   themeInVenueList: any;
@@ -25,7 +25,7 @@ interface AuthState {
   loading: boolean;
 }
 
-const initialState: AuthState = {
+const initialState: State = {
   themeReponse: {
     status: "",
     message: "",

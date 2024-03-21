@@ -1,6 +1,6 @@
 import { ThemeDataResponse } from "@/dtos/response/theme.response";
 import { ThemeInVenueDataResponse } from "@/dtos/response/theme.resposne";
-import { VenueResponse } from "@/dtos/venue.dtos";
+import { VenueResponse } from "@/dtos/response/venue.response";
 import { imageUrlIfUndefined } from "@/utils/images";
 import { CardBody, CardHeader } from "@material-tailwind/react";
 import { Button, Card, Col, Flex, Image, Typography } from "antd";

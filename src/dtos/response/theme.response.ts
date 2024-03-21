@@ -5,14 +5,24 @@ export interface ThemeDataResponse {
   themeImgUrl: string;
   active: boolean;
 }
+export interface ThemeArrayResponse {
+  status: string;
+  message: string;
+  data: ThemeDataResponse[] | [];
+}
 
+export interface ThemeObjectResponse {
+  status: string;
+  message: string;
+  data: ThemeDataResponse;
+}
 // Theme In Venue
 export interface ThemeInVenueDataResponse {
   id: number;
   active: boolean;
-  themeObject: ThemeDataResponse;
+  theme: ThemeDataResponse;
 }
-export interface ThemeInVenueResponse {
+export interface ThemeInVenueArrayResponse {
   status: string;
   message: string;
   data: ThemeInVenueDataResponse[] | [];
