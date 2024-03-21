@@ -1,56 +1,10 @@
-"use client";
-
-import CourseCard from "@/components/package-card/package-card";
+"use client";;
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { getAllVenue } from "@/lib/features/action/venue.action";
 import { useEffect } from "react";
 import VenueCard from "@/components/venue-card";
 import { Typography } from "antd";
 const { Title } = Typography;
-const COURSES = [
-  {
-    img: "/image/package-basic-1.png",
-    tag: "Sức chứa: từ 1 - 30 người",
-    title: "Gói tiệc sinh nhật BASIC 1",
-    label: "2 triệu VNĐ",
-    desc: "Gói BASIC bao gồm các dịch vụ trang trí, thức ăn, chươn trình ca nhạc,.....",
-  },
-  {
-    img: "/image/package-basic-1.png",
-    tag: "Sức chứa: từ 1 - 30 người",
-    title: "Gói tiệc sinh nhật BASIC 2",
-    label: "2 triệu VNĐ",
-    desc: "Gói BASIC bao gồm các dịch vụ trang trí, thức ăn, chươn trình ca nhạc,.....",
-  },
-  {
-    img: "/image/package-basic-1.png",
-    tag: "Sức chứa: từ 1 - 30 người",
-    title: "Gói tiệc sinh nhật BASIC 3",
-    label: "2 triệu VNĐ",
-    desc: "Gói BASIC bao gồm các dịch vụ trang trí, thức ăn, chươn trình ca nhạc,.....",
-  },
-  {
-    img: "/image/package-basic-1.png",
-    tag: "Sức chứa: từ 1 - 50 người",
-    title: "Gói tiệc sinh nhật VIP 1",
-    label: "5 triệu VNĐ",
-    desc: "Gói VIP bao gồm các dịch vụ trang trí, thức ăn, chươn trình ca nhạc,.....",
-  },
-  {
-    img: "/image/package-basic-1.png",
-    tag: "Sức chứa: từ 1 - 50 người",
-    title: "Gói tiệc sinh nhật VIP 2",
-    label: "5 triệu VNĐ",
-    desc: "Gói VIP bao gồm các dịch vụ trang trí, thức ăn, chươn trình ca nhạc,.....",
-  },
-  {
-    img: "/image/package-basic-1.png",
-    tag: "Sức chứa: từ 1 - 50 người",
-    title: "Gói tiệc sinh nhật VIP 3",
-    label: "5 triệu VNĐ",
-    desc: "Gói VIP bao gồm các dịch vụ trang trí, thức ăn, chươn trình ca nhạc,.....",
-  },
-];
 
 export function VenueCards() {
   // ** Disptach API

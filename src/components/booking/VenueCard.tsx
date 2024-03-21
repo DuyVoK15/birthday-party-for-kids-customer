@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./VenueCard.css";
 import Link from "next/link";
 import { blue } from "@ant-design/colors";
@@ -15,7 +15,24 @@ import {
 import Meta from "antd/es/card/Meta";
 import { ClockCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { VenueResponse } from "@/dtos/venue.dtos";
-const VenueCard = ({ venue }: { venue: VenueResponse }) => {
+const VenueCard = ({
+  venue,
+  itemtSelected,
+  setItem,
+}: {
+  venue: VenueResponse;
+  itemtSelected: {
+    venue?: VenueResponse;
+    slotInVenueId?: number;
+  } | null;
+  setItem: ({
+    venue,
+    slotInVenueId,
+  }: {
+    venue: VenueResponse;
+    slotInVenueId: number;
+  }) => void;
+}) => {
   const {
     venueName,
     venueImgUrl,
@@ -50,23 +67,32 @@ const VenueCard = ({ venue }: { venue: VenueResponse }) => {
             <Flex vertical gap={5}>
               <Typography.Title level={5}>Time Slots:</Typography.Title>
               <Space direction="horizontal">
-                {slotInVenueList.map((slot, index: number) =>
-                  slot?.status === true ? (
+                {slotInVenueList.map((slotInVenue, index: number) =>
+                  slotInVenue?.status === true ? (
                     <Tag
                       key={index}
                       icon={<ClockCircleOutlined />}
-                      color="red"
+                      color="error"
+                      style={{ padding: "4px 6px" }}
                     >
                       In Use
                     </Tag>
                   ) : (
                     <Tag
+                      onClick={() => {
+                        setItem({ venue, slotInVenueId: slotInVenue?.id });
+                      }}
                       key={index}
                       icon={<ClockCircleOutlined />}
-                      color="blue"
+                      color={
+                        slotInVenue?.id === itemtSelected?.slotInVenueId
+                          ? "gold-inverse"
+                          : "cyan"
+                      }
+                      style={{ padding: "4px 6px" }}
                     >
-                      {slot?.slotObject?.timeStart} -{" "}
-                      {slot?.slotObject?.timeEnd}
+                      {slotInVenue?.slot?.timeStart.substring(0, 5)} -{" "}
+                      {slotInVenue?.slot?.timeEnd.substring(0, 5)}
                     </Tag>
                   ),
                 )}

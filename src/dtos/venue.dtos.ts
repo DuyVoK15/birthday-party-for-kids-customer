@@ -9,7 +9,7 @@ export interface SlotInVenueResponse {
   id: number;
   active: boolean;
   status: boolean;
-  slotObject: SlotOnjectResponse;
+  slot: SlotOnjectResponse;
 }
 export interface VenueResponse {
   id: number;

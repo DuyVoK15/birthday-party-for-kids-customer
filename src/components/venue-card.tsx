@@ -9,7 +9,7 @@ const VenueCard = ({ venue }: { venue: VenueResponse }) => {
         <Image
           width={'100%'}
           height={300}
-          src={venue?.venueImgUrl}
+          src={venue?.venueImgUrl || ""}
           alt={venue?.venueName}
           className="object-cover"
           style={{borderRadius: 16}}
