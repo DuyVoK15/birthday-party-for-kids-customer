@@ -70,6 +70,7 @@ const Account = () => {
       reader.onload = () => setImgSrc(reader.result as string);
       setImgFile(files[0]);
       reader.readAsDataURL(files[0]);
+      console.log(files)
     }
   };
 
