@@ -1,13 +1,18 @@
 import { AxiosResponse } from "axios";
 import axiosClient from "./axiosClient";
-import { ServiceResponse } from "@/dtos/response/service.response";
+import {
+  ServiceArrayResponse,
+  ServiceObjectResponse,
+} from "@/dtos/response/service.response";
 
 export const serviceService = {
-  getAllService: (): Promise<AxiosResponse<ServiceResponse>> => {
+  getAllService: (): Promise<AxiosResponse<ServiceArrayResponse>> => {
     const url = `/api/services/getAll-service`;
     return axiosClient.get(url);
   },
-  getServiceById: (id: number | null): Promise<AxiosResponse<any>> => {
+  getServiceById: (
+    id: number | null,
+  ): Promise<AxiosResponse<ServiceObjectResponse>> => {
     const url = `/api/services/getId-service/${id}`;
     return axiosClient.get(url);
   },

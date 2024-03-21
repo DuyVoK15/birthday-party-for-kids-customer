@@ -1,12 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getAllService, getServiceById } from "../action/service.action";
 import {
+  ServiceArrayResponse,
   ServiceDataResponse,
-  ServiceResponse,
 } from "@/dtos/response/service.response";
 
 interface State {
-  serviceReponse: ServiceResponse;
+  serviceReponse: ServiceArrayResponse;
   serviceList: ServiceDataResponse[] | [];
   serviceByIdList: any;
   loading: boolean;
