@@ -11,7 +11,7 @@ export function PackageCard({ pkg }: { pkg: PackageDataResponse }) {
         <Image
           width={768}
           height={768}
-          src={pkg?.packageImgUrl}
+          src={pkg?.packageImgUrl || ""}
           alt={pkg?.packageName}
           className="h-full w-full scale-[1.1] object-cover"
         />

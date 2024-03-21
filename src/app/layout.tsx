@@ -8,6 +8,9 @@ import StyledComponentsRegistry from "@/lib/AntdRegistry";
 import StoreProvider from "./StoreProvider";
 import MessageProvider from "./MessageProvider";
 import AuthProvider from "./AuthProvider";
+import { BookingProvider } from "@/context/BookingContext";
+import { ConfigProvider } from "antd";
+import en_US from "antd/locale/en_US";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -38,18 +41,23 @@ export default function RootLayout({
       </head>
       <ThemeProvider theme={theme}>
         <body className={roboto.className}>
-          <MessageProvider>
-            <StoreProvider>
-              <AuthProvider>
-                <StyledComponentsRegistry>
-                  <Navbar />
-                  {children}
-                  <Footer />
-                </StyledComponentsRegistry>
-              </AuthProvider>
-              {/* <FixedPlugin /> */}
-            </StoreProvider>
-          </MessageProvider>
+          <ConfigProvider locale={en_US}>
+            <MessageProvider>
+              <StoreProvider>
+                <AuthProvider>
+                  <BookingProvider>
+                    <StyledComponentsRegistry>
+                      <Navbar />
+                      {children}
+                      <Footer />
+                    </StyledComponentsRegistry>
+                  </BookingProvider>
+                </AuthProvider>
+
+                {/* <FixedPlugin /> */}
+              </StoreProvider>
+            </MessageProvider>
+          </ConfigProvider>
         </body>
       </ThemeProvider>
     </html>

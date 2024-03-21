@@ -1,25 +1,36 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAllPackage, getPackageById } from "../action/package.action";
+import {
+  getAllPackage,
+  getAllPackageInVenueByVenueId,
+  getPackageById,
+} from "../action/package.action";
 import {
   PackageDataResponse,
+  PackageInVenueDataResponse,
   PackageResponse,
 } from "@/dtos/response/package.response";
 
-interface State {
+interface AuthState {
   packageReponse: PackageResponse;
   packageList: PackageDataResponse[] | [];
-  packageByIdList: any;
+  packageById: any;
+  packageInVenueList: PackageInVenueDataResponse[] | [];
+  createPackage: any;
+  updatePackage: any;
   loading: boolean;
 }
 
-const initialState: State = {
+const initialState: AuthState = {
   packageReponse: {
     status: "",
     message: "",
     data: [],
   },
   packageList: [],
-  packageByIdList: null,
+  packageInVenueList: [],
+  packageById: null,
+  createPackage: null,
+  updatePackage: null,
   loading: false,
 };
 
@@ -45,12 +56,25 @@ export const packageSlice = createSlice({
         state.loading = true;
       })
       .addCase(getPackageById.fulfilled, (state, action) => {
-        state.packageByIdList = action.payload;
+        state.packageById = action.payload;
         state.loading = false;
       })
       .addCase(getPackageById.rejected, (state, action) => {
         state.loading = false;
+      })
+      //
+      .addCase(getAllPackageInVenueByVenueId.pending, (state, action) => {
+        state.loading = true;
+        state.packageInVenueList = [];
+      })
+      .addCase(getAllPackageInVenueByVenueId.fulfilled, (state, action) => {
+        state.packageInVenueList = action.payload.data || [];
+        state.loading = false;
+      })
+      .addCase(getAllPackageInVenueByVenueId.rejected, (state, action) => {
+        state.loading = false;
       });
+    //
   },
 });
 

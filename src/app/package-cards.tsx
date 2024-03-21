@@ -85,7 +85,7 @@ export function PackageCards() {
         </Title>
       </div>
       <div className="container mx-auto mt-12 grid grid-cols-1 gap-x-10 gap-y-24 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-14">
-        {packageList.map((item, idx) => (
+        {packageList?.map((item, idx) => (
           <PackageCard key={idx} pkg={item} />
         ))}
       </div>

@@ -1,17 +1,47 @@
-import React from 'react';
-import { Grid } from '@mui/material';
-import PackageCard from './PackageCard';
+"use client";
 
-const PackageList = ({ packages }: {packages: any}) => {
-  return (
-    <Grid container spacing={2}>
-      {packages.map((packageInfo: any, index: number) => (
-        <Grid item key={index} xs={12} md={6} lg={4}>
-          <PackageCard packageInfo={packageInfo} />
-        </Grid>
-      ))}
-    </Grid>
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import React, { Fragment, useEffect } from "react";
+import { Row, Spin, Typography } from "antd";
+import { useBookingContext } from "@/context/BookingContext";
+import PackageCard from "./PackageCard";
+
+const { Title } = Typography;
+
+export function PackageList() {
+  // ** Disptach API
+  const dispatch = useAppDispatch();
+  const packageInVenueList = useAppSelector(
+    (state) => state.packageReducer.packageInVenueList,
   );
-};
+  const loading = useAppSelector((state) => state.packageReducer.loading);
+  // ** Context API
+  const { setBookingData, venue } = useBookingContext();
+
+  const [itemSelected, setItemSelected] = React.useState<number | null>(null);
+  const setItem = (packageInVenueId: number) => {
+    setItemSelected(packageInVenueId);
+    setBookingData((prev) => ({ ...prev, packageInVenueId }));
+  };
+
+  return (
+    <Row gutter={[16, 16]}>
+      <Spin
+        spinning={loading}
+        fullscreen
+        tip="Đang chờ tải gói dịch vụ của địa điểm này ..."
+      />
+
+      {packageInVenueList.map((pkg: any, idx: number) => (
+        <PackageCard
+          key={idx}
+          pkg={pkg}
+          itemSelected={itemSelected}
+          setItem={setItem}
+        />
+      ))}
+    </Row>
+  );
+}
 
 export default PackageList;
