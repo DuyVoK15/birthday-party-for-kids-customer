@@ -12,12 +12,11 @@ import {
   InputNumber,
   Modal,
   Skeleton,
-  Spin,
   Typography,
   message,
 } from "antd";
 import Meta from "antd/es/card/Meta";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const ServiceCards = ({
   serviceList,

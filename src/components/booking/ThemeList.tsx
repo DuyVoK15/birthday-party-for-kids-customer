@@ -1,12 +1,6 @@
-"use client";
-
+"use client";;
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import {
-  getAllTheme,
-  getAllThemeInVenue,
-  getAllThemeInVenueByVenueId,
-} from "@/lib/features/action/theme.action";
-import React, { Fragment, useEffect } from "react";
+import React from "react";
 import { Row, Spin, Typography } from "antd";
 import { useBookingContext } from "@/context/BookingContext";
 import ThemeCard from "./ThemeCard";
@@ -20,6 +14,7 @@ export function ThemeList() {
     (state) => state.themeReducer.themeInVenueList,
   );
   const loading = useAppSelector((state) => state.themeReducer.loading);
+  
   // ** Context API
   const { setBookingData, venue } = useBookingContext();
 

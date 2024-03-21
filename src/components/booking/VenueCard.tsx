@@ -1,35 +1,24 @@
-import React, { useState } from "react";
 import "./VenueCard.css";
-import Link from "next/link";
 import { blue } from "@ant-design/colors";
-import {
-  Avatar,
-  Card,
-  Divider,
-  Flex,
-  Popover,
-  Space,
-  Tag,
-  Typography,
-} from "antd";
+import { Avatar, Card, Flex, Popover, Space, Tag, Typography } from "antd";
 import Meta from "antd/es/card/Meta";
 import { ClockCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import { VenueResponse } from "@/dtos/response/venue.response";
+import { VenueDataResponse } from "@/dtos/response/venue.response";
 const VenueCard = ({
   venue,
   itemtSelected,
   setItem,
 }: {
-  venue: VenueResponse;
+  venue: VenueDataResponse;
   itemtSelected: {
-    venue?: VenueResponse;
+    venue?: VenueDataResponse;
     slotInVenueId?: number;
   } | null;
   setItem: ({
     venue,
     slotInVenueId,
   }: {
-    venue: VenueResponse;
+    venue: VenueDataResponse;
     slotInVenueId: number;
   }) => void;
 }) => {

@@ -1,17 +1,6 @@
-// components
-import { Navbar, Footer } from "@/components";
-
 // sections
 import Hero from "./hero";
-import OutImpressiveStats from "./out-impressive-stats";
-import CoursesCategories from "./courses-categories";
-import ExploreCourses, { PackageCards } from "./package-cards";
-import Testimonial from "./testimonial";
-import Events from "./events";
-import StudentsFeedback from "./students-feedback";
-import TrustedCompany from "./trusted-companies";
-import { ThemeProvider } from "@mui/material";
-import theme from "./theme";
+import { PackageCards } from "./package-cards";
 import "./globals.css";
 import ThemeCards from "./theme-cards";
 import { Divider } from "antd";
@@ -20,8 +9,7 @@ export default function RootApplication() {
   return (
     <div className="container mx-auto">
       <Hero />
-      {/* <OutImpressiveStats /> */}
-      {/* <CoursesCategories /> */}
+ 
       <div className="mt-56">
         <VenueCards />
         <Divider className="mt-10" />
@@ -30,10 +18,7 @@ export default function RootApplication() {
         <ThemeCards />
       </div>
 
-      {/* <Testimonial />
-      <Events />
-      <StudentsFeedback />
-      <TrustedCompany /> */}
+ 
     </div>
   );
 }

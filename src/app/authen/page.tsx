@@ -1,5 +1,4 @@
-"use client";
-import { LOGIN_GOOGLE_RES } from "@/dtos/response/auth.response";
+"use client";;
 import { APP_CONSTANTS } from "@/enums/app";
 import { auth } from "@/firebase/firebaseConfig";
 import {
@@ -9,27 +8,9 @@ import {
   register,
 } from "@/lib/features/slice/auth.slice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { REGISTER_PARAM } from "@/models/auth.param";
-import {
-  AlipayOutlined,
-  LockOutlined,
-  MobileOutlined,
-  TaobaoOutlined,
-  UserOutlined,
-  SendOutlined,
-  WeiboOutlined,
-  FacebookOutlined,
-  GoogleOutlined,
-} from "@ant-design/icons";
-import {
-  LoginFormPage,
-  ProConfigProvider,
-  ProFormCaptcha,
-  ProFormCheckbox,
-  ProFormText,
-} from "@ant-design/pro-components";
-import { Button, Divider, Space, Tabs, message, theme } from "antd";
-import axios from "axios";
+import { LockOutlined, UserOutlined, SendOutlined, FacebookOutlined, GoogleOutlined } from "@ant-design/icons";
+import { LoginFormPage, ProConfigProvider, ProFormCheckbox, ProFormText } from "@ant-design/pro-components";
+import { Divider, Space, Tabs, message, theme } from "antd";
 import {
   GoogleAuthProvider,
   User,
@@ -39,8 +20,6 @@ import {
 import { useRouter } from "next/navigation";
 import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
-import AuthGuard from "../AuthGuard";
-import { unwrapResult } from "@reduxjs/toolkit";
 
 type LoginType = "Login" | "Register";
 

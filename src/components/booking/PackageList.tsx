@@ -1,7 +1,6 @@
 "use client";
-
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import React, { Fragment, useEffect } from "react";
+import React from "react";
 import { Row, Spin, Typography } from "antd";
 import { useBookingContext } from "@/context/BookingContext";
 import PackageCard from "./PackageCard";
@@ -15,6 +14,7 @@ export function PackageList() {
     (state) => state.packageReducer.packageInVenueList,
   );
   const loading = useAppSelector((state) => state.packageReducer.loading);
+
   // ** Context API
   const { setBookingData, venue } = useBookingContext();
 

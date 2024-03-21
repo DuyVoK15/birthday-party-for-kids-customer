@@ -1,11 +1,8 @@
-import { ThemeDataResponse } from "@/dtos/response/theme.response";
-import { ThemeInVenueDataResponse } from "@/dtos/response/theme.resposne";
-import { VenueResponse } from "@/dtos/response/venue.response";
+
+import { ThemeInVenueDataResponse } from "@/dtos/response/theme.response";
 import { imageUrlIfUndefined } from "@/utils/images";
-import { CardBody, CardHeader } from "@material-tailwind/react";
-import { Button, Card, Col, Flex, Image, Typography } from "antd";
+import { Button, Card, Col, Flex, Image } from "antd";
 import Meta from "antd/es/card/Meta";
-import React from "react";
 
 const ThemeCard = ({
   themeInVenue,
@@ -17,6 +14,7 @@ const ThemeCard = ({
   setItem: (id: number) => void;
 }) => {
   const { id, active, theme } = themeInVenue;
+  
   return (
     <Col span={6}>
       <Card

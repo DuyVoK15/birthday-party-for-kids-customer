@@ -1,13 +1,7 @@
-import {
-  PackageDataResponse,
-  PackageInVenueDataResponse,
-} from "@/dtos/response/package.response";
-import { VenueResponse } from "@/dtos/response/venue.response";
+import { PackageInVenueDataResponse } from "@/dtos/response/package.response";
 import { imageUrlIfUndefined } from "@/utils/images";
-import { CardBody, CardHeader } from "@material-tailwind/react";
-import { Button, Card, Col, Flex, Image, Typography } from "antd";
+import { Button, Card, Col, Flex, Image } from "antd";
 import Meta from "antd/es/card/Meta";
-import React from "react";
 
 const PackageCard = ({
   pkg,
@@ -19,6 +13,7 @@ const PackageCard = ({
   setItem: (id: number) => void;
 }) => {
   const { id, active, apackage } = pkg;
+  
   return (
     <Col span={6}>
       <Card

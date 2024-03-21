@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
-import { Layout, FixedPlugin, Navbar, Footer } from "@/components";
+import { Navbar, Footer } from "@/components";
 import { ThemeProvider } from "@mui/material";
 import theme from "./theme";
 import StyledComponentsRegistry from "@/lib/AntdRegistry";
