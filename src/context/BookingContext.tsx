@@ -1,6 +1,6 @@
 "use client";
 import { ServiceDataResponse } from "@/dtos/response/service.response";
-import { VenueResponse } from "@/dtos/venue.dtos";
+import { VenueDataResponse } from "@/dtos/response/venue.response";
 import React, { createContext, useState, useContext, FC } from "react";
 
 export interface DataUpgrade {
@@ -23,8 +23,8 @@ export interface BookingRequest {
 interface BookingContextType {
   bookingData: BookingRequest | null;
   setBookingData: React.Dispatch<React.SetStateAction<BookingRequest | null>>;
-  venue: VenueResponse | null;
-  setVenue: React.Dispatch<React.SetStateAction<VenueResponse | null>>;
+  venue: VenueDataResponse | null;
+  setVenue: React.Dispatch<React.SetStateAction<VenueDataResponse | null>>;
   services: { service: ServiceDataResponse; count: number }[] | [];
   setServices: React.Dispatch<
     React.SetStateAction<{ service: ServiceDataResponse; count: number }[] | []>
@@ -59,7 +59,7 @@ export const BookingProvider = ({
   const [dataUpgrade, setDataUpgrade] = useState<
     { serviceId: number; count: number }[] | []
   >([]);
-  const [venue, setVenue] = useState<VenueResponse | null>(null);
+  const [venue, setVenue] = useState<VenueDataResponse | null>(null);
   // Các hàm hoặc trạng thái khác có thể được thêm vào đây
 
   return (
