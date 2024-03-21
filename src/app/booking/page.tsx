@@ -1,31 +1,60 @@
 "use client";
 import * as React from "react";
-import Box from "@mui/material/Box";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import { DatePicker, DatePickerProps, Space, Spin } from "antd";
+import {
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Col,
+  DatePicker,
+  DatePickerProps,
+  Descriptions,
+  DescriptionsProps,
+  Divider,
+  Flex,
+  Form,
+  Modal,
+  Row,
+  Space,
+  Spin,
+  Steps,
+  Tooltip,
+  Typography,
+  message,
+  theme,
+} from "antd";
 import VenueList from "@/components/booking/VenueList";
 import PackageList from "@/components/booking/PackageList";
 import ThemeList from "@/components/booking/ThemeList";
-import dayjs from "dayjs";
-import {
-  Container,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Grid,
-  Paper,
-  Radio,
-  RadioGroup,
-  TextField,
-} from "@mui/material";
-import CheckIcon from "@mui/icons-material/Check";
 import AuthGuard from "../AuthGuard";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { getAllVenueCheckSlotByDate } from "@/lib/features/action/venue.action";
+import { useBookingContext } from "@/context/BookingContext";
+import Meta from "antd/es/card/Meta";
+import { PlusOneOutlined } from "@mui/icons-material";
+import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
+import { getAllService } from "@/lib/features/action/service.action";
+import ServiceCards from "../service-cards";
+import { Box, Container, Step, StepLabel, Stepper } from "@mui/material";
+import { getAllThemeInVenueByVenueId } from "@/lib/features/action/theme.action";
+import { getAllPackageInVenueByVenueId } from "@/lib/features/action/package.action";
+import {
+  ModalForm,
+  ProForm,
+  ProFormDatePicker,
+  ProFormText,
+} from "@ant-design/pro-components";
+import { createPartyBooking } from "@/lib/features/action/partyBooking.action";
+
+const { Title } = Typography;
+const steps = [
+  "Pick Date & Venue",
+  "Select theme",
+  "Select package",
+  "Upgrage service",
+  "Fill information",
+  "Confirm & Payment",
+];
 
 const data = [
   {
@@ -191,35 +220,135 @@ const themeData = [
   },
 ];
 
-const steps = [
-  "Pick Date & Venue",
-  "Select package",
-  "Select theme",
-  "Fill information",
-  "Confirm & Payment",
-];
-
 export default function Booking() {
+  const { bookingData, setBookingData, services, setServices, venue } =
+    useBookingContext();
+
+  const [dateQuery, setDateQuery] = React.useState<string>("");
+  let total = 0;
+  const onChange: DatePickerProps["onChange"] = (date, dateString) => {
+    const partDate = date?.format("YYYY-MM-DD");
+    setDateQuery(partDate || "");
+    setBookingData((prev) => ({
+      ...prev,
+      date: partDate,
+    }));
+  };
+
+  // Dispatch API
+  const dispatch = useAppDispatch();
+  const userInfo = useAppSelector((state) => state.auth.userInfo);
+  const venueCheckSlotByDateList = useAppSelector(
+    (state) => state.venueReducer.venueCheckSlotByDateList,
+  );
+  const serviceList = useAppSelector(
+    (state) => state.serviceReducer.serviceList,
+  );
+  const loading = useAppSelector((state) => state.venueReducer.loading);
+
+  const fetchVenueCheckSlotByDate = async () => {
+    await dispatch(getAllVenueCheckSlotByDate(dateQuery));
+  };
+
+  const fetchAllService = async () => {
+    await dispatch(getAllService());
+  };
+  React.useEffect(() => {
+    fetchAllService();
+  }, []);
+
+  console.log(serviceList);
+  // ** Hook
+
+  React.useEffect(() => {
+    fetchVenueCheckSlotByDate();
+  }, [dateQuery]);
+  console.log(bookingData);
+
+  // Components
+
+  const fetchAllThemeInVenue = async () => {
+    if (venue?.id !== undefined) {
+      await dispatch(getAllThemeInVenueByVenueId(venue?.id)).then((res) => {
+        console.log(JSON.stringify(res, null, 2));
+      });
+    }
+  };
+  const fetchAllPackageInVenue = async () => {
+    if (venue?.id !== undefined) {
+      await dispatch(getAllPackageInVenueByVenueId(venue?.id)).then((res) => {
+        console.log(JSON.stringify(res, null, 2));
+      });
+    }
+  };
+
+  const createOnePartyBooking = async () => {
+    try {
+      if (bookingData !== null) {
+        const res = await dispatch(createPartyBooking(bookingData));
+        if (res?.meta?.requestStatus === "fulfilled") {
+          return true;
+        }
+        return false;
+      }
+    } catch (error: any) {
+      message.error(error);
+    }
+  };
+
+  // Steps component
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set<number>());
 
   const isStepOptional = (step: number) => {
-    return step === 1;
+    return null;
   };
 
   const isStepSkipped = (step: number) => {
     return skipped.has(step);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     let newSkipped = skipped;
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
     }
 
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped(newSkipped);
+    if (activeStep + 1 === 6) {
+      const result = await createOnePartyBooking();
+      if (result) {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setSkipped(newSkipped);
+      }
+      scrollToTop();
+    } else {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      setSkipped(newSkipped);
+    }
+
+    switch (activeStep + 1) {
+      case 1:
+        fetchAllThemeInVenue();
+        scrollToTop();
+        break;
+      case 2:
+        fetchAllPackageInVenue();
+        scrollToTop();
+        break;
+      case 3:
+        scrollToTop();
+        break;
+      case 4:
+        scrollToTop();
+        break;
+      case 5:
+        scrollToTop();
+        break;
+
+      default:
+        break;
+    }
   };
 
   const handleBack = () => {
@@ -244,38 +373,134 @@ export default function Booking() {
   const handleReset = () => {
     setActiveStep(0);
   };
+  console.log(bookingData);
 
-  const [isShowVenues, setIsShowVenues] = React.useState(false);
-  const [dateQuery, setDateQuery] = React.useState<string>("");
-  const onChange: DatePickerProps["onChange"] = (date, dateString) => {
-    const partDate = date?.format("YYYY-MM-DD");
-    setDateQuery(partDate || "");
-  };
+  function scrollToTop() {
+    window.scrollTo(0, 0);
 
-  // Dispatch API
-  const dispatch = useAppDispatch();
-  const venueCheckSlotByDateList = useAppSelector(
-    (state) => state.venueReducer.venueCheckSlotByDateList,
-  );
-  const loading = useAppSelector((state) => state.venueReducer.loading);
-  const fetchVenueCheckSlotByDate = async () => {
-    await dispatch(getAllVenueCheckSlotByDate(dateQuery));
-  };
+    return null;
+  }
 
-  // ** Hook
-  React.useEffect(() => {
-    if (dateQuery !== "") {
-      fetchVenueCheckSlotByDate();
-    }
-  }, [dateQuery]);
+  const [form] = Form.useForm();
+  const items: DescriptionsProps["items"] = [
+    {
+      key: "1",
+      label: "Venue",
+      children: (
+        <Space>
+          <Typography>{venue?.venueName || "venue name"}</Typography>
+          <Tooltip>
+            <a>{venue?.location || "location"}</a>
+          </Tooltip>
+        </Space>
+      ),
+    },
+    {
+      key: "2",
+      label: "Theme",
+      children: (
+        <ModalForm
+          title="Theme"
+          trigger={
+            <Button type="primary">
+              <EyeOutlined />
+              View theme
+            </Button>
+          }
+          form={form}
+          autoFocusFirstInput
+          modalProps={{
+            destroyOnClose: true,
+            onCancel: () => console.log("run"),
+          }}
+          submitTimeout={2000}
+          onFinish={async (values) => {
+            return true;
+          }}
+        ></ModalForm>
+      ),
+    },
+    {
+      key: "3",
+      label: "Package",
+      children: (
+        <ModalForm
+          title="Package"
+          trigger={
+            <Button type="primary">
+              <EyeOutlined />
+              View package
+            </Button>
+          }
+          form={form}
+          autoFocusFirstInput
+          modalProps={{
+            destroyOnClose: true,
+            onCancel: () => console.log("run"),
+          }}
+          submitTimeout={2000}
+          onFinish={async (values) => {
+            return true;
+          }}
+        ></ModalForm>
+      ),
+    },
+    {
+      key: "4",
+      label: "Order time",
+      children: "07:00:00",
+    },
+    {
+      key: "5",
+      label: "Usage Time",
+      span: 2,
+      children: "07:00:00",
+    },
+    {
+      key: "6",
+      label: "Status",
+      span: 3,
+      children: <Badge status={"success"} text={"Ai biết"} />,
+    },
+    {
+      key: "7",
+      label: "Negotiated Amount",
+      children: (80000000).toLocaleString(),
+    },
+    {
+      key: "8",
+      label: "Discount",
+      children: (0).toLocaleString(),
+    },
+    {
+      key: "9",
+      label: "Official Receipts",
+      children: (80000000).toLocaleString(),
+    },
+    {
+      key: "10",
+      label: "Booking Info",
+      children: (
+        <>
+          `Tên người đặt: ${userInfo?.data?.fullName}`
+          <br />
+          `Email: ${bookingData?.email}`
+          <br />
+          `Số điện thoại: ${bookingData?.email}`
+          <br />
+          `Tên của bé: ${bookingData?.phone}`
+          <br />
+          `Ngày sinh nhật của bé: ${bookingData?.kidDOB}`
+        </>
+      ),
+    },
+  ];
 
   return (
     <AuthGuard>
       <div className="container mx-auto mt-10">
         <Box sx={{ width: "100%" }}>
-          <Typography className="mb-5" variant="h4">
-            Các bước tạo bữa tiệc
-          </Typography>
+          <Typography.Title className="mb-5">Các bước tạo bữa tiệc</Typography.Title>
           <Stepper activeStep={activeStep}>
             {steps.map((label, index) => {
               const stepProps: { completed?: boolean } = {};
@@ -283,9 +508,7 @@ export default function Booking() {
                 optional?: React.ReactNode;
               } = {};
               if (isStepOptional(index)) {
-                labelProps.optional = (
-                  <Typography variant="caption">Optional</Typography>
-                );
+                labelProps.optional = <Typography>Optional</Typography>;
               }
               if (isStepSkipped(index)) {
                 stepProps.completed = false;
@@ -300,10 +523,7 @@ export default function Booking() {
           {activeStep === steps.length ? (
             <React.Fragment>
               <Container maxWidth="sm">
-                <Typography
-                  variant="h4"
-                  sx={{ mt: 2, mb: 1, textAlign: "center" }}
-                >
+                <Typography>
                   Đặt bữa tiệc thành công! Hãy kiểm tra thông tin đặt tiệc của
                   bạn ở mục Booking!
                 </Typography>
@@ -318,9 +538,7 @@ export default function Booking() {
             <React.Fragment>
               {activeStep + 1 === 1 ? (
                 <>
-                  <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
-                    Chọn một ngày
-                  </Typography>
+                  <Title level={3}>Pick a date</Title>
                   <DatePicker
                     format="YYYY-MM-DD"
                     // disabledDate={disabledDate}
@@ -329,178 +547,183 @@ export default function Booking() {
                     onChange={onChange}
                   />
 
-                  <>
-                    <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
-                      Chọn địa điểm
-                    </Typography>
+                  <div>
+                    <Title level={3}>Choose venue & slot</Title>
                     <div className="mt-0">
                       <VenueList
                         loading={loading}
                         venues={venueCheckSlotByDateList}
                       />
                     </div>
-                  </>
+                  </div>
                 </>
               ) : activeStep + 1 === 2 ? (
-                <>
-                  <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
-                    Chọn gói dịch vụ
-                  </Typography>
-                  <PackageList packages={packageData} />
-                </>
+                <React.Fragment>
+                  <Title level={3}>Chọn chủ đề</Title>
+                  <div className="mt-10">
+                    <ThemeList />
+                  </div>
+                </React.Fragment>
               ) : activeStep + 1 === 3 ? (
-                <>
-                  <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
-                    Chọn chủ đề
-                  </Typography>
-                  <ThemeList themes={themeData} />
-                </>
+                <React.Fragment>
+                  <Title level={3}>Chọn gói dịch vụ</Title>
+                  <div className="mt-10">
+                    <PackageList />
+                  </div>
+                </React.Fragment>
               ) : activeStep + 1 === 4 ? (
-                <>
-                  {/* <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
-                  Điền thông tin
-                </Typography> */}
-                  <Container maxWidth="sm">
-                    <Paper className="mt-10 p-10">
-                      <Typography variant="h5" gutterBottom>
-                        Điền thông tin
-                      </Typography>
-                      <form>
-                        <Grid container spacing={3}>
-                          <Grid item xs={12}>
-                            <TextField label="Tên của bé" fullWidth required />
-                          </Grid>
-                          <Grid item xs={12}>
-                            <TextField
-                              label="Tuổi của bé"
-                              type="date"
-                              fullWidth
-                              InputLabelProps={{
-                                shrink: true,
-                              }}
-                              required
-                            />
-                          </Grid>
-                          <Grid item xs={12}>
-                            <TextField
-                              label="Email"
-                              type="email"
-                              fullWidth
-                              required
-                            />
-                          </Grid>
-                          <Grid item xs={12}>
-                            <TextField
-                              label="Số điện thoại"
-                              type="tel"
-                              fullWidth
-                              required
-                            />
-                          </Grid>
-                          <Grid item xs={12}>
-                            <Button
-                              type="submit"
-                              variant="contained"
-                              color="inherit"
-                              fullWidth
-                            >
-                              Submit
-                            </Button>
-                          </Grid>
-                        </Grid>
-                      </form>
-                    </Paper>
-                  </Container>
-                </>
+                <div className="mt-10 w-full">
+                  <Title level={3}>Upgrade services</Title>
+                  <Flex gap={10} justify="space-between">
+                    <Row style={{ width: 280 * 3 + 50 }} gutter={[16, 16]}>
+                      <ServiceCards serviceList={serviceList} />
+                    </Row>
+                    <Flex vertical gap={15}>
+                      {services.map((item, index) => {
+                        total += item?.service?.pricing * item?.count;
+                        return (
+                          <Card key={index}>
+                            <Flex gap={20}>
+                              <Avatar
+                                style={{ width: 50, height: 50 }}
+                                src={item?.service?.serviceImgUrl}
+                              />
+                              <div>
+                                <div>
+                                  Name:{" "}
+                                  <strong>{item?.service?.serviceName}</strong>
+                                </div>
+                                <div>
+                                  Amout: <strong>{item?.count}</strong>
+                                </div>
+                                <div>
+                                  Price:{" "}
+                                  <strong>
+                                    {(
+                                      item?.service?.pricing * item?.count
+                                    ).toLocaleString() + " VNĐ"}
+                                  </strong>
+                                </div>
+                              </div>
+                            </Flex>
+                          </Card>
+                        );
+                      })}
+                      {total > 0 && (
+                        <React.Fragment>
+                          {" "}
+                          <Divider />
+                          <Flex justify="space-between">
+                            <div>Total:</div>
+                            <div>
+                              <strong>{total.toLocaleString() + "VNĐ"}</strong>
+                            </div>
+                          </Flex>
+                        </React.Fragment>
+                      )}
+                    </Flex>
+                  </Flex>
+                </div>
               ) : activeStep + 1 === 5 ? (
-                <Container maxWidth="sm">
-                  <Paper className="mt-10 p-10">
-                    <Typography variant="h5" className="mb-5" gutterBottom>
-                      Xác nhận và thanh toán
-                    </Typography>
-                    <form>
-                      <Grid container spacing={3}>
-                        <Grid item xs={12}>
-                          <Typography variant="body1">
-                            Tên của bé: <strong>Nguyễn Thị Giáo Làng</strong>
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Typography variant="body1">
-                            Tuổi của bé: <strong>40 tuổi</strong>
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Typography variant="body1">
-                            Đặt ngày:{" "}
-                            <strong>12-01-2024 vào lúc 18:00:00</strong>
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Typography variant="body1">
-                            Gói dịch vụ:{" "}
-                            <strong>Gói tiệc sinh nhật BASIC 1</strong>
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Typography variant="body1">
-                            Chủ đề:{" "}
-                            <strong>Chủ đề Công chúa ngủ trong rừng</strong>
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Typography variant="body1">
-                            Tổng số tiền: <strong>2.000.000 VNĐ</strong>
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <FormControl>
-                            <FormLabel id="demo-row-radio-buttons-group-label">
-                              Chọn phương thức thanh toán
-                            </FormLabel>
-                            <RadioGroup
-                              row
-                              aria-labelledby="demo-row-radio-buttons-group-label"
-                              name="row-radio-buttons-group"
-                            >
-                              <FormControlLabel
-                                value="Momo"
-                                control={<Radio />}
-                                label="Momo"
-                              />
-                              <FormControlLabel
-                                value="Paypal"
-                                control={<Radio />}
-                                label="Paypal"
-                              />
-                              <FormControlLabel
-                                value="Tiền mặt"
-                                control={<Radio />}
-                                label="Tiền mặt"
-                              />
-                            </RadioGroup>
-                          </FormControl>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Button
-                            type="submit"
-                            variant="contained"
-                            color="inherit"
-                            fullWidth
-                          >
-                            Thanh toán
-                          </Button>
-                        </Grid>
-                      </Grid>
-                    </form>
-                  </Paper>
-                </Container>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    // height: "100vh",
+                  }}
+                >
+                  <ProForm
+                    style={{
+                      width: "auto",
+                      margin: "auto",
+                      padding: 40,
+                    }}
+                    onFinish={async ({
+                      kidName,
+                      kidDOB,
+                      email,
+                      phone,
+                    }: {
+                      kidName: string;
+                      kidDOB: string;
+                      email: string;
+                      phone: string;
+                    }) => {
+                      console.log(kidName, kidDOB, email, phone);
+                      setBookingData((prev) => ({
+                        ...prev,
+                        kidName,
+                        kidDOB,
+                        email,
+                        phone,
+                      }));
+                      handleNext();
+                    }}
+
+                    // submitter={{submitButtonProps:{style: {alignSelf: 'center'}}, resetButtonProps: {style: {}}}}
+                  >
+                    <ProForm.Group>
+                      <ProFormText
+                        name={"kidName"}
+                        label={"Tên của bé"}
+                        width={"sm"}
+                        placeholder={"Điền tên của bé"}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng nhập trường này",
+                          },
+                        ]}
+                      />
+                      <ProFormDatePicker
+                        name={"kidDOB"}
+                        label={"Ngày sinh nhật của bé"}
+                        width={"sm"}
+                        placeholder={"Điền sinh nhật của bé"}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng nhập trường này",
+                          },
+                        ]}
+                      />
+                    </ProForm.Group>
+                    <ProForm.Group>
+                      <ProFormText
+                        name={"email"}
+                        label={"Email của bạn"}
+                        width={"sm"}
+                        placeholder={"Email của bạn"}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng nhập trường này",
+                          },
+                        ]}
+                      />
+                      <ProFormText
+                        name={"phone"}
+                        label={"Số điện thoại của bạn"}
+                        width={"sm"}
+                        placeholder={"Số điện thoại của bạn"}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng nhập trường này",
+                          },
+                        ]}
+                      />
+                    </ProForm.Group>
+                  </ProForm>
+                </div>
               ) : (
-                <>
-                  <Typography sx={{ mt: 2, mb: 1 }}>
-                    Step {activeStep + 1}
-                  </Typography>
-                </>
+                <Descriptions
+                  className="m-5 mt-10"
+                  items={items}
+                  layout="vertical"
+                  bordered
+                />
               )}
 
               <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
@@ -508,19 +731,20 @@ export default function Booking() {
                   color="inherit"
                   disabled={activeStep === 0}
                   onClick={handleBack}
-                  sx={{ mr: 1 }}
                 >
                   Back
                 </Button>
                 <Box sx={{ flex: "1 1 auto" }} />
                 {isStepOptional(activeStep) && (
-                  <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
+                  <Button color="inherit" onClick={handleSkip}>
                     Skip
                   </Button>
                 )}
-                <Button onClick={handleNext}>
-                  {activeStep === steps.length - 1 ? "Finish" : "Next"}
-                </Button>
+                {activeStep + 1 !== 5 && (
+                  <Button type="primary" onClick={handleNext}>
+                    {activeStep === steps.length - 1 ? "Finish" : "Next"}
+                  </Button>
+                )}
               </Box>
             </React.Fragment>
           )}
