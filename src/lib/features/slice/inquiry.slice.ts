@@ -1,10 +1,9 @@
-import { INQUIRY } from "@/dtos/inquiry.dtos";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { inquiryService } from "../../service/inquiry.service";
+import { InquiryDataResponse } from "@/dtos/response/inquiry.response";
+import { createSlice } from "@reduxjs/toolkit";
 import { getAllInquiryByAuthor } from "../action/inquiry.action";
 
 interface InquiryState {
-  inquiryList: INQUIRY[] | [];
+  inquiryList: InquiryDataResponse[] | [];
   loading: boolean;
 }
 const initialState: InquiryState = {

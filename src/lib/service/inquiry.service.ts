@@ -1,13 +1,18 @@
 import { AxiosResponse } from "axios";
 import axiosClient from "./axiosClient";
-import { INQUIRY_RESPONSE } from "@/dtos/inquiry.dtos";
+import {
+  InquiryArrayResponse,
+  InquiryObjectResponse,
+} from "@/dtos/response/inquiry.response";
 
 export const inquiryService = {
-  getAllInquiryByAuthor: (): Promise<AxiosResponse<INQUIRY_RESPONSE>> => {
+  getAllInquiryByAuthor: (): Promise<AxiosResponse<InquiryArrayResponse>> => {
     const url = "/api/inquiry/get-all-question";
     return axiosClient.get(url);
   },
-  getInquiryById: (id: number): Promise<AxiosResponse<INQUIRY_RESPONSE>> => {
+  getInquiryById: (
+    id: number,
+  ): Promise<AxiosResponse<InquiryObjectResponse>> => {
     const url = `/api/inquiry/get-question-by-id/${id}`;
     return axiosClient.get(url);
   },
@@ -20,11 +25,11 @@ export const inquiryService = {
   updateInquiry: (request: {
     id: number;
     payload: { inquiryQuestion: string };
-  }): Promise<AxiosResponse<INQUIRY_RESPONSE>> => {
+  }): Promise<AxiosResponse<any>> => {
     const url = `/api/inquiry/update-question/${request.id}`;
     return axiosClient.put(url, { ...request.payload });
   },
-  deleteInquiry: (id: number): Promise<AxiosResponse<INQUIRY_RESPONSE>> => {
+  deleteInquiry: (id: number): Promise<AxiosResponse<any>> => {
     const url = `/api/inquiry/delete-question/${id}`;
     return axiosClient.delete(url);
   },
