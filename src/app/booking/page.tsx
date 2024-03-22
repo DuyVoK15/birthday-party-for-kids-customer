@@ -1,4 +1,4 @@
-"use client";;
+"use client";
 import * as React from "react";
 import {
   Avatar,
@@ -24,7 +24,7 @@ import ThemeList from "@/components/booking/ThemeList";
 import AuthGuard from "../AuthGuard";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { getAllVenueCheckSlotByDate } from "@/lib/features/action/venue.action";
-import { useBookingContext } from "@/context/BookingContext";
+import { BookingRequest, useBookingContext } from "@/context/BookingContext";
 import { EyeOutlined } from "@ant-design/icons";
 import { getAllService } from "@/lib/features/action/service.action";
 import ServiceCards from "../service-cards";
@@ -38,66 +38,111 @@ import {
   ProFormText,
 } from "@ant-design/pro-components";
 import { createPartyBooking } from "@/lib/features/action/partyBooking.action";
+import { ServiceDataResponse } from "@/dtos/response/service.response";
+import { VenueDataResponse } from "@/dtos/response/venue.response";
+import dayjs from "dayjs";
+import { ThemeInVenueDataResponse } from "@/dtos/response/theme.response";
+import { PackageInVenueDataResponse } from "@/dtos/response/package.response";
+import { SlotInVenueDataResponse } from "@/dtos/response/slot.response";
 
 const { Title } = Typography;
 const steps = [
-  "Pick Date & Venue",
-  "Select theme",
-  "Select package",
-  "Upgrage service",
-  "Fill information",
-  "Confirm & Payment",
+  "Chọn ngày & địa điểm",
+  "Lựa chọn chủ đề",
+  "Lựa chọn gói dịch vụ",
+  "Nâng cấp dịch vụ",
+  "Điền thông tin",
+  "Xác nhận & đặt chỗ",
 ];
-
+export interface DataUpgradeDisplay {
+  service: ServiceDataResponse;
+  count: number;
+}
+export interface BookingDataDisplay {
+  kidName?: string;
+  kidDOB?: string;
+  email?: string;
+  phone?: string;
+  themeInVenue?: ThemeInVenueDataResponse;
+  packageInVenue?: PackageInVenueDataResponse;
+  slotInVenue?: SlotInVenueDataResponse;
+  dataUpgrade?: DataUpgradeDisplay[] | [];
+  date?: string;
+  totalPriceService?: number;
+  totalPriceBooking?: number;
+}
 export default function Booking() {
-  const { bookingData, setBookingData, services, setServices, venue } =
-    useBookingContext();
+  const [bookingData, setBookingData] = React.useState<BookingRequest | null>(
+    null,
+  );
+  const [bookingDataDisplay, setBookingDataDisplay] =
+    React.useState<BookingDataDisplay | null>(null);
+  const [services, setServices] = React.useState<
+    { service: ServiceDataResponse; count: number }[] | []
+  >([]);
+  const [dataUpgrade, setDataUpgrade] = React.useState<
+    { serviceId: number; count: number }[] | []
+  >([]);
+  const [venue, setVenue] = React.useState<VenueDataResponse | null>(null);
+  const [dateQuery, setDateQuery] = React.useState<string>("2024-03-23");
+  const [venueList, setVenueList] = React.useState<VenueDataResponse[] | []>(
+    [],
+  );
+  const [totalPriceSerivce, setTotalPriceService] = React.useState(0);
+  const [totalPriceBooking, setTotalPriceBooking] = React.useState(0);
 
-  const [dateQuery, setDateQuery] = React.useState<string>("");
-  let total = 0;
-  const onChange: DatePickerProps["onChange"] = (date, dateString) => {
-    const partDate = date?.format("YYYY-MM-DD");
-    setDateQuery(partDate || "");
-    setBookingData((prev) => ({
-      ...prev,
-      date: partDate,
-    }));
-  };
-
-  // Dispatch API
-  const dispatch = useAppDispatch();
   const userInfo = useAppSelector((state) => state.auth.userInfo);
-  const venueCheckSlotByDateList = useAppSelector(
-    (state) => state.venueReducer.venueCheckSlotByDateList,
-  );
-  const serviceList = useAppSelector(
-    (state) => state.serviceReducer.serviceList,
-  );
-  const loading = useAppSelector((state) => state.venueReducer.loading);
+
   const loadingCreatePartyBooking = useAppSelector(
     (state) => state.partyBookingReducer.loading,
   );
 
-  const fetchVenueCheckSlotByDate = async () => {
-    await dispatch(getAllVenueCheckSlotByDate(dateQuery));
+  const onChange: DatePickerProps["onChange"] = (date, dateString) => {
+    if (date !== null) {
+      const partDate = date.format("YYYY-MM-DD");
+      setDateQuery(partDate);
+      setBookingData((prev) => ({
+        ...prev,
+        date: partDate,
+      }));
+      setBookingDataDisplay((prev) => ({
+        ...prev,
+        date: partDate,
+      }));
+    }
   };
 
+  // Dispatch API
+  const dispatch = useAppDispatch();
+
+  const fetchVenueCheckSlotByDate = async () => {
+    await dispatch(getAllVenueCheckSlotByDate(dateQuery)).then((res: any) => {
+      if (res?.meta?.requestStatus === "fulfilled") {
+        setVenueList(res?.payload?.data);
+      } else {
+        setVenueList([]);
+      }
+    });
+  };
+  console.log("venueList", JSON.stringify(venueList, null, 2));
   const fetchAllService = async () => {
     await dispatch(getAllService());
   };
-  React.useEffect(() => {
-    fetchAllService();
-  }, []);
 
-  console.log(serviceList);
   // ** Hook
-
   React.useEffect(() => {
     fetchVenueCheckSlotByDate();
+    setBookingData((prev) => ({
+      ...prev,
+      date: dateQuery,
+    }));
+    setBookingDataDisplay((prev) => ({
+      ...prev,
+      date: dateQuery,
+    }));
   }, [dateQuery]);
-  console.log(bookingData);
 
-  // Components
+  console.log(bookingData);
 
   const fetchAllThemeInVenue = async () => {
     if (venue?.id !== undefined) {
@@ -169,6 +214,7 @@ export default function Booking() {
         scrollToTop();
         break;
       case 3:
+        fetchAllService();
         scrollToTop();
         break;
       case 4:
@@ -206,6 +252,7 @@ export default function Booking() {
     setActiveStep(0);
   };
   console.log(bookingData);
+  console.log(bookingDataDisplay);
 
   function scrollToTop() {
     window.scrollTo(0, 0);
@@ -217,7 +264,7 @@ export default function Booking() {
   const items: DescriptionsProps["items"] = [
     {
       key: "1",
-      label: "Venue",
+      label: "Địa điểm",
       children: (
         <Space>
           <Typography>{venue?.venueName || "venue name"}</Typography>
@@ -229,14 +276,14 @@ export default function Booking() {
     },
     {
       key: "2",
-      label: "Theme",
+      label: "Chủ đề",
       children: (
         <ModalForm
-          title="Theme"
+          title="Chủ đề đã chọn"
           trigger={
             <Button type="primary">
               <EyeOutlined />
-              View theme
+              Xem
             </Button>
           }
           form={form}
@@ -254,14 +301,40 @@ export default function Booking() {
     },
     {
       key: "3",
-      label: "Package",
+      label: "Gói dịch vụ",
       children: (
         <ModalForm
-          title="Package"
+          title="Gói dịch vụ đã chọn"
           trigger={
             <Button type="primary">
               <EyeOutlined />
-              View package
+              Xem
+            </Button>
+          }
+          form={form}
+          autoFocusFirstInput
+          modalProps={{
+            destroyOnClose: true,
+            onCancel: () => console.log("run"),
+          }}
+          submitTimeout={2000}
+          onFinish={async (values) => {
+            return true;
+          }}
+        ></ModalForm>
+      ),
+    },
+    {
+      key: "6",
+      label: "Dịch vụ năng cấp",
+
+      children: (
+        <ModalForm
+          title="Dịch vụ nâng cấp"
+          trigger={
+            <Button type="primary">
+              <EyeOutlined />
+              Xem
             </Button>
           }
           form={form}
@@ -279,35 +352,29 @@ export default function Booking() {
     },
     {
       key: "4",
-      label: "Order time",
-      children: "07:00:00",
+      label: "Thời gian check-in",
+      children: bookingDataDisplay?.slotInVenue?.slot?.timeStart,
     },
     {
       key: "5",
-      label: "Usage Time",
-      span: 2,
-      children: "07:00:00",
-    },
-    {
-      key: "6",
-      label: "Status",
-      span: 3,
-      children: <Badge status={"success"} text={"Ai biết"} />,
+      label: "Thời gian check-out",
+
+      children: bookingDataDisplay?.slotInVenue?.slot?.timeEnd,
     },
     {
       key: "7",
-      label: "Negotiated Amount",
-      children: (80000000).toLocaleString(),
+      label: "Số tiền hiện tại",
+      children: bookingDataDisplay?.totalPriceBooking?.toLocaleString(),
     },
     {
       key: "8",
-      label: "Discount",
+      label: "Chiếu khấu",
       children: (0).toLocaleString(),
     },
     {
       key: "9",
-      label: "Official Receipts",
-      children: (80000000).toLocaleString(),
+      label: "Tổng cộng",
+      children: bookingDataDisplay?.totalPriceBooking?.toLocaleString(),
     },
     {
       key: "10",
@@ -372,21 +439,27 @@ export default function Booking() {
             <React.Fragment>
               {activeStep + 1 === 1 ? (
                 <>
-                  <Title level={3}>Pick a date</Title>
+                  <Title level={3}>Chọn một ngày</Title>
                   <DatePicker
                     format="YYYY-MM-DD"
                     // disabledDate={disabledDate}
                     // disabledTime={disabledDateTime}
                     // showTime={{ defaultValue: dayjs("00:00:00", "HH:mm:ss") }}
+                    // defaultValue={dayjs(dateQuery)}
+                    value={dayjs(dateQuery)}
                     onChange={onChange}
                   />
 
                   <div>
-                    <Title level={3}>Choose venue & slot</Title>
+                    <Title level={3}>Lựa chọn địa điểm và khung giờ</Title>
                     <div className="mt-0">
                       <VenueList
-                        loading={loading}
-                        venues={venueCheckSlotByDateList}
+                        venueList={venueList}
+                        bookingData={bookingData}
+                        setBookingData={setBookingData}
+                        setVenue={setVenue}
+                        bookingDataDisplay={bookingDataDisplay}
+                        setBookingDataDisplay={setBookingDataDisplay}
                       />
                     </div>
                   </div>
@@ -395,26 +468,48 @@ export default function Booking() {
                 <React.Fragment>
                   <Title level={3}>Chọn chủ đề</Title>
                   <div className="mt-10">
-                    <ThemeList />
+                    <ThemeList
+                      bookingData={bookingData}
+                      setBookingData={setBookingData}
+                      bookingDataDisplay={bookingDataDisplay}
+                      setBookingDataDisplay={setBookingDataDisplay}
+                    />
                   </div>
                 </React.Fragment>
               ) : activeStep + 1 === 3 ? (
                 <React.Fragment>
                   <Title level={3}>Chọn gói dịch vụ</Title>
                   <div className="mt-10">
-                    <PackageList />
+                    <PackageList
+                      bookingData={bookingData}
+                      setBookingData={setBookingData}
+                      bookingDataDisplay={bookingDataDisplay}
+                      setBookingDataDisplay={setBookingDataDisplay}
+                    />
                   </div>
                 </React.Fragment>
               ) : activeStep + 1 === 4 ? (
                 <div className="mt-10 w-full">
-                  <Title level={3}>Upgrade services</Title>
+                  <Title level={3}>Nâng cấp dịch vụ</Title>
                   <Flex gap={10} justify="space-between">
                     <Row style={{ width: 280 * 3 + 50 }} gutter={[16, 16]}>
-                      <ServiceCards serviceList={serviceList} />
+                      <ServiceCards
+                        // bookingData={bookingData}
+                        setBookingData={setBookingData}
+                        services={services}
+                        setServices={setServices}
+                        dataUpgrade={dataUpgrade}
+                        setDataUpgrade={setDataUpgrade}
+                        bookingDataDisplay={bookingDataDisplay}
+                        setBookingDataDisplay={setBookingDataDisplay}
+                        totalPriceSerivce={totalPriceSerivce}
+                        setTotalPriceService={setTotalPriceService}
+                        totalPriceBooking={totalPriceBooking}
+                        setTotalPriceBooking={setTotalPriceBooking}
+                      />
                     </Row>
                     <Flex vertical gap={15}>
                       {services.map((item, index) => {
-                        total += item?.service?.pricing * item?.count;
                         return (
                           <Card key={index}>
                             <Flex gap={20}>
@@ -424,14 +519,14 @@ export default function Booking() {
                               />
                               <div>
                                 <div>
-                                  Name:{" "}
+                                  Tên dịch vụ:{" "}
                                   <strong>{item?.service?.serviceName}</strong>
                                 </div>
                                 <div>
-                                  Amout: <strong>{item?.count}</strong>
+                                  Số lượng: <strong>{item?.count}</strong>
                                 </div>
                                 <div>
-                                  Price:{" "}
+                                  Giá:{" "}
                                   <strong>
                                     {(
                                       item?.service?.pricing * item?.count
@@ -443,14 +538,16 @@ export default function Booking() {
                           </Card>
                         );
                       })}
-                      {total > 0 && (
+                      {totalPriceSerivce > 0 && (
                         <React.Fragment>
                           {" "}
                           <Divider />
                           <Flex justify="space-between">
-                            <div>Total:</div>
+                            <div>Tổng cộng:</div>
                             <div>
-                              <strong>{total.toLocaleString() + "VNĐ"}</strong>
+                              <strong>
+                                {totalPriceSerivce.toLocaleString() + "VNĐ"}
+                              </strong>
                             </div>
                           </Flex>
                         </React.Fragment>
@@ -486,6 +583,13 @@ export default function Booking() {
                     }) => {
                       console.log(kidName, kidDOB, email, phone);
                       setBookingData((prev) => ({
+                        ...prev,
+                        kidName,
+                        kidDOB,
+                        email,
+                        phone,
+                      }));
+                      setBookingDataDisplay((prev) => ({
                         ...prev,
                         kidName,
                         kidDOB,

@@ -1,42 +1,107 @@
 "use client";
-import { CalendarOutlined, EnvironmentOutlined } from "@ant-design/icons";
-import { Avatar, Button, Divider, Flex, Image, Space, Typography } from "antd";
-import * as React from "react";
+import { getAllBooking } from "@/lib/features/action/partyBooking.action";
+import { getAllVenue } from "@/lib/features/action/venue.action";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { PlusCircleOutlined } from "@ant-design/icons";
+import {
+  Avatar,
+  Card,
+  Carousel,
+  Flex,
+  Image,
+  Popover,
+  Space,
+  Typography,
+} from "antd";
+import Meta from "antd/lib/card/Meta";
+import Link from "next/link";
+import { useEffect } from "react";
 
-const Item = ({
-  title,
-  description,
-}: {
-  title: string;
-  description: string | React.ReactNode;
-}) => {
-  return (
-    <Flex gap={100}>
-      <div className="flex-1 font-bold">{title}</div>
-      <div className="flex-1 text-sm font-normal text-gray-700">
-        {description}
-      </div>
-    </Flex>
-  );
+const contentStyle: React.CSSProperties = {
+  height: "160px",
+  color: "#fff",
+  lineHeight: "160px",
+  textAlign: "center",
+  background: "#364d79",
 };
-const ChildItem = ({
-  title,
-  description,
-}: {
-  title: string;
-  description: string | React.ReactNode;
-}) => {
-  return (
-    <Flex gap={100} justify="space-between">
-      <div className="font-bold text-black">{title}</div>
-      <div className="text-sm font-normal text-gray-700">{description}</div>
-    </Flex>
+const BookingHistory = () => {
+  // ** Disptach API
+  const dispatch = useAppDispatch();
+  const venueList = useAppSelector((state) => state.venueReducer.venueList);
+  const bookingList = useAppSelector(
+    (state) => state.partyBookingReducer.bookingList,
   );
-};
-export default function BookingHistory() {
+
+  const fetchAllVenue = async () => {
+    await dispatch(getAllVenue()).then((res) => {
+      console.log(JSON.stringify(res, null, 2));
+    });
+  };
+
+  const fetchAllBooking = async () => {
+    await dispatch(getAllBooking()).then((res) => {
+      console.log(JSON.stringify(res, null, 2));
+    });
+  };
+
+  useEffect(() => {
+    fetchAllVenue();
+    fetchAllBooking();
+  }, []);
+
   return (
     <div className="container mx-auto mt-10">
-      
+      <div className="mx-auto max-w-5xl">
+        <Typography.Title level={2}>Đặt chỗ bữa tiệc</Typography.Title>
+        <Carousel className="rounded-xl shadow" autoplay>
+          {venueList.map((item, index) => (
+            <div className="rounded-xl" style={{ overflow: "hidden", }}>
+              <img
+                src={item?.venueImgUrl}
+                alt="carousel image"
+                style={{
+                  width: "100%",
+                  height: "300px",
+                  objectFit: "cover",
+                  borderRadius: 12,
+                }}
+              />
+            </div>
+          ))}
+        </Carousel>
+        {bookingList?.map((item, index) => (
+          <Link href={`/booking-history/${item?.id}`}>
+            <Card key={index} className="shadow-md" style={{ marginTop: 16 }}>
+              <Flex align="center" justify="space-between">
+                <Meta
+                  avatar={
+                    <Avatar
+                      shape="square"
+                      size={112}
+                      src={item?.venue?.venueImgUrl}
+                    />
+                  }
+                  title={`${item?.venue?.venueName} - ${item?.venue?.location}`}
+                  description={
+                    <Space direction="vertical" size={"middle"}>
+                      <div>{`Thời gian: ${item?.slotInVenueObject?.slot?.timeStart} - ${item?.slotInVenueObject?.slot?.timeEnd}, ${item?.slotInVenueObject?.partyDated?.date}`}</div>
+                      <div className="text-green-300">Đang chờ xác nhận</div>
+                    </Space>
+                  }
+                />
+                <Typography.Title
+                  style={{ alignSelf: "flex-end", margin: 0 }}
+                  level={3}
+                >
+                  {item?.pricingTotal?.toLocaleString('vi-VN', {style: 'currency',currency: 'VND'})}
+                </Typography.Title>
+              </Flex>
+            </Card>
+          </Link>
+        ))}
+      </div>
     </div>
   );
-}
+};
+
+export default BookingHistory;
