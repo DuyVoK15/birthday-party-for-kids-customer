@@ -1,8 +1,5 @@
 import { APP_CONSTANTS } from "@/enums/app";
 import axios from "axios";
-// import createAuthRefreshInterceptor, {
-//     AxiosAuthRefreshRequestConfig,
-// } from 'axios-auth-refresh';
 
 const axiosClient = axios.create({
   baseURL: "http://localhost:8080",
@@ -10,9 +7,6 @@ const axiosClient = axios.create({
     "content-type": "application/json",
     "Access-Control-Allow-Origin": "*",
   },
-  // validateStatus: (status) => {
-  //     return status < 500;
-  // }
 });
 
 axiosClient.interceptors.request.use((config: any) => {

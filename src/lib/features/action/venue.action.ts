@@ -1,5 +1,6 @@
 import { venueService } from "@/lib/service/venue.service";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { AxiosError } from "axios";
 
 export const getAllVenue = createAsyncThunk(
   "venue/getAllVenue",
@@ -8,7 +9,8 @@ export const getAllVenue = createAsyncThunk(
       const response = await venueService.getAllVenue();
       return response?.data;
     } catch (error) {
-      console.log(error);
+      const axiosError = error as AxiosError;
+      return rejectWithValue(axiosError.response?.data);
     }
   },
 );
@@ -20,7 +22,8 @@ export const getAllVenueCheckSlotByDate = createAsyncThunk(
       const response = await venueService.getAllVenueCheckSlotByDate(date);
       return response?.data;
     } catch (error) {
-      console.log(error);
+      const axiosError = error as AxiosError;
+      return rejectWithValue(axiosError.response?.data);
     }
   },
 );

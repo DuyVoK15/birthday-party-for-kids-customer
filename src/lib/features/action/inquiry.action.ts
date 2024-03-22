@@ -1,5 +1,6 @@
 import { inquiryService } from "@/lib/service/inquiry.service";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { AxiosError } from "axios";
 
 export const getAllInquiryByAuthor = createAsyncThunk(
   "inquiry/getAllInquiryByAuthor",
@@ -8,7 +9,8 @@ export const getAllInquiryByAuthor = createAsyncThunk(
       const response = await inquiryService.getAllInquiryByAuthor();
       return response?.data?.data;
     } catch (error) {
-      console.log(error);
+      const axiosError = error as AxiosError;
+      return rejectWithValue(axiosError.response?.data);
     }
   },
 );
@@ -20,7 +22,8 @@ export const getInquiryById = createAsyncThunk(
       const response = await inquiryService.getInquiryById(id);
       return response?.data?.data;
     } catch (error) {
-      console.log(error);
+      const axiosError = error as AxiosError;
+      return rejectWithValue(axiosError.response?.data);
     }
   },
 );
@@ -37,7 +40,8 @@ export const createInquiry = createAsyncThunk(
       const response = await inquiryService.createInquiry(payload);
       return response?.data?.data;
     } catch (error) {
-      console.log(error);
+      const axiosError = error as AxiosError;
+      return rejectWithValue(axiosError.response?.data);
     }
   },
 );
@@ -55,7 +59,8 @@ export const updateInquiry = createAsyncThunk(
       });
       return response?.data?.data;
     } catch (error) {
-      console.log(error);
+      const axiosError = error as AxiosError;
+      return rejectWithValue(axiosError.response?.data);
     }
   },
 );
@@ -67,7 +72,8 @@ export const deleteInquiry = createAsyncThunk(
       const response = await inquiryService.deleteInquiry(id);
       return response?.data?.data;
     } catch (error) {
-      console.log(error);
+      const axiosError = error as AxiosError;
+      return rejectWithValue(axiosError.response?.data);
     }
   },
 );
