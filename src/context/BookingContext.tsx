@@ -13,7 +13,7 @@ export interface BookingRequest {
   email?: string;
   phone?: string;
   themeInVenueId?: number;
-  slotInVenuepackageId?: number;
+  packageInVenueId?: number;
   slotInVenueId?: number;
   dataUpgrade?: DataUpgrade[] | [];
   date?: string;

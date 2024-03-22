@@ -1,4 +1,4 @@
-import { useBookingContext } from "@/context/BookingContext";
+import { BookingRequest, useBookingContext } from "@/context/BookingContext";
 import { ServiceDataResponse } from "@/dtos/response/service.response";
 import { getServiceById } from "@/lib/features/action/service.action";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
@@ -17,23 +17,71 @@ import {
 } from "antd";
 import Meta from "antd/es/card/Meta";
 import { useEffect, useState } from "react";
+import { BookingDataDisplay } from "./booking/page";
 
 const ServiceCards = ({
-  serviceList,
+  setBookingData,
+  services,
+  setServices,
+  dataUpgrade,
+  setDataUpgrade,
+  bookingDataDisplay,
+  setBookingDataDisplay,
+  totalPriceSerivce,
+  setTotalPriceService,
+  totalPriceBooking,
+  setTotalPriceBooking,
 }: {
-  serviceList: ServiceDataResponse[];
+  setBookingData: React.Dispatch<React.SetStateAction<BookingRequest | null>>;
+  services: { service: ServiceDataResponse; count: number }[] | [];
+  setServices: React.Dispatch<
+    React.SetStateAction<
+      | []
+      | {
+          service: ServiceDataResponse;
+          count: number;
+        }[]
+    >
+  >;
+  dataUpgrade:
+    | []
+    | {
+        serviceId: number;
+        count: number;
+      }[];
+  setDataUpgrade: React.Dispatch<
+    React.SetStateAction<
+      | {
+          serviceId: number;
+          count: number;
+        }[]
+      | []
+    >
+  >;
+  bookingDataDisplay: BookingDataDisplay | null;
+  setBookingDataDisplay: React.Dispatch<
+    React.SetStateAction<BookingDataDisplay | null>
+  >;
+  totalPriceSerivce: number;
+  setTotalPriceService: React.Dispatch<React.SetStateAction<number>>;
+  totalPriceBooking: number;
+  setTotalPriceBooking: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const [open, setOpen] = useState(false);
   const [service, setService] = useState<ServiceDataResponse | null>(null);
   const [count, setCount] = useState<number | null>(1);
-  const {
-    bookingData,
-    setBookingData,
-    services,
-    setServices,
-    dataUpgrade,
-    setDataUpgrade,
-  } = useBookingContext();
+  // const {
+  //   bookingData,
+  //   setBookingData,
+  //   services,
+  //   setServices,
+  //   dataUpgrade,
+  //   setDataUpgrade,
+  // } = useBookingContext();
+
+  const serviceList = useAppSelector(
+    (state) => state.serviceReducer.serviceList,
+  );
 
   // Hàm xử lý khi bấm nút OK
   const handleOk = (item: ServiceDataResponse | null, count: number | null) => {
@@ -75,8 +123,41 @@ const ServiceCards = ({
           };
 
           setServices(updatedServicesDisplay);
+          const _totalPriceService: number = updatedServicesDisplay.reduce(
+            (accumulator, current) => {
+              return accumulator + current.service.pricing * current.count;
+            },
+            0,
+          );
+          const _totalPriceBooking: number =
+            _totalPriceService +
+            Number(bookingDataDisplay?.packageInVenue?.apackage?.pricing);
+          setTotalPriceService(_totalPriceService);
+          setBookingDataDisplay((prev) => ({
+            ...prev,
+            dataUpgrade: updatedServicesDisplay,
+            totalPriceService: _totalPriceService,
+            totalPriceBooking: _totalPriceBooking,
+          }));
         } else {
           setServices([...services, { service: item, count }]);
+          const _totalPriceService: number = [
+            ...services,
+            { service: item, count },
+          ].reduce((accumulator, current) => {
+            return accumulator + current.service.pricing * current.count;
+          }, 0);
+          const _totalPriceBooking: number =
+            _totalPriceService +
+            Number(bookingDataDisplay?.packageInVenue?.apackage?.pricing);
+
+          setTotalPriceService(_totalPriceService);
+          setBookingDataDisplay((prev) => ({
+            ...prev,
+            dataUpgrade: [...services, { service: item, count }],
+            totalPriceService: _totalPriceService,
+            totalPriceBooking: _totalPriceBooking,
+          }));
         }
       } else {
         message.error("Vui lòng nhập count lớn hơn 0!");
@@ -115,7 +196,10 @@ const ServiceCards = ({
           />
         }
       >
-        <Meta title={item?.serviceName || ""} />
+        <Meta
+          title={item?.serviceName || ""}
+          description={`Đơn giá: ${item?.pricing?.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`}
+        />
         <Modal
           open={open}
           onCancel={() => setOpen(false)}

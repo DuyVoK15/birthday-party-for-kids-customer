@@ -18,4 +18,5 @@ export interface SlotInVenueDataResponse {
   active: boolean;
   status: boolean;
   slot: SlotDataResponse;
+  partyDated: any;
 }

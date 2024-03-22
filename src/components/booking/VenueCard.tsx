@@ -4,22 +4,21 @@ import { Avatar, Card, Flex, Popover, Space, Tag, Typography } from "antd";
 import Meta from "antd/es/card/Meta";
 import { ClockCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { VenueDataResponse } from "@/dtos/response/venue.response";
+import { BookingRequest } from "@/context/BookingContext";
+import { SlotInVenueDataResponse } from "@/dtos/response/slot.response";
 const VenueCard = ({
   venue,
-  itemtSelected,
+  bookingData,
   setItem,
 }: {
   venue: VenueDataResponse;
-  itemtSelected: {
-    venue?: VenueDataResponse;
-    slotInVenueId?: number;
-  } | null;
+  bookingData: BookingRequest | null;
   setItem: ({
     venue,
-    slotInVenueId,
+    slotInVenue,
   }: {
     venue: VenueDataResponse;
-    slotInVenueId: number;
+    slotInVenue: SlotInVenueDataResponse;
   }) => void;
 }) => {
   const {
@@ -69,12 +68,12 @@ const VenueCard = ({
                   ) : (
                     <Tag
                       onClick={() => {
-                        setItem({ venue, slotInVenueId: slotInVenue?.id });
+                        setItem({ venue, slotInVenue });
                       }}
                       key={index}
                       icon={<ClockCircleOutlined />}
                       color={
-                        slotInVenue?.id === itemtSelected?.slotInVenueId
+                        slotInVenue?.id === bookingData?.slotInVenueId
                           ? "gold-inverse"
                           : "cyan"
                       }

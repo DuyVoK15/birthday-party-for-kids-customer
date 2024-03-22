@@ -1,4 +1,4 @@
-
+import { BookingRequest } from "@/context/BookingContext";
 import { ThemeInVenueDataResponse } from "@/dtos/response/theme.response";
 import { imageUrlIfUndefined } from "@/utils/images";
 import { Button, Card, Col, Flex, Image } from "antd";
@@ -6,23 +6,23 @@ import Meta from "antd/es/card/Meta";
 
 const ThemeCard = ({
   themeInVenue,
-  itemSelected,
+  bookingData,
   setItem,
 }: {
   themeInVenue: ThemeInVenueDataResponse;
-  itemSelected: number | null;
-  setItem: (id: number) => void;
+  bookingData: BookingRequest | null;
+  setItem: (themeInVenue: ThemeInVenueDataResponse) => void;
 }) => {
   const { id, active, theme } = themeInVenue;
-  
+
   return (
     <Col span={6}>
       <Card
         hoverable
         style={{
-          bottom: id === itemSelected ? 10 : 0,
+          bottom: id === bookingData?.themeInVenueId ? 10 : 0,
           boxShadow:
-            id === itemSelected
+            id === bookingData?.themeInVenueId
               ? "0 4px 8px rgba(153, 102, 255, 0.9)"
               : "unset",
         }}
@@ -47,8 +47,12 @@ const ThemeCard = ({
           <Button onClick={() => null} className="mt-3">
             Chi tiết
           </Button>
-          <Button type="primary" onClick={() => setItem(id)} className="mt-3">
-            {id === itemSelected ? "Đang chọn" : "Chọn"}
+          <Button
+            type="primary"
+            onClick={() => setItem(themeInVenue)}
+            className="mt-3"
+          >
+            {id === bookingData?.themeInVenueId ? "Đang chọn" : "Chọn"}
           </Button>
         </Flex>
       </Card>

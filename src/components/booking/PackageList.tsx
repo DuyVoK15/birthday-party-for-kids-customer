@@ -2,12 +2,26 @@
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import React from "react";
 import { Row, Spin, Typography } from "antd";
-import { useBookingContext } from "@/context/BookingContext";
+import { BookingRequest, useBookingContext } from "@/context/BookingContext";
 import PackageCard from "./PackageCard";
+import { BookingDataDisplay } from "@/app/booking/page";
+import { PackageInVenueDataResponse } from "@/dtos/response/package.response";
 
 const { Title } = Typography;
 
-export function PackageList() {
+export function PackageList({
+  bookingData,
+  setBookingData,
+  bookingDataDisplay,
+  setBookingDataDisplay,
+}: {
+  bookingData: BookingRequest | null;
+  setBookingData: React.Dispatch<React.SetStateAction<BookingRequest | null>>;
+  bookingDataDisplay: BookingDataDisplay | null;
+  setBookingDataDisplay: React.Dispatch<
+    React.SetStateAction<BookingDataDisplay | null>
+  >;
+}) {
   // ** Disptach API
   const dispatch = useAppDispatch();
   const packageInVenueList = useAppSelector(
@@ -15,13 +29,9 @@ export function PackageList() {
   );
   const loading = useAppSelector((state) => state.packageReducer.loading);
 
-  // ** Context API
-  const { setBookingData, venue } = useBookingContext();
-
-  const [itemSelected, setItemSelected] = React.useState<number | null>(null);
-  const setItem = (packageInVenueId: number) => {
-    setItemSelected(packageInVenueId);
-    setBookingData((prev) => ({ ...prev, packageInVenueId }));
+  const setItem = (packageInVenue: PackageInVenueDataResponse) => {
+    setBookingData((prev) => ({ ...prev, packageInVenueId: packageInVenue?.id }));
+    setBookingDataDisplay((prev) => ({ ...prev, packageInVenue }));
   };
 
   return (
@@ -36,7 +46,7 @@ export function PackageList() {
         <PackageCard
           key={idx}
           pkg={pkg}
-          itemSelected={itemSelected}
+          bookingData={bookingData}
           setItem={setItem}
         />
       ))}

@@ -1,3 +1,4 @@
+import { BookingRequest } from "@/context/BookingContext";
 import { PackageInVenueDataResponse } from "@/dtos/response/package.response";
 import { imageUrlIfUndefined } from "@/utils/images";
 import { Button, Card, Col, Flex, Image } from "antd";
@@ -5,23 +6,23 @@ import Meta from "antd/es/card/Meta";
 
 const PackageCard = ({
   pkg,
-  itemSelected,
+  bookingData,
   setItem,
 }: {
   pkg: PackageInVenueDataResponse;
-  itemSelected: number | null;
-  setItem: (id: number) => void;
+  bookingData: BookingRequest | null;
+  setItem: (id: PackageInVenueDataResponse) => void;
 }) => {
   const { id, active, apackage } = pkg;
-  
+
   return (
     <Col span={6}>
       <Card
         hoverable
         style={{
-          bottom: id === itemSelected ? 10 : 0,
+          bottom: id === bookingData?.packageInVenueId ? 10 : 0,
           boxShadow:
-            id === itemSelected
+            id === bookingData?.packageInVenueId
               ? "0 4px 8px rgba(153, 102, 255, 0.9)"
               : "unset",
         }}
@@ -46,8 +47,8 @@ const PackageCard = ({
           <Button onClick={() => null} className="mt-3">
             Chi tiết
           </Button>
-          <Button type="primary" onClick={() => setItem(id)} className="mt-3">
-            Chọn
+          <Button type="primary" onClick={() => setItem(pkg)} className="mt-3">
+            {id === bookingData?.packageInVenueId ? "Đang chọn" : "Chọn"}
           </Button>
         </Flex>
       </Card>

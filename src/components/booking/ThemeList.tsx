@@ -1,27 +1,37 @@
-"use client";;
+"use client";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import React from "react";
 import { Row, Spin, Typography } from "antd";
-import { useBookingContext } from "@/context/BookingContext";
+import { BookingRequest, useBookingContext } from "@/context/BookingContext";
 import ThemeCard from "./ThemeCard";
+import { BookingDataDisplay } from "@/app/booking/page";
+import { ThemeInVenueDataResponse } from "@/dtos/response/theme.response";
 
 const { Title } = Typography;
 
-export function ThemeList() {
+export function ThemeList({
+  bookingData,
+  setBookingData,
+  bookingDataDisplay,
+  setBookingDataDisplay,
+}: {
+  bookingData: BookingRequest | null;
+  setBookingData: React.Dispatch<React.SetStateAction<BookingRequest | null>>;
+  bookingDataDisplay: BookingDataDisplay | null;
+  setBookingDataDisplay: React.Dispatch<
+    React.SetStateAction<BookingDataDisplay | null>
+  >;
+}) {
   // ** Disptach API
   const dispatch = useAppDispatch();
   const themeInVenueList = useAppSelector(
     (state) => state.themeReducer.themeInVenueList,
   );
   const loading = useAppSelector((state) => state.themeReducer.loading);
-  
-  // ** Context API
-  const { setBookingData, venue } = useBookingContext();
 
-  const [itemSelected, setItemSelected] = React.useState<number | null>(null);
-  const setItem = (themeInVenueId: number) => {
-    setItemSelected(themeInVenueId);
-    setBookingData((prev) => ({ ...prev, themeInVenueId }));
+  const setItem = (themeInVenue: ThemeInVenueDataResponse) => {
+    setBookingData((prev) => ({ ...prev, themeInVenueId: themeInVenue?.id }));
+    setBookingDataDisplay((prev) => ({ ...prev, themeInVenue }));
   };
 
   return (
@@ -36,7 +46,7 @@ export function ThemeList() {
         <ThemeCard
           key={idx}
           themeInVenue={theme}
-          itemSelected={itemSelected}
+          bookingData={bookingData}
           setItem={setItem}
         />
       ))}

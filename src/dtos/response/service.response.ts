@@ -1,9 +1,4 @@
-export interface UpgradeServiceDataResponse {
-  id: number;
-  count: number;
-  pricing: number;
-  active: boolean;
-}
+
 export interface ServiceDataResponse {
   id: number;
   serviceName: string;
