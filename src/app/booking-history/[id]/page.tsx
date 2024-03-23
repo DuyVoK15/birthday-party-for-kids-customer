@@ -3,6 +3,7 @@ import PackageInVenueDetail from "@/components/booking/PackageInVenueDetail";
 import ThemeInVenueDetail from "@/components/booking/ThemeInVenueDetail";
 import UpgradeServiceBookingDetail from "@/components/booking/UpgradeServiceBookingDetail";
 import { getBookingById } from "@/lib/features/action/partyBooking.action";
+import { createPaymentByBookingId } from "@/lib/features/action/payment.action";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { formatDateto } from "@/utils/format";
 import {
@@ -21,7 +22,9 @@ import {
   Skeleton,
   Space,
   Typography,
+  message,
 } from "antd";
+import { redirect, useRouter } from "next/navigation";
 import * as React from "react";
 
 export const Item = ({
@@ -57,6 +60,7 @@ const ChildItem = ({
   );
 };
 export default function BookingDetail({ params }: { params: any }) {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const loading = useAppSelector((state) => state.partyBookingReducer.loading);
   const booking = useAppSelector(
@@ -72,6 +76,16 @@ export default function BookingDetail({ params }: { params: any }) {
   React.useEffect(() => {
     fetchBookingById();
   }, []);
+
+  const createOnePayment = async () => {
+    const res = await dispatch(createPaymentByBookingId(params?.id));
+    if (res?.meta?.requestStatus === "fulfilled") {
+      const url = res?.payload as string;
+      window.open(url);
+    } else {
+      message.error("Lỗi khi thanh toán!");
+    }
+  };
 
   if (loading) {
     return (
@@ -104,7 +118,13 @@ export default function BookingDetail({ params }: { params: any }) {
               direction="vertical"
               size={"large"}
             >
-              <Typography.Title style={{ color: "red", margin: 0 }} level={5}>
+              <Typography.Title
+                style={{
+                  color: booking?.status === "PENDING" ? "red" : "green",
+                  margin: 0,
+                }}
+                level={5}
+              >
                 {booking?.status === "PENDING" ? "Chờ xác nhận" : "Đã xác nhận"}
               </Typography.Title>
               <Typography.Title style={{ margin: 0 }} level={3}>
@@ -306,6 +326,30 @@ export default function BookingDetail({ params }: { params: any }) {
                 <div className="text-gray-600">Hotline: 0909900009</div>
                 <div className="text-gray-600">Fanpage: lovekids@123</div>
                 <div className="text-gray-600">Email: lovekids@gmail.com</div>
+              </Space>
+            </div>
+            <div className="h-50 mt-5 rounded-lg p-6 shadow">
+              <Typography.Title
+                style={{ color: "rgb(41 182 246 / var(--tw-bg-opacity))" }}
+                className="m-0"
+                level={4}
+              >
+                Xác nhận thanh toán
+              </Typography.Title>
+              <Space direction="vertical">
+                {booking?.status === "CONFIRMED" ? (
+                  <Typography.Title
+                    style={{ color: "green" }}
+                    className="m-0"
+                    level={5}
+                  >
+                    Đã thanh toán
+                  </Typography.Title>
+                ) : (
+                  <Button type="primary" onClick={createOnePayment}>
+                    Thanh toán
+                  </Button>
+                )}
               </Space>
             </div>
           </div>

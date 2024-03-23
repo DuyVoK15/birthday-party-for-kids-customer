@@ -5,6 +5,7 @@ import { SlotInVenueDataResponse } from "./slot.response";
 import { ThemeInVenueDataResponse } from "./theme.response";
 import { UpgradeServiceDataResponse } from "./upgradeService.response";
 import { VenueDataResponse } from "./venue.response";
+import { PartyDatedDataResponse } from "./partyDated.response";
 
 export interface PartyBookingDataResponse {
   id: number;
@@ -22,6 +23,7 @@ export interface PartyBookingDataResponse {
   upgradeServices: UpgradeServiceDataResponse[] | [];
   active: boolean;
   slotInVenueObject: SlotInVenueDataResponse;
+  partyDated: PartyDatedDataResponse;
   venue: VenueDataResponse;
   pricingTotal: number;
 }

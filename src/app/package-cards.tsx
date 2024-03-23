@@ -74,7 +74,7 @@ export function PackageCards() {
     <section className="px-8">
       <div className="text-center">
         <Title level={1} color="blue-gray">
-          Các gói dịch vụ bữa tiệc
+          Tổng hợp các gói dịch vụ bữa tiệc
         </Title>
         <Title
           level={5}

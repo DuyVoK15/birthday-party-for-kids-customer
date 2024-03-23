@@ -55,7 +55,7 @@ const BookingHistory = () => {
         <Typography.Title level={2}>Đặt chỗ bữa tiệc</Typography.Title>
         <Carousel className="rounded-xl shadow" autoplay>
           {venueList.map((item, index) => (
-            <div className="rounded-xl" style={{ overflow: "hidden", }}>
+            <div className="rounded-xl" style={{ overflow: "hidden" }}>
               <img
                 src={item?.venueImgUrl}
                 alt="carousel image"
@@ -84,8 +84,12 @@ const BookingHistory = () => {
                   title={`${item?.venue?.venueName} - ${item?.venue?.location}`}
                   description={
                     <Space direction="vertical" size={"middle"}>
-                      <div>{`Thời gian: ${item?.slotInVenueObject?.slot?.timeStart} - ${item?.slotInVenueObject?.slot?.timeEnd}, ${item?.slotInVenueObject?.partyDated?.date}`}</div>
-                      <div className="text-green-300">Đang chờ xác nhận</div>
+                      <div>{`Thời gian: ${item?.slotInVenueObject?.slot?.timeStart} - ${item?.slotInVenueObject?.slot?.timeEnd}, ${item?.partyDated?.date}`}</div>
+                      {item?.status === "PENDING" ? (
+                        <div className="text-red-300">Đang chờ xác nhận</div>
+                      ) : (
+                        <div className="text-green-300">Đã xác nhận</div>
+                      )}
                     </Space>
                   }
                 />
@@ -93,7 +97,10 @@ const BookingHistory = () => {
                   style={{ alignSelf: "flex-end", margin: 0 }}
                   level={3}
                 >
-                  {item?.pricingTotal?.toLocaleString('vi-VN', {style: 'currency',currency: 'VND'})}
+                  {item?.pricingTotal?.toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  })}
                 </Typography.Title>
               </Flex>
             </Card>

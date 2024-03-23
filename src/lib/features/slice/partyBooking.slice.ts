@@ -5,14 +5,17 @@ import {
   getAllBooking,
   getBookingById,
 } from "../action/partyBooking.action";
+import { createPaymentByBookingId } from "../action/payment.action";
 
 interface PartyBookingState {
   bookingList: PartyBookingDataResponse[] | [];
   bookingById: PartyBookingDataResponse | null;
+  paymentUrl: string;
   loading: boolean;
 }
 const initialState: PartyBookingState = {
   bookingList: [],
+  paymentUrl: "",
   bookingById: null,
   loading: false,
 };
@@ -50,6 +53,16 @@ export const partyBookingSlice = createSlice({
         state.loading = false;
       })
       .addCase(getBookingById.rejected, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(createPaymentByBookingId.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(createPaymentByBookingId.fulfilled, (state, action) => {
+        state.paymentUrl = action.payload;
+        state.loading = false;
+      })
+      .addCase(createPaymentByBookingId.rejected, (state, action) => {
         state.loading = false;
       });
   },
