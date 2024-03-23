@@ -1,8 +1,11 @@
+import { ServiceDataResponse } from "./service.response";
+
 export interface PackageServiceDataResponse {
   id: number;
   count: number;
   pricing: number;
   active: boolean;
+  services: ServiceDataResponse;
 }
 
 export interface PackageDataResponse {

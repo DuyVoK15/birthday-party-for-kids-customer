@@ -1,8 +1,16 @@
 "use client";
+import PackageInVenueDetail from "@/components/booking/PackageInVenueDetail";
+import ThemeInVenueDetail from "@/components/booking/ThemeInVenueDetail";
+import UpgradeServiceBookingDetail from "@/components/booking/UpgradeServiceBookingDetail";
 import { getBookingById } from "@/lib/features/action/partyBooking.action";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { formatDateto } from "@/utils/format";
-import { CalendarOutlined, EnvironmentOutlined } from "@ant-design/icons";
+import {
+  CalendarOutlined,
+  EnvironmentOutlined,
+  EyeOutlined,
+} from "@ant-design/icons";
+import { ModalForm } from "@ant-design/pro-components";
 import {
   Avatar,
   Button,
@@ -16,7 +24,7 @@ import {
 } from "antd";
 import * as React from "react";
 
-const Item = ({
+export const Item = ({
   title,
   description,
   align,
@@ -144,7 +152,7 @@ export default function BookingDetail({ params }: { params: any }) {
                 </Flex>
               </Space>
 
-              <Typography.Title style={{margin: 0}} level={3}>
+              <Typography.Title style={{ margin: 0 }} level={3}>
                 Chi tiết của bữa tiệc
               </Typography.Title>
               <Space className="w-full" direction="vertical" size={"middle"}>
@@ -182,17 +190,62 @@ export default function BookingDetail({ params }: { params: any }) {
                 />
                 <Item
                   title="Chi tiết chủ đề"
-                  description={<Button type="link">Xem chi tiết</Button>}
+                  description={
+                    <ModalForm
+                      title="Chủ đề đã chọn"
+                      trigger={
+                        <Button style={{ padding: 0 }} type="link">
+                          <EyeOutlined />
+                          Xem chi tiết
+                        </Button>
+                      }
+                      style={{ padding: 0 }}
+                    >
+                      <ThemeInVenueDetail
+                        themeInVenue={booking?.themeInVenue}
+                      />
+                    </ModalForm>
+                  }
                   align={"center"}
                 />
                 <Item
                   title="Chi tiết gói dịch vụ"
-                  description={<Button type="link">Xem chi tiết</Button>}
+                  description={
+                    <ModalForm
+                      title="Gói dịch vụ đã chọn"
+                      trigger={
+                        <Button style={{ padding: 0 }} type="link">
+                          <EyeOutlined />
+                          Xem chi tiết
+                        </Button>
+                      }
+                      style={{ padding: 0 }}
+                    >
+                      <PackageInVenueDetail
+                        packageInVenue={booking?.packageInVenue}
+                      />
+                    </ModalForm>
+                  }
                   align={"center"}
                 />
                 <Item
                   title="Chi tiết nâng cấp dịch vụ"
-                  description={<Button type="link">Xem chi tiết</Button>}
+                  description={
+                    <ModalForm
+                      title="Dịch vụ đã nâng cấp"
+                      trigger={
+                        <Button style={{ padding: 0 }} type="link">
+                          <EyeOutlined />
+                          Xem chi tiết
+                        </Button>
+                      }
+                      style={{ padding: 0 }}
+                    >
+                      <UpgradeServiceBookingDetail
+                        upgradeServices={booking?.upgradeServices}
+                      />
+                    </ModalForm>
+                  }
                   align={"center"}
                 />
                 <Item

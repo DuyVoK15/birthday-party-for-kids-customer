@@ -12,6 +12,7 @@ import {
   Divider,
   Flex,
   Form,
+  Popconfirm,
   Row,
   Space,
   Tooltip,
@@ -25,7 +26,7 @@ import AuthGuard from "../AuthGuard";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { getAllVenueCheckSlotByDate } from "@/lib/features/action/venue.action";
 import { BookingRequest, useBookingContext } from "@/context/BookingContext";
-import { EyeOutlined } from "@ant-design/icons";
+import { CheckCircleFilled, EyeOutlined } from "@ant-design/icons";
 import { getAllService } from "@/lib/features/action/service.action";
 import ServiceCards from "../service-cards";
 import { Box, Container, Step, StepLabel, Stepper } from "@mui/material";
@@ -44,6 +45,11 @@ import dayjs from "dayjs";
 import { ThemeInVenueDataResponse } from "@/dtos/response/theme.response";
 import { PackageInVenueDataResponse } from "@/dtos/response/package.response";
 import { SlotInVenueDataResponse } from "@/dtos/response/slot.response";
+import ThemeInVenueDetail from "@/components/booking/ThemeInVenueDetail";
+import PackageInVenueDetail from "@/components/booking/PackageInVenueDetail";
+import UpgradeServiceDetail from "@/components/booking/UpgradeServiceDetail";
+import { Item } from "../booking-history/[id]/page";
+import { useRouter } from "next/navigation";
 
 const { Title } = Typography;
 const steps = [
@@ -71,7 +77,12 @@ export interface BookingDataDisplay {
   totalPriceService?: number;
   totalPriceBooking?: number;
 }
+
+const today = new Date();
+const tomorrow = new Date(today);
+tomorrow.setDate(today.getDate() + 1);
 export default function Booking() {
+  const router = useRouter();
   const [bookingData, setBookingData] = React.useState<BookingRequest | null>(
     null,
   );
@@ -84,7 +95,9 @@ export default function Booking() {
     { serviceId: number; count: number }[] | []
   >([]);
   const [venue, setVenue] = React.useState<VenueDataResponse | null>(null);
-  const [dateQuery, setDateQuery] = React.useState<string>("2024-03-23");
+  const [dateQuery, setDateQuery] = React.useState<string>(
+    dayjs(tomorrow).format("YYYY-MM-DD"),
+  );
   const [venueList, setVenueList] = React.useState<VenueDataResponse[] | []>(
     [],
   );
@@ -160,16 +173,17 @@ export default function Booking() {
   };
 
   const createOnePartyBooking = async () => {
-    try {
-      if (bookingData !== null) {
-        const res = await dispatch(createPartyBooking(bookingData));
-        if (res?.meta?.requestStatus === "fulfilled") {
-          return true;
-        }
-        return false;
+    if (bookingData !== null) {
+      const res = await dispatch(createPartyBooking(bookingData));
+      if (res?.meta?.requestStatus === "fulfilled") {
+        return true;
       }
-    } catch (error: any) {
-      message.error(error);
+      res?.payload.map((item: any) => {
+        if (item === "Invalid email format") {
+          message.error("Email sai định dạng!");
+        }
+      });
+      return false;
     }
   };
 
@@ -185,7 +199,7 @@ export default function Booking() {
     return skipped.has(step);
   };
 
-  const handleNext = async () => {
+  const handleFinish = async () => {
     let newSkipped = skipped;
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
@@ -199,29 +213,73 @@ export default function Booking() {
         setSkipped(newSkipped);
       }
       scrollToTop();
-    } else {
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      setSkipped(newSkipped);
+    }
+  };
+  const handleNext = async () => {
+    let newSkipped = skipped;
+    if (isStepSkipped(activeStep)) {
+      newSkipped = new Set(newSkipped.values());
+      newSkipped.delete(activeStep);
     }
 
     switch (activeStep + 1) {
       case 1:
-        fetchAllThemeInVenue();
         scrollToTop();
+        if (
+          typeof bookingData?.date !== "undefined" &&
+          typeof bookingData?.slotInVenueId !== "undefined"
+        ) {
+          setActiveStep((prevActiveStep) => prevActiveStep + 1);
+          setSkipped(newSkipped);
+          fetchAllThemeInVenue();
+          scrollToTop();
+        } else {
+          message.error(
+            "Vui lòng tích chọn đầy đủ thông tin trước khi đến bước tiếp theo!",
+          );
+        }
+
         break;
       case 2:
-        fetchAllPackageInVenue();
         scrollToTop();
+        if (typeof bookingData?.themeInVenueId !== "undefined") {
+          setActiveStep((prevActiveStep) => prevActiveStep + 1);
+          setSkipped(newSkipped);
+          fetchAllPackageInVenue();
+          scrollToTop();
+        } else {
+          message.error(
+            "Vui lòng tích chọn đầy đủ thông tin trước khi đến bước tiếp theo!",
+          );
+        }
         break;
       case 3:
-        fetchAllService();
         scrollToTop();
+        if (typeof bookingData?.packageInVenueId !== "undefined") {
+          setActiveStep((prevActiveStep) => prevActiveStep + 1);
+          setSkipped(newSkipped);
+          fetchAllService();
+          scrollToTop();
+        } else {
+          message.error(
+            "Vui lòng tích chọn đầy đủ thông tin trước khi đến bước tiếp theo!",
+          );
+        }
         break;
       case 4:
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setSkipped(newSkipped);
         scrollToTop();
+        if (typeof bookingData?.dataUpgrade === "undefined") {
+          setBookingData((prev) => ({ ...prev, dataUpgrade: [] }));
+          setBookingDataDisplay((prev) => ({ ...prev, dataUpgrade: [] }));
+        }
         break;
       case 5:
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setSkipped(newSkipped);
         scrollToTop();
+
         break;
 
       default:
@@ -230,6 +288,7 @@ export default function Booking() {
   };
 
   const handleBack = () => {
+    scrollToTop();
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
@@ -249,7 +308,8 @@ export default function Booking() {
   };
 
   const handleReset = () => {
-    setActiveStep(0);
+    // setActiveStep(0);
+    router.push("/booking-history");
   };
   console.log(bookingData);
   console.log(bookingDataDisplay);
@@ -261,6 +321,8 @@ export default function Booking() {
   }
 
   const [form] = Form.useForm();
+  const [form2] = Form.useForm();
+
   const items: DescriptionsProps["items"] = [
     {
       key: "1",
@@ -283,20 +345,12 @@ export default function Booking() {
           trigger={
             <Button type="primary">
               <EyeOutlined />
-              Xem
+              Xem chi tiết
             </Button>
           }
-          form={form}
-          autoFocusFirstInput
-          modalProps={{
-            destroyOnClose: true,
-            onCancel: () => console.log("run"),
-          }}
-          submitTimeout={2000}
-          onFinish={async (values) => {
-            return true;
-          }}
-        ></ModalForm>
+        >
+          <ThemeInVenueDetail themeInVenue={bookingDataDisplay?.themeInVenue} />
+        </ModalForm>
       ),
     },
     {
@@ -308,25 +362,19 @@ export default function Booking() {
           trigger={
             <Button type="primary">
               <EyeOutlined />
-              Xem
+              Xem chi tiết
             </Button>
           }
-          form={form}
-          autoFocusFirstInput
-          modalProps={{
-            destroyOnClose: true,
-            onCancel: () => console.log("run"),
-          }}
-          submitTimeout={2000}
-          onFinish={async (values) => {
-            return true;
-          }}
-        ></ModalForm>
+        >
+          <PackageInVenueDetail
+            packageInVenue={bookingDataDisplay?.packageInVenue}
+          />
+        </ModalForm>
       ),
     },
     {
       key: "6",
-      label: "Dịch vụ năng cấp",
+      label: "Dịch vụ nâng cấp",
 
       children: (
         <ModalForm
@@ -334,20 +382,15 @@ export default function Booking() {
           trigger={
             <Button type="primary">
               <EyeOutlined />
-              Xem
+              Xem chi tiết
             </Button>
           }
-          form={form}
-          autoFocusFirstInput
-          modalProps={{
-            destroyOnClose: true,
-            onCancel: () => console.log("run"),
-          }}
-          submitTimeout={2000}
-          onFinish={async (values) => {
-            return true;
-          }}
-        ></ModalForm>
+        >
+          <UpgradeServiceDetail
+            dataUpgrade={bookingDataDisplay?.dataUpgrade}
+            totalPriceSerivce={bookingDataDisplay?.totalPriceService}
+          />
+        </ModalForm>
       ),
     },
     {
@@ -379,18 +422,24 @@ export default function Booking() {
     {
       key: "10",
       label: "Booking Info",
+      span: 1,
       children: (
-        <>
-          `Tên người đặt: ${userInfo?.data?.fullName}`
-          <br />
-          `Email: ${bookingData?.email}`
-          <br />
-          `Số điện thoại: ${bookingData?.email}`
-          <br />
-          `Tên của bé: ${bookingData?.phone}`
-          <br />
-          `Ngày sinh nhật của bé: ${bookingData?.kidDOB}`
-        </>
+        <Space direction="vertical" size={"middle"}>
+          <Item title="Tên người đặt:" description={userInfo?.data?.fullName} />
+          <Item
+            title="Email người đặt:"
+            description={bookingDataDisplay?.email}
+          />
+          <Item
+            title="Số điện thoại:"
+            description={bookingDataDisplay?.phone}
+          />
+          <Item title="Tên của bé:" description={bookingDataDisplay?.kidName} />
+          <Item
+            title="Sinh nhật của bé:"
+            description={bookingDataDisplay?.kidDOB}
+          />
+        </Space>
       ),
     },
   ];
@@ -423,16 +472,25 @@ export default function Booking() {
           </Stepper>
           {activeStep === steps.length ? (
             <React.Fragment>
-              <Container maxWidth="sm">
-                <Typography>
+              <Container
+                maxWidth="md"
+                className="mt-10"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <CheckCircleFilled style={{ color: "green", fontSize: 100 }} />
+                <Typography.Title style={{ textAlign: "center" }} level={2}>
                   Đặt bữa tiệc thành công! Hãy kiểm tra thông tin đặt tiệc của
                   bạn ở mục Booking!
-                </Typography>
+                </Typography.Title>
               </Container>
 
               <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
                 <Box sx={{ flex: "1 1 auto" }} />
-                <Button onClick={handleReset}>OK</Button>
+                <Button type="primary" onClick={handleReset}>OK</Button>
               </Box>
             </React.Fragment>
           ) : (
@@ -598,8 +656,8 @@ export default function Booking() {
                       }));
                       handleNext();
                     }}
-
-                    // submitter={{submitButtonProps:{style: {alignSelf: 'center'}}, resetButtonProps: {style: {}}}}
+                    form={form2}
+                    submitter={{ render: false }}
                   >
                     <ProForm.Group>
                       <ProFormText
@@ -613,6 +671,11 @@ export default function Booking() {
                             message: "Vui lòng nhập trường này",
                           },
                         ]}
+                        initialValue={
+                          typeof bookingData?.kidName !== "undefined"
+                            ? bookingData?.email
+                            : ""
+                        }
                       />
                       <ProFormDatePicker
                         name={"kidDOB"}
@@ -625,6 +688,11 @@ export default function Booking() {
                             message: "Vui lòng nhập trường này",
                           },
                         ]}
+                        initialValue={
+                          typeof bookingData?.kidDOB !== "undefined"
+                            ? dayjs(bookingData?.kidDOB)
+                            : null
+                        }
                       />
                     </ProForm.Group>
                     <ProForm.Group>
@@ -638,7 +706,16 @@ export default function Booking() {
                             required: true,
                             message: "Vui lòng nhập trường này",
                           },
+                          {
+                            type: "email",
+                            message: "Email không hợp lệ",
+                          },
                         ]}
+                        initialValue={
+                          typeof bookingData?.email !== "undefined"
+                            ? bookingData?.email
+                            : ""
+                        }
                       />
                       <ProFormText
                         name={"phone"}
@@ -650,7 +727,16 @@ export default function Booking() {
                             required: true,
                             message: "Vui lòng nhập trường này",
                           },
+                          {
+                            pattern: /^0[0-9]{9,10}$/,
+                            message: "Số điện thoại không hợp lệ",
+                          },
                         ]}
+                        initialValue={
+                          typeof bookingData?.phone !== "undefined"
+                            ? bookingData?.phone
+                            : ""
+                        }
                       />
                     </ProForm.Group>
                   </ProForm>
@@ -678,13 +764,34 @@ export default function Booking() {
                     Skip
                   </Button>
                 )}
-                {activeStep + 1 !== 5 && (
+                {activeStep === steps.length - 1 ? (
+                  <Popconfirm
+                    title="Xác nhận đặt tiệc"
+                    description="Bạn có chắc chắn muốn đặt bữa tiệc này?"
+                    onConfirm={handleFinish}
+                    onOpenChange={() => console.log("open change")}
+                    okText="Đồng ý"
+                    cancelText="Huỷ"
+                  >
+                    <Button
+                      loading={loadingCreatePartyBooking}
+                      type="primary"
+                      // onClick={
+                      //   activeStep + 1 === 5 ? () => form2.submit() : handleNext
+                      // }
+                    >
+                      Finish
+                    </Button>
+                  </Popconfirm>
+                ) : (
                   <Button
                     loading={loadingCreatePartyBooking}
                     type="primary"
-                    onClick={handleNext}
+                    onClick={
+                      activeStep + 1 === 5 ? () => form2.submit() : handleNext
+                    }
                   >
-                    {activeStep === steps.length - 1 ? "Finish" : "Next"}
+                    Next
                   </Button>
                 )}
               </Box>
