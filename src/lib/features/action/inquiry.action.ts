@@ -46,6 +46,46 @@ export const createInquiry = createAsyncThunk(
   },
 );
 
+export const createInquiryForChangeThemeInVenue = createAsyncThunk(
+  "inquiry/createInquiryForChangeThemeInVenue",
+  async (
+    payload: {
+      bookingId: number;
+      themeInVenueId: number;
+    },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response =
+        await inquiryService.createInquiryForChangeThemeInVenue(payload);
+      return response?.data;
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      return rejectWithValue(axiosError.response?.data);
+    }
+  },
+);
+
+export const createInquiryForChangePackageInVenue = createAsyncThunk(
+  "inquiry/createInquiryForChangePackageInVenue",
+  async (
+    payload: {
+      bookingId: number;
+      packageInVenueId: number;
+    },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response =
+        await inquiryService.createInquiryForChangePackageInVenue(payload);
+      return response?.data;
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      return rejectWithValue(axiosError.response?.data);
+    }
+  },
+);
+
 export const updateInquiry = createAsyncThunk(
   "inquiry/updateInquiry",
   async (
