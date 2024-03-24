@@ -96,7 +96,7 @@ export default function Booking() {
   >([]);
   const [venue, setVenue] = React.useState<VenueDataResponse | null>(null);
   const [dateQuery, setDateQuery] = React.useState<string>(
-    dayjs(tomorrow).format("YYYY-MM-DD"),
+    dayjs(tomorrow).format("YYYY-MM-DDTHH:mm:ss"),
   );
   const [venueList, setVenueList] = React.useState<VenueDataResponse[] | []>(
     [],
@@ -113,7 +113,7 @@ export default function Booking() {
   const onChange: DatePickerProps["onChange"] = (date, dateString) => {
     if (date !== null) {
       const partDate = date.format("YYYY-MM-DD");
-      setDateQuery(partDate);
+      setDateQuery(date.format("YYYY-MM-DDTHH:mm:ss"));
       setBookingData((prev) => ({
         ...prev,
         date: partDate,
@@ -133,6 +133,9 @@ export default function Booking() {
       if (res?.meta?.requestStatus === "fulfilled") {
         setVenueList(res?.payload?.data);
       } else {
+        message.error(
+          "Chỉ được đặt lịch trong vòng 6 tiếng kể từ 00:00:00 của ngày chọn",
+        );
         setVenueList([]);
       }
     });
@@ -490,7 +493,9 @@ export default function Booking() {
 
               <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
                 <Box sx={{ flex: "1 1 auto" }} />
-                <Button type="primary" onClick={handleReset}>OK</Button>
+                <Button type="primary" onClick={handleReset}>
+                  OK
+                </Button>
               </Box>
             </React.Fragment>
           ) : (

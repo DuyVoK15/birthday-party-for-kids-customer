@@ -42,4 +42,10 @@ export const themeService = {
     const url = `/api/themeInVenue/get-theme-in-venue-id/${id}`;
     return axiosClient.get(url);
   },
+  getAllThemeInVenueNotChoose: (id: number): Promise<
+    AxiosResponse<ThemeInVenueArrayResponse>
+  > => {
+    const url = `/api/themeInVenue/get-theme-in-venue-id-not-choose/${id}`;
+    return axiosClient.get(url);
+  },
 };

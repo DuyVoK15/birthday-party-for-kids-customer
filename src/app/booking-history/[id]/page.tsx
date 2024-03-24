@@ -2,23 +2,39 @@
 import PackageInVenueDetail from "@/components/booking/PackageInVenueDetail";
 import ThemeInVenueDetail from "@/components/booking/ThemeInVenueDetail";
 import UpgradeServiceBookingDetail from "@/components/booking/UpgradeServiceBookingDetail";
+import {
+  createInquiryForChangePackageInVenue,
+  createInquiryForChangeThemeInVenue,
+} from "@/lib/features/action/inquiry.action";
+import { getAllPackageInVenueNotChoose } from "@/lib/features/action/package.action";
 import { getBookingById } from "@/lib/features/action/partyBooking.action";
 import { createPaymentByBookingId } from "@/lib/features/action/payment.action";
+import { getAllThemeInVenueNotChoose } from "@/lib/features/action/theme.action";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { formatDateto } from "@/utils/format";
 import {
   CalendarOutlined,
   EnvironmentOutlined,
   EyeOutlined,
+  SwapOutlined,
 } from "@ant-design/icons";
-import { ModalForm } from "@ant-design/pro-components";
+import {
+  ModalForm,
+  ProFormCheckbox,
+  ProFormRadio,
+} from "@ant-design/pro-components";
 import {
   Avatar,
   Button,
+  Card,
   Divider,
   Empty,
   Flex,
+  Form,
   Image,
+  Input,
+  Popconfirm,
+  Rate,
   Skeleton,
   Space,
   Typography,
@@ -66,6 +82,12 @@ export default function BookingDetail({ params }: { params: any }) {
   const booking = useAppSelector(
     (state) => state.partyBookingReducer.bookingById,
   );
+  const themeInVenueNotChooseList = useAppSelector(
+    (state) => state.themeReducer.themeInVenueNotChooseList,
+  );
+  const packageInVenueNotChooseList = useAppSelector(
+    (state) => state.packageReducer.packageInVenueNotChooseList,
+  );
 
   const fetchBookingById = async () => {
     await dispatch(getBookingById(params?.id)).then((res) => {
@@ -73,9 +95,46 @@ export default function BookingDetail({ params }: { params: any }) {
     });
   };
 
+  const fetchAllThemeInVenueNotChoose = async () => {
+    if (typeof booking?.themeInVenue?.id !== "undefined") {
+      const res = await dispatch(
+        getAllThemeInVenueNotChoose(booking?.themeInVenue?.id),
+      );
+      if (res?.meta?.requestStatus === "fulfilled") {
+        return true;
+      }
+      return false;
+    }
+  };
+
+  const fetchAllPackageInVenueNotChoose = async () => {
+    if (typeof booking?.packageInVenue?.id !== "undefined") {
+      const res = await dispatch(
+        getAllPackageInVenueNotChoose(booking?.packageInVenue?.id),
+      );
+      if (res?.meta?.requestStatus === "fulfilled") {
+        return true;
+      }
+      return false;
+    }
+  };
+
+  const fetchInQueue = async () => {
+    await fetchBookingById();
+  };
+
+  const fetchInQueue2 = async () => {
+    await fetchAllThemeInVenueNotChoose();
+    await fetchAllPackageInVenueNotChoose();
+  };
+
   React.useEffect(() => {
-    fetchBookingById();
+    fetchInQueue();
   }, []);
+
+  React.useEffect(() => {
+    fetchInQueue2();
+  }, [booking]);
 
   const createOnePayment = async () => {
     const res = await dispatch(createPaymentByBookingId(params?.id));
@@ -84,6 +143,41 @@ export default function BookingDetail({ params }: { params: any }) {
       window.open(url);
     } else {
       message.error("Lỗi khi thanh toán!");
+    }
+  };
+
+  const createOneInquiryForChangeThemeInVenue = async (id: number) => {
+    if (typeof booking?.id !== "undefined") {
+      const res = await dispatch(
+        createInquiryForChangeThemeInVenue({
+          bookingId: booking?.id,
+          themeInVenueId: id,
+        }),
+      );
+      if (res?.meta?.requestStatus === "fulfilled") {
+        message.success("Gửi yêu cầu thay đổi chủ đề thành công!");
+        return true;
+      } else {
+        message.error("Lỗi khi gửi yêu cầu!");
+        return false;
+      }
+    }
+  };
+
+  const createOneInquiryForChangePackageInVenue = async (id: number) => {
+    if (typeof booking?.id !== "undefined") {
+      const res = await dispatch(
+        createInquiryForChangePackageInVenue({
+          bookingId: booking?.id,
+          packageInVenueId: id,
+        }),
+      );
+      if (res?.meta?.requestStatus === "fulfilled") {
+        message.success("Gửi yêu cầu thay đổi gói dịch vụ thành công!");
+        return true;
+      } else {
+        message.error("Lỗi khi gửi yêu cầu!");
+      }
     }
   };
 
@@ -100,13 +194,13 @@ export default function BookingDetail({ params }: { params: any }) {
     );
   }
 
-  if (booking === null) {
-    return (
-      <React.Fragment>
-        <Empty className="p-20" />
-      </React.Fragment>
-    );
-  }
+  // if (booking === null) {
+  //   return (
+  //     <React.Fragment>
+  //       <Empty className="p-20" />
+  //     </React.Fragment>
+  //   );
+  // }
 
   return (
     <div className="container mx-auto mt-10">
@@ -211,40 +305,184 @@ export default function BookingDetail({ params }: { params: any }) {
                 <Item
                   title="Chi tiết chủ đề"
                   description={
-                    <ModalForm
-                      title="Chủ đề đã chọn"
-                      trigger={
-                        <Button style={{ padding: 0 }} type="link">
-                          <EyeOutlined />
-                          Xem chi tiết
-                        </Button>
-                      }
-                      style={{ padding: 0 }}
-                    >
-                      <ThemeInVenueDetail
-                        themeInVenue={booking?.themeInVenue}
-                      />
-                    </ModalForm>
+                    <Flex gap={5}>
+                      <ModalForm
+                        title="Chủ đề đã chọn"
+                        trigger={
+                          <Button style={{ padding: 0 }} type="link">
+                            <EyeOutlined />
+                            Xem chi tiết
+                          </Button>
+                        }
+                        style={{ padding: 0 }}
+                      >
+                        <ThemeInVenueDetail
+                          themeInVenue={booking?.themeInVenue}
+                        />
+                      </ModalForm>
+
+                      <ModalForm
+                        title="Các chủ để khác"
+                        trigger={
+                          <Button type="link">
+                            <SwapOutlined />
+                            Gửi yêu cầu thay đổi
+                          </Button>
+                        }
+                        // form={form}
+                        autoFocusFirstInput
+                        modalProps={{
+                          destroyOnClose: true,
+                          onCancel: () => console.log("run"),
+                        }}
+                        onFinish={async (values) => {
+                          let result: boolean | undefined = false;
+                          result = await createOneInquiryForChangeThemeInVenue(
+                            values?.themeId,
+                          );
+
+                          return result;
+                        }}
+                      >
+                        {themeInVenueNotChooseList?.length > 0 ? (
+                          <ProFormRadio.Group
+                            name="themeId"
+                            layout="horizontal"
+                            // label='Industry Distribution'
+                            style={{ marginBottom: 10 }}
+                            options={themeInVenueNotChooseList?.map(
+                              (item, index) => ({
+                                label: (
+                                  <Card
+                                    key={index}
+                                    hoverable
+                                    style={{ width: 200, marginBottom: 10 }}
+                                    cover={
+                                      <Image
+                                        style={{
+                                          width: "100%",
+                                          height: 100,
+                                          objectFit: "cover",
+                                        }}
+                                        alt="example"
+                                        src={item?.theme?.themeImgUrl}
+                                      />
+                                    }
+                                  >
+                                    <Card.Meta title={item?.theme?.themeName} />
+                                  </Card>
+                                ),
+                                value: item?.id,
+                              }),
+                            )}
+                          />
+                        ) : (
+                          <Empty style={{ margin: "auto" }} />
+                        )}
+                      </ModalForm>
+                    </Flex>
                   }
                   align={"center"}
                 />
                 <Item
                   title="Chi tiết gói dịch vụ"
                   description={
-                    <ModalForm
-                      title="Gói dịch vụ đã chọn"
-                      trigger={
-                        <Button style={{ padding: 0 }} type="link">
-                          <EyeOutlined />
-                          Xem chi tiết
-                        </Button>
-                      }
-                      style={{ padding: 0 }}
-                    >
-                      <PackageInVenueDetail
-                        packageInVenue={booking?.packageInVenue}
-                      />
-                    </ModalForm>
+                    <Flex gap={5}>
+                      <ModalForm
+                        title="Gói dịch vụ đã chọn"
+                        trigger={
+                          <Button style={{ padding: 0 }} type="link">
+                            <EyeOutlined />
+                            Xem chi tiết
+                          </Button>
+                        }
+                        style={{ padding: 0 }}
+                      >
+                        <PackageInVenueDetail
+                          packageInVenue={booking?.packageInVenue}
+                        />
+                      </ModalForm>
+                      <ModalForm
+                        title="Các gói dịch vụ khác"
+                        trigger={
+                          <Button type="link">
+                            <SwapOutlined />
+                            Gửi yêu cầu thay đổi
+                          </Button>
+                        }
+                        // form={form}
+                        autoFocusFirstInput
+                        modalProps={{
+                          destroyOnClose: true,
+                          onCancel: () => console.log("run"),
+                        }}
+                        onFinish={async (values) => {
+                          let result: boolean | undefined = false;
+                          result =
+                            await createOneInquiryForChangePackageInVenue(
+                              values?.id,
+                            );
+
+                          return result;
+                        }}
+                      >
+                        {packageInVenueNotChooseList?.length > 0 ? (
+                          <ProFormRadio.Group
+                            name="id"
+                            layout="horizontal"
+                            style={{ marginBottom: 10 }}
+                            options={packageInVenueNotChooseList?.map(
+                              (item, index) => ({
+                                label: (
+                                  <Card
+                                    key={index}
+                                    hoverable
+                                    style={{ width: 200, marginBottom: 10 }}
+                                    cover={
+                                      <Image
+                                        style={{
+                                          width: "100%",
+                                          height: 100,
+                                          objectFit: "cover",
+                                        }}
+                                        alt="example"
+                                        src={item?.apackage?.packageImgUrl}
+                                      />
+                                    }
+                                  >
+                                    <Space direction="vertical">
+                                      <Card.Meta
+                                        title={item?.apackage?.packageName}
+                                      />
+                                      <ModalForm
+                                        title="Chi tiết gói dịch vụ"
+                                        trigger={
+                                          <Button
+                                            style={{ padding: 0 }}
+                                            type="link"
+                                          >
+                                            <EyeOutlined />
+                                            Chi tiết gói dịch vụ
+                                          </Button>
+                                        }
+                                        style={{ padding: 0 }}
+                                      >
+                                        <PackageInVenueDetail
+                                          packageInVenue={item}
+                                        />
+                                      </ModalForm>
+                                    </Space>
+                                  </Card>
+                                ),
+                                value: item?.id,
+                              }),
+                            )}
+                          />
+                        ) : (
+                          <Empty style={{ margin: "auto" }} />
+                        )}
+                      </ModalForm>
+                    </Flex>
                   }
                   align={"center"}
                 />
@@ -336,6 +574,17 @@ export default function BookingDetail({ params }: { params: any }) {
               >
                 Xác nhận thanh toán
               </Typography.Title>
+
+              <Flex className="my-5" justify="space-between">
+                <Typography style={{ fontSize: 19 }}>Tổng số tiền:</Typography>
+                <Typography style={{ fontSize: 19 }} className="font-medium">
+                  {booking?.pricingTotal.toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  })}
+                </Typography>
+              </Flex>
+
               <Space direction="vertical">
                 {booking?.status === "CONFIRMED" ? (
                   <Typography.Title
@@ -346,11 +595,38 @@ export default function BookingDetail({ params }: { params: any }) {
                     Đã thanh toán
                   </Typography.Title>
                 ) : (
-                  <Button type="primary" onClick={createOnePayment}>
-                    Thanh toán
-                  </Button>
+                  <Popconfirm
+                    title="Xác nhận thanh toán"
+                    description="Bạn có chắc chắn muốn thanh toán?"
+                    onConfirm={createOnePayment}
+                    onCancel={() => null}
+                    okText="Đồng ý"
+                    cancelText="Huỷ"
+                  >
+                    <Button type="primary">Thanh toán</Button>
+                  </Popconfirm>
                 )}
               </Space>
+            </div>
+            <div className="h-50 mt-5 rounded-lg p-6 shadow">
+              <Typography.Title
+                style={{ color: "rgb(41 182 246 / var(--tw-bg-opacity))" }}
+                className="m-0"
+                level={4}
+              >
+                Viết đánh giá
+              </Typography.Title>
+              <Form onFinish={(values) => console.log(values)}>
+                <Form.Item name={"message"}>
+                  <Input.TextArea placeholder="Viết đánh giá ..." />
+                </Form.Item>
+                <Form.Item name={"rating"}>
+                  <Rate />
+                </Form.Item>
+                <Form.Item>
+                  <Button htmlType="submit">Gửi đánh giá</Button>
+                </Form.Item>
+              </Form>
             </div>
           </div>
         </Flex>
