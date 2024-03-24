@@ -48,8 +48,8 @@ import { SlotInVenueDataResponse } from "@/dtos/response/slot.response";
 import ThemeInVenueDetail from "@/components/booking/ThemeInVenueDetail";
 import PackageInVenueDetail from "@/components/booking/PackageInVenueDetail";
 import UpgradeServiceDetail from "@/components/booking/UpgradeServiceDetail";
-import { Item } from "../booking-history/[id]/page";
 import { useRouter } from "next/navigation";
+import { Item } from "@/components/booking/Item";
 
 const { Title } = Typography;
 const steps = [
