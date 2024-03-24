@@ -7,6 +7,7 @@ import {
   Avatar,
   Card,
   Carousel,
+  Empty,
   Flex,
   Image,
   Popover,
@@ -44,9 +45,13 @@ const BookingHistory = () => {
     });
   };
 
+  const fetchInQueue = async () => {
+    await fetchAllVenue();
+    await fetchAllBooking();
+  };
+
   useEffect(() => {
-    fetchAllVenue();
-    fetchAllBooking();
+    fetchInQueue();
   }, []);
 
   return (
@@ -69,43 +74,56 @@ const BookingHistory = () => {
             </div>
           ))}
         </Carousel>
-        {bookingList?.map((item, index) => (
-          <Link href={`/booking-history/${item?.id}`}>
-            <Card key={index} className="shadow-md" style={{ marginTop: 16 }}>
-              <Flex align="center" justify="space-between">
-                <Meta
-                  avatar={
-                    <Avatar
-                      shape="square"
-                      size={112}
-                      src={item?.venue?.venueImgUrl}
-                    />
-                  }
-                  title={`${item?.venue?.venueName} - ${item?.venue?.location}`}
-                  description={
-                    <Space direction="vertical" size={"middle"}>
-                      <div>{`Thời gian: ${item?.slotInVenueObject?.slot?.timeStart} - ${item?.slotInVenueObject?.slot?.timeEnd}, ${item?.partyDated?.date}`}</div>
-                      {item?.status === "PENDING" ? (
-                        <div className="text-red-300">Đang chờ xác nhận</div>
-                      ) : (
-                        <div className="text-green-300">Đã xác nhận</div>
-                      )}
-                    </Space>
-                  }
-                />
-                <Typography.Title
-                  style={{ alignSelf: "flex-end", margin: 0 }}
-                  level={3}
-                >
-                  {item?.pricingTotal?.toLocaleString("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  })}
-                </Typography.Title>
-              </Flex>
-            </Card>
-          </Link>
-        ))}
+        {bookingList && bookingList?.length > 0 ? (
+          bookingList?.map((item, index) => (
+            <Link href={`/booking-history/${item?.id}`}>
+              <Card key={index} className="shadow-md" style={{ marginTop: 16 }}>
+                <Flex align="center" justify="space-between">
+                  <Meta
+                    avatar={
+                      <Avatar
+                        shape="square"
+                        size={112}
+                        src={item?.venue?.venueImgUrl}
+                      />
+                    }
+                    title={`${item?.venue?.venueName} - ${item?.venue?.location}`}
+                    description={
+                      <Space direction="vertical" size={"middle"}>
+                        <div>{`Thời gian: ${item?.slotInVenueObject?.slot?.timeStart} - ${item?.slotInVenueObject?.slot?.timeEnd}, ${item?.partyDated?.date}`}</div>
+                        {item?.status === "PENDING" ? (
+                          <div className="text-blue-300">
+                            Đang chờ xác nhận
+                          </div>
+                        ) : item?.status === "CANCELLED" ? (
+                          <div className="text-red-300">Đã huỷ</div>
+                        ) : item?.status === "COMPLETED" ? (
+                          <div className="text-green-300">Đã hoàn thành</div>
+                        ) : (
+                          <div className="text-orange-300">Đã được xác nhận</div>
+                        )}
+                      </Space>
+                    }
+                  />
+                  <Typography.Title
+                    style={{ alignSelf: "flex-end", margin: 0 }}
+                    level={3}
+                  >
+                    {item?.pricingTotal?.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    })}
+                  </Typography.Title>
+                </Flex>
+              </Card>
+            </Link>
+          ))
+        ) : (
+          <Empty
+            className="mt-10"
+            description="Bạn hiện chưa có một booking nào"
+          />
+        )}
       </div>
     </div>
   );
