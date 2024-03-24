@@ -1,4 +1,5 @@
 "use client";
+import { ChildItem, Item } from "@/components/booking/Item";
 import PackageInVenueDetail from "@/components/booking/PackageInVenueDetail";
 import ThemeInVenueDetail from "@/components/booking/ThemeInVenueDetail";
 import UpgradeServiceBookingDetail from "@/components/booking/UpgradeServiceBookingDetail";
@@ -44,38 +45,6 @@ import {
 import { redirect, useRouter } from "next/navigation";
 import * as React from "react";
 
-export const Item = ({
-  title,
-  description,
-  align,
-}: {
-  title: string;
-  description: string | React.ReactNode;
-  align?: any;
-}) => {
-  return (
-    <Flex align={align} gap={100} justify="space-between">
-      <div className="flex-1 font-bold">{title}</div>
-      <div className="flex-1 text-sm font-normal text-gray-700">
-        {description}
-      </div>
-    </Flex>
-  );
-};
-const ChildItem = ({
-  title,
-  description,
-}: {
-  title: string;
-  description: string | React.ReactNode;
-}) => {
-  return (
-    <Flex gap={100} justify="space-between">
-      <div className="font-bold text-black">{title}</div>
-      <div className="text-sm font-normal text-gray-700">{description}</div>
-    </Flex>
-  );
-};
 export default function BookingDetail({ params }: { params: any }) {
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -194,7 +163,7 @@ export default function BookingDetail({ params }: { params: any }) {
       const res = await dispatch(createReview(request));
       if (res?.meta?.requestStatus === "fulfilled") {
         message.success("Gửi đánh giá đi thành công!");
-        await fetchBookingById()
+        await fetchBookingById();
         return true;
       } else {
         message.error("Lỗi khi gửi yêu cầu!");
@@ -657,7 +626,7 @@ export default function BookingDetail({ params }: { params: any }) {
               </Space>
             </div>
 
-            {!booking?.review && booking?.status==="COMPLETED" && (
+            {!booking?.review && booking?.status === "COMPLETED" && (
               <div className="h-50 mt-5 rounded-lg p-6 shadow">
                 <Typography.Title
                   style={{ color: "rgb(41 182 246 / var(--tw-bg-opacity))" }}
