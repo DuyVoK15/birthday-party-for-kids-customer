@@ -1,8 +1,11 @@
 import { BookingRequest } from "@/context/BookingContext";
 import { ThemeInVenueDataResponse } from "@/dtos/response/theme.response";
 import { imageUrlIfUndefined } from "@/utils/images";
+import { EyeOutlined } from "@ant-design/icons";
+import { ModalForm } from "@ant-design/pro-components";
 import { Button, Card, Col, Flex, Image } from "antd";
 import Meta from "antd/es/card/Meta";
+import ThemeDetail from "./ThemeDetail";
 
 const ThemeCard = ({
   themeInVenue,
@@ -43,14 +46,26 @@ const ThemeCard = ({
           title={theme?.themeName || "Chủ đề"}
           description={theme?.themeDescription || "Mô tar"}
         />
-        <Flex gap={10}>
-          <Button onClick={() => null} className="mt-3">
-            Chi tiết
-          </Button>
+        <Flex gap={10} align="center" className="mt-3">
+          <ModalForm
+            title="Chi tiết"
+            trigger={
+              <Button type="default">
+                <EyeOutlined />
+                Chi tiết
+              </Button>
+            }
+            style={{ padding: 0 }}
+            onFinish={async () => {
+              return true;
+            }}
+          >
+            <ThemeDetail theme={theme} />
+          </ModalForm>
           <Button
             type="primary"
             onClick={() => setItem(themeInVenue)}
-            className="mt-3"
+            // className="mt-3"
           >
             {id === bookingData?.themeInVenueId ? "Đang chọn" : "Chọn"}
           </Button>

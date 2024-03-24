@@ -1,8 +1,11 @@
 import { BookingRequest } from "@/context/BookingContext";
 import { PackageInVenueDataResponse } from "@/dtos/response/package.response";
 import { imageUrlIfUndefined } from "@/utils/images";
+import { EyeOutlined } from "@ant-design/icons";
+import { ModalForm } from "@ant-design/pro-components";
 import { Button, Card, Col, Flex, Image } from "antd";
 import Meta from "antd/es/card/Meta";
+import PackageDetail from "./PackageDetail";
 
 const PackageCard = ({
   pkg,
@@ -43,11 +46,23 @@ const PackageCard = ({
           title={apackage?.packageName || "Chủ đề"}
           description={`Giá: ${apackage?.pricing} ` || "Giá"}
         />
-        <Flex gap={10}>
-          <Button onClick={() => null} className="mt-3">
-            Chi tiết
-          </Button>
-          <Button type="primary" onClick={() => setItem(pkg)} className="mt-3">
+        <Flex gap={10} align="center" className="mt-3">
+          <ModalForm
+            title="Chi tiết"
+            trigger={
+              <Button type="default" size="middle">
+                <EyeOutlined />
+                Chi tiết
+              </Button>
+            }
+            style={{ padding: 0 }}
+            onFinish={async () => {
+              return true;
+            }}
+          >
+            <PackageDetail packageInVenue={apackage} />
+          </ModalForm>
+          <Button type="primary" onClick={() => setItem(pkg)}>
             {id === bookingData?.packageInVenueId ? "Đang chọn" : "Chọn"}
           </Button>
         </Flex>
