@@ -10,7 +10,7 @@ export default function RootApplication() {
     <div className="container mx-auto">
       <Hero />
 
-      <div className="mt-56">   
+      <div className="mt-80">   
         <VenueCards />
         <Divider className="mt-10" />
         <PackageCards />
