@@ -10,6 +10,7 @@ import {
   createInquiryForChangePackageInVenue,
   createInquiryForChangeThemeInVenue,
 } from "../action/inquiry.action";
+import { createReview } from "../action/review.action";
 
 interface PartyBookingState {
   bookingList: PartyBookingDataResponse[] | [];
@@ -17,7 +18,8 @@ interface PartyBookingState {
   paymentUrl: string;
   loading: boolean;
   loadingCreate: boolean;
-  loadingPayment: boolean
+  loadingPayment: boolean;
+  loadingReview: boolean;
 }
 const initialState: PartyBookingState = {
   bookingList: [],
@@ -25,7 +27,8 @@ const initialState: PartyBookingState = {
   bookingById: null,
   loading: false,
   loadingCreate: false,
-  loadingPayment: false
+  loadingPayment: false,
+  loadingReview: false,
 };
 
 export const partyBookingSlice = createSlice({
@@ -72,6 +75,15 @@ export const partyBookingSlice = createSlice({
       })
       .addCase(createPaymentByBookingId.rejected, (state, action) => {
         state.loadingPayment = false;
+      })
+      .addCase(createReview.pending, (state) => {
+        state.loadingReview = true;
+      })
+      .addCase(createReview.fulfilled, (state, action) => {
+        state.loadingReview = false;
+      })
+      .addCase(createReview.rejected, (state, action) => {
+        state.loadingReview = false;
       })
       .addMatcher(
         isAnyOf(

@@ -71,7 +71,7 @@ export function PackageCards() {
   }, []);
 
   return (
-    <section className="px-8">
+    <section className="px-0">
       <div className="text-center">
         <Title level={1} color="blue-gray">
           Tổng hợp các gói dịch vụ bữa tiệc

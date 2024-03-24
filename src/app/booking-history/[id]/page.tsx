@@ -9,6 +9,7 @@ import {
 import { getAllPackageInVenueNotChoose } from "@/lib/features/action/package.action";
 import { getBookingById } from "@/lib/features/action/partyBooking.action";
 import { createPaymentByBookingId } from "@/lib/features/action/payment.action";
+import { createReview } from "@/lib/features/action/review.action";
 import { getAllThemeInVenueNotChoose } from "@/lib/features/action/theme.action";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { formatDateto } from "@/utils/format";
@@ -177,6 +178,26 @@ export default function BookingDetail({ params }: { params: any }) {
         return true;
       } else {
         message.error("Lỗi khi gửi yêu cầu!");
+        return false;
+      }
+    }
+  };
+
+  const createOneReview = async (request: {
+    id: number;
+    payload: {
+      reviewMessage: string;
+      rating: number;
+    };
+  }) => {
+    if (typeof booking?.id !== "undefined") {
+      const res = await dispatch(createReview(request));
+      if (res?.meta?.requestStatus === "fulfilled") {
+        message.success("Gửi đánh giá đi thành công!");
+        return true;
+      } else {
+        message.error("Lỗi khi gửi yêu cầu!");
+        return false;
       }
     }
   };
@@ -616,8 +637,22 @@ export default function BookingDetail({ params }: { params: any }) {
               >
                 Viết đánh giá
               </Typography.Title>
-              <Form onFinish={(values) => console.log(values)}>
-                <Form.Item name={"message"}>
+              <Form
+                onFinish={async (values) => {
+                  let result: undefined | boolean = false;
+                  if (typeof booking?.id !== "undefined") {
+                    result = await createOneReview({
+                      id: booking?.id,
+                      payload: {
+                        reviewMessage: values?.reviewMessage,
+                        rating: values?.rating,
+                      },
+                    });
+                  }
+                  return result;
+                }}
+              >
+                <Form.Item name={"reviewMessage"}>
                   <Input.TextArea placeholder="Viết đánh giá ..." />
                 </Form.Item>
                 <Form.Item name={"rating"}>

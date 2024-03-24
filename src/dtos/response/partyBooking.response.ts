@@ -23,6 +23,7 @@ export interface PartyBookingDataResponse {
   upgradeServices: UpgradeServiceDataResponse[] | [];
   active: boolean;
   slotInVenueObject: SlotInVenueDataResponse;
+  reviewList: any;
   partyDated: PartyDatedDataResponse;
   venue: VenueDataResponse;
   pricingTotal: number;

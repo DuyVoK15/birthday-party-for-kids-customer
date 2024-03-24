@@ -1,9 +1,9 @@
-"use client";;
+"use client";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { getAllVenue } from "@/lib/features/action/venue.action";
 import { useEffect } from "react";
 import VenueCard from "@/components/venue-card";
-import { Typography } from "antd";
+import { Carousel, Typography } from "antd";
 const { Title } = Typography;
 
 export function VenueCards() {
@@ -21,7 +21,7 @@ export function VenueCards() {
   }, []);
 
   return (
-    <section className="px-8">
+    <section className="px-0">
       <div className="text-center">
         <Title level={1} color="blue-gray">
           Các Địa Điểm Nổi Bật
@@ -33,10 +33,12 @@ export function VenueCards() {
           Các địa điểm tổ chức tiệc sinh nhật với LoveKids thật hoành tráng
         </Title>
       </div>
-      <div className="container mt-10 mx-auto grid grid-cols-1 gap-x-10 gap-y-24 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-14">
-        {venueList.map((venue, idx) => (
-          <VenueCard key={idx} venue={venue} />
-        ))}
+      <div className="container mx-auto mt-10">
+        <Carousel autoplay autoplaySpeed={2000}>
+          {venueList.map((venue, idx) => (
+            <VenueCard key={idx} venue={venue} />
+          ))}
+        </Carousel>
       </div>
     </section>
   );
