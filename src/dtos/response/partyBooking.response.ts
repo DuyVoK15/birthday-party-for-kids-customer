@@ -6,6 +6,7 @@ import { ThemeInVenueDataResponse } from "./theme.response";
 import { UpgradeServiceDataResponse } from "./upgradeService.response";
 import { VenueDataResponse } from "./venue.response";
 import { PartyDatedDataResponse } from "./partyDated.response";
+import { ReviewDataResponse } from "./review.response";
 
 export interface PartyBookingDataResponse {
   id: number;
@@ -27,7 +28,8 @@ export interface PartyBookingDataResponse {
   partyDated: PartyDatedDataResponse;
   venue: VenueDataResponse;
   pricingTotal: number;
-  isPayment: true;
+  isPayment: boolean;
+  review: ReviewDataResponse;
 }
 
 export interface PartyBookingArrayResponse {

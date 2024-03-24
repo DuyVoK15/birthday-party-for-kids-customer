@@ -1,11 +1,10 @@
+import { EyeOutlined } from "@ant-design/icons";
+import { ModalForm } from "@ant-design/pro-components";
 import { CardBody } from "@material-tailwind/react";
 import { Button, Card, Image, Typography } from "antd";
+import ThemeDetail from "./booking/ThemeDetail";
 
-const ThemeCard = ({
-  theme,
-}: {
-  theme: any;
-}) => {
+const ThemeCard = ({ theme }: { theme: any }) => {
   return (
     <Card className="package-card border">
       <Image
@@ -26,7 +25,22 @@ const ThemeCard = ({
             {theme?.themeName}
           </Typography.Title>
         </div>
-        <Button className="mt-2">Chi tiết</Button>
+        {/* <Button className="mt-2">Chi tiết</Button> */}
+        <ModalForm
+          title="Chi tiết"
+          trigger={
+            <Button type="default">
+              <EyeOutlined />
+              Chi tiết
+            </Button>
+          }
+          style={{ padding: 0 }}
+          onFinish={async () => {
+            return true
+          }}
+        >
+          <ThemeDetail theme={theme} />
+        </ModalForm>
       </CardBody>
     </Card>
   );

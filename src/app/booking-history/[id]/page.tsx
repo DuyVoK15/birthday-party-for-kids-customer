@@ -194,6 +194,7 @@ export default function BookingDetail({ params }: { params: any }) {
       const res = await dispatch(createReview(request));
       if (res?.meta?.requestStatus === "fulfilled") {
         message.success("Gửi đánh giá đi thành công!");
+        await fetchBookingById()
         return true;
       } else {
         message.error("Lỗi khi gửi yêu cầu!");
@@ -223,7 +224,7 @@ export default function BookingDetail({ params }: { params: any }) {
   //   );
   // }
 
-  return (
+  return booking !== null ? (
     <div className="container mx-auto mt-10">
       <div className="">
         <Flex justify="space-between" gap={30}>
@@ -656,7 +657,7 @@ export default function BookingDetail({ params }: { params: any }) {
               </Space>
             </div>
 
-            {booking?.status === "COMPLETED" && (
+            {!booking?.review && booking?.status==="COMPLETED" && (
               <div className="h-50 mt-5 rounded-lg p-6 shadow">
                 <Typography.Title
                   style={{ color: "rgb(41 182 246 / var(--tw-bg-opacity))" }}
@@ -698,5 +699,7 @@ export default function BookingDetail({ params }: { params: any }) {
         </Flex>
       </div>
     </div>
+  ) : (
+    <Empty className="pt-10" />
   );
 }

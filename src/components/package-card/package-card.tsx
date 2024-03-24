@@ -1,8 +1,11 @@
 import { Card, CardBody, CardHeader } from "@material-tailwind/react";
 import Image from "next/image";
 import "./package-card.css";
-import { Button, Typography } from "antd";
+import { Button, Flex, Typography } from "antd";
 import { PackageDataResponse } from "@/dtos/response/package.response";
+import { ModalForm } from "@ant-design/pro-components";
+import { EyeOutlined } from "@ant-design/icons";
+import PackageDetail from "../booking/PackageDetail";
 
 export function PackageCard({ pkg }: { pkg: PackageDataResponse }) {
   return (
@@ -32,9 +35,26 @@ export function PackageCard({ pkg }: { pkg: PackageDataResponse }) {
           </Typography>
         </div>
 
-        <Button type="default" size="large" danger>
-          {pkg?.pricing?.toLocaleString() + " VNĐ"}
-        </Button>
+        <Flex gap={10}>
+          <Button type="default" size="large" danger>
+            {pkg?.pricing?.toLocaleString() + " VNĐ"}
+          </Button>
+          <ModalForm
+          title="Chi tiết"
+          trigger={
+            <Button type="default" size="large">
+              <EyeOutlined />
+              Chi tiết
+            </Button>
+          }
+          style={{ padding: 0 }}
+          onFinish={async () => {
+            return true
+          }}
+        >
+          <PackageDetail packageInVenue={pkg} />
+        </ModalForm>
+        </Flex>
       </CardBody>
     </Card>
   );
