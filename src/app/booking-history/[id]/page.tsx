@@ -202,7 +202,7 @@ export default function BookingDetail({ params }: { params: any }) {
     }
   };
 
-  if (loading) {
+  if (loading || booking === null) {
     return (
       <React.Fragment>
         <Skeleton className="container mx-auto mt-10" active />
@@ -235,17 +235,35 @@ export default function BookingDetail({ params }: { params: any }) {
             >
               <Typography.Title
                 style={{
-                  color: booking?.status === "PENDING" ? "red" : "green",
+                  color:
+                    booking?.status === "PENDING"
+                      ? "blue"
+                      : booking?.status === "CANCELLED"
+                        ? "red"
+                        : booking?.status === "COMPLETED"
+                          ? "green"
+                          : "orange",
                   margin: 0,
                 }}
                 level={5}
               >
-                {booking?.status === "PENDING" ? "Chờ xác nhận" : "Đã xác nhận"}
+                {booking?.status === "PENDING"
+                  ? "Đang chờ xác nhận"
+                  : booking?.status === "CANCELLED"
+                    ? "Đã huỷ"
+                    : booking?.status === "COMPLETED"
+                      ? "Đã hoàn thành"
+                      : "Đã được xác nhận"}
               </Typography.Title>
+
               <Typography.Title style={{ margin: 0 }} level={3}>
                 {booking?.status === "PENDING"
-                  ? "Bữa tiệc của bạn đang chờ được Xác Nhận"
-                  : "Bữa tiệc đã được xác nhận"}
+                  ? "Bữa tệc của bạn đang chờ xác nhận"
+                  : booking?.status === "CANCELLED"
+                    ? "Bữa tiệc của bạn đã bị huỷ"
+                    : booking?.status === "COMPLETED"
+                      ? "Bữa tiệc của bạn đã hoàn thành"
+                      : "Bữa tiệc của bạn đã được xác nhận"}
               </Typography.Title>
 
               <Space direction="vertical" size={"middle"}>
@@ -341,66 +359,71 @@ export default function BookingDetail({ params }: { params: any }) {
                           themeInVenue={booking?.themeInVenue}
                         />
                       </ModalForm>
+                      {booking?.status === "CONFIRMED" ||
+                        (booking?.status === "PENDING" && (
+                          <ModalForm
+                            title="Các chủ để khác"
+                            trigger={
+                              <Button type="link">
+                                <SwapOutlined />
+                                Gửi yêu cầu thay đổi
+                              </Button>
+                            }
+                            // form={form}
+                            autoFocusFirstInput
+                            modalProps={{
+                              destroyOnClose: true,
+                              onCancel: () => console.log("run"),
+                            }}
+                            onFinish={async (values) => {
+                              let result: boolean | undefined = false;
+                              result =
+                                await createOneInquiryForChangeThemeInVenue(
+                                  values?.themeId,
+                                );
 
-                      <ModalForm
-                        title="Các chủ để khác"
-                        trigger={
-                          <Button type="link">
-                            <SwapOutlined />
-                            Gửi yêu cầu thay đổi
-                          </Button>
-                        }
-                        // form={form}
-                        autoFocusFirstInput
-                        modalProps={{
-                          destroyOnClose: true,
-                          onCancel: () => console.log("run"),
-                        }}
-                        onFinish={async (values) => {
-                          let result: boolean | undefined = false;
-                          result = await createOneInquiryForChangeThemeInVenue(
-                            values?.themeId,
-                          );
-
-                          return result;
-                        }}
-                      >
-                        {themeInVenueNotChooseList?.length > 0 ? (
-                          <ProFormRadio.Group
-                            name="themeId"
-                            layout="horizontal"
-                            // label='Industry Distribution'
-                            style={{ marginBottom: 10 }}
-                            options={themeInVenueNotChooseList?.map(
-                              (item, index) => ({
-                                label: (
-                                  <Card
-                                    key={index}
-                                    hoverable
-                                    style={{ width: 200, marginBottom: 10 }}
-                                    cover={
-                                      <Image
-                                        style={{
-                                          width: "100%",
-                                          height: 100,
-                                          objectFit: "cover",
-                                        }}
-                                        alt="example"
-                                        src={item?.theme?.themeImgUrl}
-                                      />
-                                    }
-                                  >
-                                    <Card.Meta title={item?.theme?.themeName} />
-                                  </Card>
-                                ),
-                                value: item?.id,
-                              }),
+                              return result;
+                            }}
+                          >
+                            {themeInVenueNotChooseList?.length > 0 ? (
+                              <ProFormRadio.Group
+                                name="themeId"
+                                layout="horizontal"
+                                // label='Industry Distribution'
+                                style={{ marginBottom: 10 }}
+                                options={themeInVenueNotChooseList?.map(
+                                  (item, index) => ({
+                                    label: (
+                                      <Card
+                                        key={index}
+                                        hoverable
+                                        style={{ width: 200, marginBottom: 10 }}
+                                        cover={
+                                          <Image
+                                            style={{
+                                              width: "100%",
+                                              height: 100,
+                                              objectFit: "cover",
+                                            }}
+                                            alt="example"
+                                            src={item?.theme?.themeImgUrl}
+                                          />
+                                        }
+                                      >
+                                        <Card.Meta
+                                          title={item?.theme?.themeName}
+                                        />
+                                      </Card>
+                                    ),
+                                    value: item?.id,
+                                  }),
+                                )}
+                              />
+                            ) : (
+                              <Empty style={{ margin: "auto" }} />
                             )}
-                          />
-                        ) : (
-                          <Empty style={{ margin: "auto" }} />
-                        )}
-                      </ModalForm>
+                          </ModalForm>
+                        ))}
                     </Flex>
                   }
                   align={"center"}
@@ -423,86 +446,89 @@ export default function BookingDetail({ params }: { params: any }) {
                           packageInVenue={booking?.packageInVenue}
                         />
                       </ModalForm>
-                      <ModalForm
-                        title="Các gói dịch vụ khác"
-                        trigger={
-                          <Button type="link">
-                            <SwapOutlined />
-                            Gửi yêu cầu thay đổi
-                          </Button>
-                        }
-                        // form={form}
-                        autoFocusFirstInput
-                        modalProps={{
-                          destroyOnClose: true,
-                          onCancel: () => console.log("run"),
-                        }}
-                        onFinish={async (values) => {
-                          let result: boolean | undefined = false;
-                          result =
-                            await createOneInquiryForChangePackageInVenue(
-                              values?.id,
-                            );
+                      {booking?.status === "CONFIRMED" ||
+                        (booking?.status === "PENDING" && (
+                          <ModalForm
+                            title="Các gói dịch vụ khác"
+                            trigger={
+                              <Button type="link">
+                                <SwapOutlined />
+                                Gửi yêu cầu thay đổi
+                              </Button>
+                            }
+                            // form={form}
+                            autoFocusFirstInput
+                            modalProps={{
+                              destroyOnClose: true,
+                              onCancel: () => console.log("run"),
+                            }}
+                            onFinish={async (values) => {
+                              let result: boolean | undefined = false;
+                              result =
+                                await createOneInquiryForChangePackageInVenue(
+                                  values?.id,
+                                );
 
-                          return result;
-                        }}
-                      >
-                        {packageInVenueNotChooseList?.length > 0 ? (
-                          <ProFormRadio.Group
-                            name="id"
-                            layout="horizontal"
-                            style={{ marginBottom: 10 }}
-                            options={packageInVenueNotChooseList?.map(
-                              (item, index) => ({
-                                label: (
-                                  <Card
-                                    key={index}
-                                    hoverable
-                                    style={{ width: 200, marginBottom: 10 }}
-                                    cover={
-                                      <Image
-                                        style={{
-                                          width: "100%",
-                                          height: 100,
-                                          objectFit: "cover",
-                                        }}
-                                        alt="example"
-                                        src={item?.apackage?.packageImgUrl}
-                                      />
-                                    }
-                                  >
-                                    <Space direction="vertical">
-                                      <Card.Meta
-                                        title={item?.apackage?.packageName}
-                                      />
-                                      <ModalForm
-                                        title="Chi tiết gói dịch vụ"
-                                        trigger={
-                                          <Button
-                                            style={{ padding: 0 }}
-                                            type="link"
-                                          >
-                                            <EyeOutlined />
-                                            Chi tiết gói dịch vụ
-                                          </Button>
+                              return result;
+                            }}
+                          >
+                            {packageInVenueNotChooseList?.length > 0 ? (
+                              <ProFormRadio.Group
+                                name="id"
+                                layout="horizontal"
+                                style={{ marginBottom: 10 }}
+                                options={packageInVenueNotChooseList?.map(
+                                  (item, index) => ({
+                                    label: (
+                                      <Card
+                                        key={index}
+                                        hoverable
+                                        style={{ width: 200, marginBottom: 10 }}
+                                        cover={
+                                          <Image
+                                            style={{
+                                              width: "100%",
+                                              height: 100,
+                                              objectFit: "cover",
+                                            }}
+                                            alt="example"
+                                            src={item?.apackage?.packageImgUrl}
+                                          />
                                         }
-                                        style={{ padding: 0 }}
                                       >
-                                        <PackageInVenueDetail
-                                          packageInVenue={item}
-                                        />
-                                      </ModalForm>
-                                    </Space>
-                                  </Card>
-                                ),
-                                value: item?.id,
-                              }),
+                                        <Space direction="vertical">
+                                          <Card.Meta
+                                            title={item?.apackage?.packageName}
+                                          />
+                                          <ModalForm
+                                            title="Chi tiết gói dịch vụ"
+                                            trigger={
+                                              <Button
+                                                style={{ padding: 0 }}
+                                                type="link"
+                                              >
+                                                <EyeOutlined />
+                                                Chi tiết gói dịch vụ
+                                              </Button>
+                                            }
+                                            style={{ padding: 0 }}
+                                          >
+                                            <PackageInVenueDetail
+                                              packageInVenue={item}
+                                            />
+                                          </ModalForm>
+                                        </Space>
+                                      </Card>
+                                    ),
+                                    value: item?.id,
+                                  }),
+                                )}
+                              />
+                            ) : (
+                              <Empty style={{ margin: "auto" }} />
                             )}
-                          />
-                        ) : (
-                          <Empty style={{ margin: "auto" }} />
-                        )}
-                      </ModalForm>
+                          </ModalForm>
+                        ))}
                     </Flex>
                   }
                   align={"center"}
@@ -607,7 +633,7 @@ export default function BookingDetail({ params }: { params: any }) {
               </Flex>
 
               <Space direction="vertical">
-                {booking?.status === "CONFIRMED" ? (
+                {booking?.isPayment ? (
                   <Typography.Title
                     style={{ color: "green" }}
                     className="m-0"
@@ -629,40 +655,45 @@ export default function BookingDetail({ params }: { params: any }) {
                 )}
               </Space>
             </div>
-            <div className="h-50 mt-5 rounded-lg p-6 shadow">
-              <Typography.Title
-                style={{ color: "rgb(41 182 246 / var(--tw-bg-opacity))" }}
-                className="m-0"
-                level={4}
-              >
-                Viết đánh giá
-              </Typography.Title>
-              <Form
-                onFinish={async (values) => {
-                  let result: undefined | boolean = false;
-                  if (typeof booking?.id !== "undefined") {
-                    result = await createOneReview({
-                      id: booking?.id,
-                      payload: {
-                        reviewMessage: values?.reviewMessage,
-                        rating: values?.rating,
-                      },
-                    });
-                  }
-                  return result;
-                }}
-              >
-                <Form.Item name={"reviewMessage"}>
-                  <Input.TextArea placeholder="Viết đánh giá ..." />
-                </Form.Item>
-                <Form.Item name={"rating"}>
-                  <Rate />
-                </Form.Item>
-                <Form.Item>
-                  <Button htmlType="submit">Gửi đánh giá</Button>
-                </Form.Item>
-              </Form>
-            </div>
+
+            {booking?.status === "COMPLETED" && (
+              <div className="h-50 mt-5 rounded-lg p-6 shadow">
+                <Typography.Title
+                  style={{ color: "rgb(41 182 246 / var(--tw-bg-opacity))" }}
+                  className="m-0"
+                  level={4}
+                >
+                  Viết đánh giá
+                </Typography.Title>
+                <Form
+                  onFinish={async (values) => {
+                    let result: undefined | boolean = false;
+                    if (typeof booking?.id !== "undefined") {
+                      result = await createOneReview({
+                        id: booking?.id,
+                        payload: {
+                          reviewMessage: values?.reviewMessage,
+                          rating: values?.rating,
+                        },
+                      });
+                    }
+                    return result;
+                  }}
+                >
+                  <Form.Item name={"reviewMessage"}>
+                    <Input.TextArea placeholder="Viết đánh giá ..." />
+                  </Form.Item>
+                  <Form.Item name={"rating"}>
+                    <Rate />
+                  </Form.Item>
+                  <Form.Item>
+                    <Button htmlType="submit" type="primary">
+                      Gửi đánh giá
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </div>
+            )}
           </div>
         </Flex>
       </div>

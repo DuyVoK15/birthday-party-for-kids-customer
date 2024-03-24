@@ -27,6 +27,7 @@ export interface PartyBookingDataResponse {
   partyDated: PartyDatedDataResponse;
   venue: VenueDataResponse;
   pricingTotal: number;
+  isPayment: true;
 }
 
 export interface PartyBookingArrayResponse {
