@@ -6,20 +6,23 @@ import {
   getAllThemeInVenue,
   getAllThemeInVenueById,
   getAllThemeInVenueByVenueId,
+  getAllThemeInVenueNotChoose,
   getThemeById,
   updateTheme,
 } from "../action/theme.action";
 import {
   ThemeArrayResponse,
   ThemeDataResponse,
+  ThemeInVenueDataResponse,
 } from "@/dtos/response/theme.response";
 
 interface State {
   themeReponse: ThemeArrayResponse;
   themeList: ThemeDataResponse[] | [];
   themeById: any;
-  themeInVenueList: any;
+  themeInVenueList: ThemeInVenueDataResponse[] | [];
   themeInVenueByVenueId: any;
+  themeInVenueNotChooseList: ThemeInVenueDataResponse[] | []
   createTheme: any;
   updateTheme: any;
   loading: boolean;
@@ -34,6 +37,7 @@ const initialState: State = {
   themeList: [],
   themeInVenueList: [],
   themeInVenueByVenueId: null,
+  themeInVenueNotChooseList: [],
   themeById: null,
   createTheme: null,
   updateTheme: null,
@@ -129,6 +133,17 @@ export const themeSlice = createSlice({
         state.loading = false;
       })
       .addCase(getAllThemeInVenueByVenueId.rejected, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(getAllThemeInVenueNotChoose.pending, (state, action) => {
+        state.loading = true;
+        state.themeInVenueNotChooseList = [];
+      })
+      .addCase(getAllThemeInVenueNotChoose.fulfilled, (state, action) => {
+        state.themeInVenueNotChooseList = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(getAllThemeInVenueNotChoose.rejected, (state, action) => {
         state.loading = false;
       });
     //

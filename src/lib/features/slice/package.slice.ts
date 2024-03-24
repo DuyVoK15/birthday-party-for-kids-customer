@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   getAllPackage,
   getAllPackageInVenueByVenueId,
+  getAllPackageInVenueNotChoose,
   getPackageById,
 } from "../action/package.action";
 import {
@@ -9,12 +10,14 @@ import {
   PackageDataResponse,
   PackageInVenueDataResponse,
 } from "@/dtos/response/package.response";
+import { getAllThemeInVenueNotChoose } from "../action/theme.action";
 
 interface AuthState {
   packageReponse: PackageArrayResponse;
   packageList: PackageDataResponse[] | [];
   packageById: any;
   packageInVenueList: PackageInVenueDataResponse[] | [];
+  packageInVenueNotChooseList: PackageInVenueDataResponse[] | [];
   createPackage: any;
   updatePackage: any;
   loading: boolean;
@@ -28,6 +31,7 @@ const initialState: AuthState = {
   },
   packageList: [],
   packageInVenueList: [],
+  packageInVenueNotChooseList: [],
   packageById: null,
   createPackage: null,
   updatePackage: null,
@@ -72,6 +76,17 @@ export const packageSlice = createSlice({
         state.loading = false;
       })
       .addCase(getAllPackageInVenueByVenueId.rejected, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(getAllPackageInVenueNotChoose.pending, (state, action) => {
+        state.loading = true;
+        state.packageInVenueNotChooseList = [];
+      })
+      .addCase(getAllPackageInVenueNotChoose.fulfilled, (state, action) => {
+        state.packageInVenueNotChooseList = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(getAllPackageInVenueNotChoose.rejected, (state, action) => {
         state.loading = false;
       });
     //

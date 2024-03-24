@@ -1,6 +1,6 @@
 import React from "react";
 import VenueCard from "./VenueCard";
-import { Flex, Spin } from "antd";
+import { Empty, Flex, Spin } from "antd";
 import { VenueDataResponse } from "@/dtos/response/venue.response";
 import { BookingRequest, useBookingContext } from "@/context/BookingContext";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
@@ -50,14 +50,18 @@ const VenueList = ({
   return (
     <Flex className="container mx-auto" vertical>
       <Spin spinning={loading} />
-      {venueList.map((venue: any, index: number) => (
-        <VenueCard
-          key={index}
-          venue={venue}
-          setItem={setItem}
-          bookingData={bookingData}
-        />
-      ))}
+      {venueList && venueList?.length > 0 ? (
+        venueList?.map((venue: any, index: number) => (
+          <VenueCard
+            key={index}
+            venue={venue}
+            setItem={setItem}
+            bookingData={bookingData}
+          />
+        ))
+      ) : (
+        <Empty description="Không có dữ liệu" />
+      )}
     </Flex>
   );
 };

@@ -1,23 +1,31 @@
 import { PartyBookingDataResponse } from "./../../../dtos/response/partyBooking.response";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, isAnyOf } from "@reduxjs/toolkit";
 import {
   createPartyBooking,
   getAllBooking,
   getBookingById,
 } from "../action/partyBooking.action";
 import { createPaymentByBookingId } from "../action/payment.action";
+import {
+  createInquiryForChangePackageInVenue,
+  createInquiryForChangeThemeInVenue,
+} from "../action/inquiry.action";
 
 interface PartyBookingState {
   bookingList: PartyBookingDataResponse[] | [];
   bookingById: PartyBookingDataResponse | null;
   paymentUrl: string;
   loading: boolean;
+  loadingCreate: boolean;
+  loadingPayment: boolean
 }
 const initialState: PartyBookingState = {
   bookingList: [],
   paymentUrl: "",
   bookingById: null,
   loading: false,
+  loadingCreate: false,
+  loadingPayment: false
 };
 
 export const partyBookingSlice = createSlice({
@@ -56,15 +64,42 @@ export const partyBookingSlice = createSlice({
         state.loading = false;
       })
       .addCase(createPaymentByBookingId.pending, (state) => {
-        state.loading = true;
+        state.loadingPayment = true;
       })
       .addCase(createPaymentByBookingId.fulfilled, (state, action) => {
         state.paymentUrl = action.payload;
-        state.loading = false;
+        state.loadingPayment = false;
       })
       .addCase(createPaymentByBookingId.rejected, (state, action) => {
-        state.loading = false;
-      });
+        state.loadingPayment = false;
+      })
+      .addMatcher(
+        isAnyOf(
+          createInquiryForChangeThemeInVenue.pending,
+          createInquiryForChangePackageInVenue.pending,
+        ),
+        (state) => {
+          state.loadingCreate = true;
+        },
+      )
+      .addMatcher(
+        isAnyOf(
+          createInquiryForChangeThemeInVenue.fulfilled,
+          createInquiryForChangePackageInVenue.fulfilled,
+        ),
+        (state) => {
+          state.loadingCreate = false;
+        },
+      )
+      .addMatcher(
+        isAnyOf(
+          createInquiryForChangeThemeInVenue.rejected,
+          createInquiryForChangePackageInVenue.rejected,
+        ),
+        (state) => {
+          state.loadingCreate = false;
+        },
+      );
   },
 });
 
