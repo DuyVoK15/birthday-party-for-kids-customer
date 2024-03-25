@@ -8,7 +8,10 @@ import {
   createInquiryForChangeThemeInVenue,
 } from "@/lib/features/action/inquiry.action";
 import { getAllPackageInVenueNotChoose } from "@/lib/features/action/package.action";
-import { getBookingById } from "@/lib/features/action/partyBooking.action";
+import {
+  cancelBooking,
+  getBookingById,
+} from "@/lib/features/action/partyBooking.action";
 import { createPaymentByBookingId } from "@/lib/features/action/payment.action";
 import { createReview } from "@/lib/features/action/review.action";
 import { getAllThemeInVenueNotChoose } from "@/lib/features/action/theme.action";
@@ -169,6 +172,18 @@ export default function BookingDetail({ params }: { params: any }) {
         message.error("Lỗi khi gửi yêu cầu!");
         return false;
       }
+    }
+  };
+
+  const cancelOneBooking = async (id: number) => {
+    const res = await dispatch(cancelBooking(id));
+    if (res?.meta?.requestStatus === "fulfilled") {
+      await fetchBookingById();
+      message.success("Cancel booking success!");
+      return true;
+    } else {
+      message.error(res?.payload?.message);
+      return false;
     }
   };
 
@@ -567,6 +582,21 @@ export default function BookingDetail({ params }: { params: any }) {
                 />
               </Space>
             </Space>
+            {booking?.status !== "CANCELLED" && (
+              <Flex justify="space-between">
+                <div></div>
+                <Popconfirm
+                  title="Action"
+                  description="Are you sure to cancel this booking?"
+                  onConfirm={() => cancelOneBooking(booking?.id)}
+                  onCancel={() => null}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button danger>Cancel</Button>
+                </Popconfirm>
+              </Flex>
+            )}
           </div>
           <div className="w-1/3" style={{ borderWidth: 2 }}>
             <div className="h-50 rounded-lg p-6 shadow">

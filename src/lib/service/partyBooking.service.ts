@@ -23,4 +23,8 @@ export const partyBookingService = {
     const url = `/api/party-booking/get-party-booking-for-customer-id/${id}`;
     return axiosClient.get(url);
   },
+  cancelBooking: (id: number): Promise<AxiosResponse<any>> => {
+    const url = `/api/party-booking/party-booking-cancel-for-customer/${id}`
+    return axiosClient.put(url)
+  }
 };

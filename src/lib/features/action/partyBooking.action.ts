@@ -41,3 +41,14 @@ export const getBookingById = createAsyncThunk(
     }
   },
 );
+
+export const cancelBooking = createAsyncThunk('partyBooking/cancelBooking', async (id: number, { rejectWithValue }) => {
+  try {
+    const response = await partyBookingService.cancelBooking(id)
+    return response.data
+  } catch (error: any) {
+    const axiosError = error as AxiosError
+    console.log(axiosError)
+    return rejectWithValue(axiosError.response?.data)
+  }
+})
