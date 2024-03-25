@@ -632,28 +632,38 @@ export default function BookingDetail({ params }: { params: any }) {
                 </Typography>
               </Flex>
 
-              <Space direction="vertical">
-                {booking?.isPayment ? (
-                  <Typography.Title
-                    style={{ color: "green" }}
-                    className="m-0"
-                    level={5}
-                  >
-                    Đã thanh toán
-                  </Typography.Title>
-                ) : (
-                  <Popconfirm
-                    title="Xác nhận thanh toán"
-                    description="Bạn có chắc chắn muốn thanh toán?"
-                    onConfirm={createOnePayment}
-                    onCancel={() => null}
-                    okText="Đồng ý"
-                    cancelText="Huỷ"
-                  >
-                    <Button type="primary">Thanh toán</Button>
-                  </Popconfirm>
-                )}
-              </Space>
+              {booking?.status === "PENDING" ? (
+                <Space direction="vertical">
+                  {booking?.isPayment ? (
+                    <Typography.Title
+                      style={{ color: "green" }}
+                      className="m-0"
+                      level={5}
+                    >
+                      Đã thanh toán
+                    </Typography.Title>
+                  ) : (
+                    <Popconfirm
+                      title="Xác nhận thanh toán"
+                      description="Bạn có chắc chắn muốn thanh toán?"
+                      onConfirm={createOnePayment}
+                      onCancel={() => null}
+                      okText="Đồng ý"
+                      cancelText="Huỷ"
+                    >
+                      <Button type="primary">Thanh toán</Button>
+                    </Popconfirm>
+                  )}
+                </Space>
+              ) : (
+                <Typography.Title
+                  style={{ color: "red" }}
+                  className="m-0"
+                  level={5}
+                >
+                  Đã huỷ
+                </Typography.Title>
+              )}
             </div>
 
             {!booking?.review && booking?.status === "COMPLETED" && (
