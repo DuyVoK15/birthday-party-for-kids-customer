@@ -1,5 +1,6 @@
 "use client";
 import { ChildItem, Item } from "@/components/booking/Item";
+import PackageDetail from "@/components/booking/PackageDetail";
 import PackageInVenueDetail from "@/components/booking/PackageInVenueDetail";
 import ThemeInVenueDetail from "@/components/booking/ThemeInVenueDetail";
 import UpgradeServiceBookingDetail from "@/components/booking/UpgradeServiceBookingDetail";
@@ -7,7 +8,6 @@ import {
   createInquiryForChangePackageInVenue,
   createInquiryForChangeThemeInVenue,
 } from "@/lib/features/action/inquiry.action";
-import { getAllPackageInVenueNotChoose } from "@/lib/features/action/package.action";
 import {
   cancelBooking,
   getBookingById,
@@ -58,9 +58,6 @@ export default function BookingDetail({ params }: { params: any }) {
   const themeInVenueNotChooseList = useAppSelector(
     (state) => state.themeReducer.themeInVenueNotChooseList,
   );
-  const packageInVenueNotChooseList = useAppSelector(
-    (state) => state.packageReducer.packageInVenueNotChooseList,
-  );
 
   const fetchBookingById = async () => {
     await dispatch(getBookingById(params?.id)).then((res) => {
@@ -68,46 +65,15 @@ export default function BookingDetail({ params }: { params: any }) {
     });
   };
 
-  const fetchAllThemeInVenueNotChoose = async () => {
-    if (typeof booking?.themeInVenue?.id !== "undefined") {
-      const res = await dispatch(
-        getAllThemeInVenueNotChoose(booking?.themeInVenue?.id),
-      );
-      if (res?.meta?.requestStatus === "fulfilled") {
-        return true;
-      }
-      return false;
-    }
-  };
 
-  const fetchAllPackageInVenueNotChoose = async () => {
-    if (typeof booking?.packageInVenue?.id !== "undefined") {
-      const res = await dispatch(
-        getAllPackageInVenueNotChoose(booking?.packageInVenue?.id),
-      );
-      if (res?.meta?.requestStatus === "fulfilled") {
-        return true;
-      }
-      return false;
-    }
-  };
 
   const fetchInQueue = async () => {
     await fetchBookingById();
   };
 
-  const fetchInQueue2 = async () => {
-    await fetchAllThemeInVenueNotChoose();
-    await fetchAllPackageInVenueNotChoose();
-  };
-
   React.useEffect(() => {
     fetchInQueue();
   }, []);
-
-  React.useEffect(() => {
-    fetchInQueue2();
-  }, [booking]);
 
   const createOnePayment = async () => {
     const res = await dispatch(createPaymentByBookingId(params?.id));
@@ -258,11 +224,11 @@ export default function BookingDetail({ params }: { params: any }) {
                     <div>Thời gian check-in</div>
                     <div className="font-bold">
                       {formatDateto(
-                        booking?.slotInVenueObject?.partyDated?.date,
+                        booking?.date
                       )}
                     </div>
                     <div className="text-sm font-thin text-gray-700">
-                      {`vào lúc ${booking?.slotInVenueObject?.slot?.timeStart}`}
+                      {`vào lúc ${booking?.slotInRoom?.slot?.timeStart}`}
                     </div>
                   </Flex>
                   <Divider className="mx-0 mt-2 h-16" type="vertical" />
@@ -270,11 +236,11 @@ export default function BookingDetail({ params }: { params: any }) {
                     <div>Thời gian check-out</div>
                     <div className="font-bold">
                       {formatDateto(
-                        booking?.slotInVenueObject?.partyDated?.date,
+                        booking?.date
                       )}
                     </div>
                     <div className="text-sm font-thin text-gray-700">
-                      {`vào lúc ${booking?.slotInVenueObject?.slot?.timeEnd}`}
+                      {`vào lúc ${booking?.slotInRoom?.slot?.timeEnd}`}
                     </div>
                   </Flex>
                 </Flex>
@@ -284,7 +250,7 @@ export default function BookingDetail({ params }: { params: any }) {
                   <Flex vertical gap={4}>
                     <div className="font-bold">Địa chỉ</div>
                     <div className="text-sm font-thin text-gray-700">
-                      {booking?.venue?.location}
+                      {booking?.venueObject?.district}
                     </div>
                   </Flex>
                 </Flex>
@@ -300,14 +266,14 @@ export default function BookingDetail({ params }: { params: any }) {
                       width={100}
                       height={100}
                       className="rounded-xl"
-                      src={booking?.venue?.venueImgUrl}
+                      src={booking?.venueObject?.venueImgUrl ?? ""}
                     />
                     <Space direction="vertical">
                       <Typography.Title className="m-0 font-bold" level={4}>
-                        {booking?.venue?.venueName}
+                        {booking?.venueObject?.venueName}
                       </Typography.Title>
                       <div className="text-sm font-thin text-gray-700">
-                        {booking?.venue?.location}
+                        {booking?.venueObject?.district}
                       </div>
                     </Space>
                   </Space>
@@ -320,98 +286,11 @@ export default function BookingDetail({ params }: { params: any }) {
                 />
                 <Item
                   title="Sức chứa tối đa"
-                  description={`${booking?.venue?.capacity} người`}
+                  description={`${booking?.participantAmount} người`}
                 />
                 <Item
                   title="Chi tiết địa điểm"
-                  description={booking?.venue?.venueDescription}
-                />
-                <Item
-                  title="Chi tiết chủ đề"
-                  description={
-                    <Flex gap={5}>
-                      <ModalForm
-                        title="Chủ đề đã chọn"
-                        trigger={
-                          <Button style={{ padding: 0 }} type="link">
-                            <EyeOutlined />
-                            Xem chi tiết
-                          </Button>
-                        }
-                        style={{ padding: 0 }}
-                      >
-                        <ThemeInVenueDetail
-                          themeInVenue={booking?.themeInVenue}
-                        />
-                      </ModalForm>
-                      {booking?.status === "CONFIRMED" ||
-                        (booking?.status === "PENDING" && (
-                          <ModalForm
-                            title="Các chủ để khác"
-                            trigger={
-                              <Button type="link">
-                                <SwapOutlined />
-                                Gửi yêu cầu thay đổi
-                              </Button>
-                            }
-                            // form={form}
-                            autoFocusFirstInput
-                            modalProps={{
-                              destroyOnClose: true,
-                              onCancel: () => console.log("run"),
-                            }}
-                            onFinish={async (values) => {
-                              let result: boolean | undefined = false;
-                              result =
-                                await createOneInquiryForChangeThemeInVenue(
-                                  values?.themeId,
-                                );
-
-                              return result;
-                            }}
-                          >
-                            {themeInVenueNotChooseList?.length > 0 ? (
-                              <ProFormRadio.Group
-                                name="themeId"
-                                layout="horizontal"
-                                // label='Industry Distribution'
-                                style={{ marginBottom: 10 }}
-                                options={themeInVenueNotChooseList?.map(
-                                  (item, index) => ({
-                                    label: (
-                                      <Card
-                                        key={index}
-                                        hoverable
-                                        style={{ width: 200, marginBottom: 10 }}
-                                        cover={
-                                          <Image
-                                            style={{
-                                              width: "100%",
-                                              height: 100,
-                                              objectFit: "cover",
-                                            }}
-                                            alt="example"
-                                            src={item?.theme?.themeImgUrl}
-                                          />
-                                        }
-                                      >
-                                        <Card.Meta
-                                          title={item?.theme?.themeName}
-                                        />
-                                      </Card>
-                                    ),
-                                    value: item?.id,
-                                  }),
-                                )}
-                              />
-                            ) : (
-                              <Empty style={{ margin: "auto" }} />
-                            )}
-                          </ModalForm>
-                        ))}
-                    </Flex>
-                  }
-                  align={"center"}
+                  description={booking?.venueObject?.venueDescription}
                 />
                 <Item
                   title="Chi tiết gói dịch vụ"
@@ -427,8 +306,8 @@ export default function BookingDetail({ params }: { params: any }) {
                         }
                         style={{ padding: 0 }}
                       >
-                        <PackageInVenueDetail
-                          packageInVenue={booking?.packageInVenue}
+                        <PackageDetail
+                          packageInVenue={booking?.packageInBookings?.[0]?.apackage}
                         />
                       </ModalForm>
                       {booking?.status === "CONFIRMED" ||
@@ -457,7 +336,7 @@ export default function BookingDetail({ params }: { params: any }) {
                               return result;
                             }}
                           >
-                            {packageInVenueNotChooseList?.length > 0 ? (
+                            {/* {packageInVenueNotChooseList?.length > 0 ? (
                               <ProFormRadio.Group
                                 name="id"
                                 layout="horizontal"
@@ -511,7 +390,112 @@ export default function BookingDetail({ params }: { params: any }) {
                               />
                             ) : (
                               <Empty style={{ margin: "auto" }} />
-                            )}
+                            )} */}
+                          </ModalForm>
+                        ))}
+                    </Flex>
+                  }
+                  align={"center"}
+                />
+                <Item
+                  title="Chi tiết gói dịch vụ"
+                  description={
+                    <Flex gap={5}>
+                      <ModalForm
+                        title="Gói dịch vụ đã chọn"
+                        trigger={
+                          <Button style={{ padding: 0 }} type="link">
+                            <EyeOutlined />
+                            Xem chi tiết
+                          </Button>
+                        }
+                        style={{ padding: 0 }}
+                      >
+                        <PackageDetail
+                          packageInVenue={booking?.packageInBookings?.[1]?.apackage}
+                        />
+                      </ModalForm>
+                      {booking?.status === "CONFIRMED" ||
+                        (booking?.status === "PENDING" && (
+                          <ModalForm
+                            title="Các gói dịch vụ khác"
+                            trigger={
+                              <Button type="link">
+                                <SwapOutlined />
+                                Gửi yêu cầu thay đổi
+                              </Button>
+                            }
+                            // form={form}
+                            autoFocusFirstInput
+                            modalProps={{
+                              destroyOnClose: true,
+                              onCancel: () => console.log("run"),
+                            }}
+                            onFinish={async (values) => {
+                              let result: boolean | undefined = false;
+                              result =
+                                await createOneInquiryForChangePackageInVenue(
+                                  values?.id,
+                                );
+
+                              return result;
+                            }}
+                          >
+                            {/* {packageInVenueNotChooseList?.length > 0 ? (
+                              <ProFormRadio.Group
+                                name="id"
+                                layout="horizontal"
+                                style={{ marginBottom: 10 }}
+                                options={packageInVenueNotChooseList?.map(
+                                  (item, index) => ({
+                                    label: (
+                                      <Card
+                                        key={index}
+                                        hoverable
+                                        style={{ width: 200, marginBottom: 10 }}
+                                        cover={
+                                          <Image
+                                            style={{
+                                              width: "100%",
+                                              height: 100,
+                                              objectFit: "cover",
+                                            }}
+                                            alt="example"
+                                            src={item?.apackage?.packageImgUrl}
+                                          />
+                                        }
+                                      >
+                                        <Space direction="vertical">
+                                          <Card.Meta
+                                            title={item?.apackage?.packageName}
+                                          />
+                                          <ModalForm
+                                            title="Chi tiết gói dịch vụ"
+                                            trigger={
+                                              <Button
+                                                style={{ padding: 0 }}
+                                                type="link"
+                                              >
+                                                <EyeOutlined />
+                                                Chi tiết gói dịch vụ
+                                              </Button>
+                                            }
+                                            style={{ padding: 0 }}
+                                          >
+                                            <PackageInVenueDetail
+                                              packageInVenue={item}
+                                            />
+                                          </ModalForm>
+                                        </Space>
+                                      </Card>
+                                    ),
+                                    value: item?.id,
+                                  }),
+                                )}
+                              />
+                            ) : (
+                              <Empty style={{ margin: "auto" }} />
+                            )} */}
                           </ModalForm>
                         ))}
                     </Flex>
@@ -625,7 +609,7 @@ export default function BookingDetail({ params }: { params: any }) {
               <Flex className="my-5" justify="space-between">
                 <Typography style={{ fontSize: 19 }}>Tổng số tiền:</Typography>
                 <Typography style={{ fontSize: 19 }} className="font-medium">
-                  {booking?.pricingTotal.toLocaleString("vi-VN", {
+                  {(100000000).toLocaleString("vi-VN", {
                     style: "currency",
                     currency: "VND",
                   })}

@@ -62,7 +62,7 @@ const BookingHistory = () => {
           {venueList.map((item, index) => (
             <div className="rounded-xl" style={{ overflow: "hidden" }}>
               <img
-                src={item?.venueImgUrl}
+                src={item?.venueImgUrl ?? ""}
                 alt="carousel image"
                 style={{
                   width: "100%",
@@ -84,13 +84,13 @@ const BookingHistory = () => {
                       <Avatar
                         shape="square"
                         size={112}
-                        src={item?.venue?.venueImgUrl}
+                        src={item?.venueObject?.venueImgUrl}
                       />
                     }
-                    title={`${item?.venue?.venueName} - ${item?.venue?.location}`}
+                    title={`${item?.venueObject?.venueName} - ${item?.venueObject?.district}`}
                     description={
                       <Space direction="vertical" size={"middle"}>
-                        <div>{`Thời gian: ${item?.slotInVenueObject?.slot?.timeStart} - ${item?.slotInVenueObject?.slot?.timeEnd}, ${item?.partyDated?.date}`}</div>
+                        <div>{`Thời gian: ${item?.slotInRoom?.slot?.timeStart} - ${item?.slotInRoom?.slot?.timeEnd}, ${item?.date}`}</div>
                         {item?.status === "PENDING" ? (
                           <div className="text-blue-300">
                             Đang chờ xác nhận
