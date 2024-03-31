@@ -2,41 +2,36 @@ import { AxiosResponse } from "axios";
 import axiosClient from "./axiosClient";
 import {
   PackageArrayResponse,
-  PackageInVenueArrayResponse,
+  PackageObjectResponse,
 } from "@/dtos/response/package.response";
+import { GetPackageRequest } from "@/dtos/request/package.request";
+import { SERVICE_ENUM } from "@/enums/service";
 
 export const packageService = {
-  getAllPackage: (): Promise<AxiosResponse<PackageArrayResponse>> => {
-    const url = `/api/package/get-all`;
+  getAllPackage: (
+    payload: GetPackageRequest,
+  ): Promise<AxiosResponse<PackageArrayResponse>> => {
+    const url = `/api/package/get-all-package-for-customer/${payload.venueId}?packageType=${payload.packageType}`;
     return axiosClient.get(url);
   },
-  getPackageById: (id: number): Promise<AxiosResponse<any>> => {
-    const url = `/api/package/get-id/${id}`;
-    return axiosClient.get(url);
-  },
-  createPackage: (payload: any): Promise<AxiosResponse<any>> => {
-    const url = `/api/package/create`;
-    return axiosClient.post(url, { ...payload });
-  },
-  updatePackage: (request: {
-    id: number;
-    payload: {
-      packageName: string;
-      packageImgUrl: string;
-      pricing: number;
-    };
-  }): Promise<AxiosResponse<any>> => {
-    const url = `/api/package/update/${request.id}`;
-    return axiosClient.put(url, { ...request.payload });
-  },
-  deletePackage: (id: number): Promise<AxiosResponse<any>> => {
-    const url = `/api/package/delete/${id}`;
-    return axiosClient.delete(url);
-  },
-  getAllPackageInVenueNotChoose: (
+
+  getAllPackageDecor: (
     id: number,
-  ): Promise<AxiosResponse<PackageInVenueArrayResponse>> => {
-    const url = `/api/packageInVenue/get-package-in-venue-id-not-choose/${id}`;
+  ): Promise<AxiosResponse<PackageArrayResponse>> => {
+    const url = `/api/package/get-all-package-for-customer/${id}?packageType=${SERVICE_ENUM.DECORATION}`;
+    return axiosClient.get(url);
+  },
+
+  getAllPackageFood: (
+    id: number,
+  ): Promise<AxiosResponse<PackageArrayResponse>> => {
+    const url = `/api/package/get-all-package-for-customer/${id}?packageType=${SERVICE_ENUM.FOOD}`;
+    return axiosClient.get(url);
+  },
+  getPackageById: (
+    id: number,
+  ): Promise<AxiosResponse<PackageObjectResponse>> => {
+    const url = `/api/package/get-package-for-customer/${id}`;
     return axiosClient.get(url);
   },
 };

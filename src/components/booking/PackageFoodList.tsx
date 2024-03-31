@@ -2,14 +2,14 @@
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import React from "react";
 import { Row, Spin, Typography } from "antd";
-import { BookingRequest, useBookingContext } from "@/context/BookingContext";
 import PackageCard from "./PackageCard";
-import { BookingDataDisplay } from "@/app/booking/page";
-import { PackageInVenueDataResponse } from "@/dtos/response/package.response";
+import { PackageDataResponse } from "@/dtos/response/package.response";
+import { BookingRequest } from "@/dtos/request/partyBooking.request";
+import { BookingDataDisplay } from "@/app/booking/[venueId]/page";
 
 const { Title } = Typography;
 
-export function PackageList({
+export function PackageFoodList({
   bookingData,
   setBookingData,
   bookingDataDisplay,
@@ -24,14 +24,17 @@ export function PackageList({
 }) {
   // ** Disptach API
   const dispatch = useAppDispatch();
-  const packageInVenueList = useAppSelector(
-    (state) => state.packageReducer.packageInVenueList,
+  const packageDecorList = useAppSelector(
+    (state) => state.packageReducer.packageDecorList,
+  );
+  const packageFoodList = useAppSelector(
+    (state) => state.packageReducer.packageFoodList,
   );
   const loading = useAppSelector((state) => state.packageReducer.loading);
 
-  const setItem = (packageInVenue: PackageInVenueDataResponse) => {
-    setBookingData((prev) => ({ ...prev, packageInVenueId: packageInVenue?.id }));
-    setBookingDataDisplay((prev) => ({ ...prev, packageInVenue }));
+  const setItem = (_package: PackageDataResponse) => {
+    setBookingData((prev) => ({ ...prev, packageFoodId: _package?.id }));
+    setBookingDataDisplay((prev) => ({ ...prev, packageFood: _package }));
   };
 
   return (
@@ -42,7 +45,7 @@ export function PackageList({
         tip="Đang chờ tải gói dịch vụ của địa điểm này ..."
       />
 
-      {packageInVenueList.map((pkg: any, idx: number) => (
+      {packageFoodList.map((pkg: PackageDataResponse, idx: number) => (
         <PackageCard
           key={idx}
           pkg={pkg}
@@ -54,4 +57,4 @@ export function PackageList({
   );
 }
 
-export default PackageList;
+export default PackageFoodList;

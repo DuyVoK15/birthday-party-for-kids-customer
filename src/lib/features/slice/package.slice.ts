@@ -1,14 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
   getAllPackage,
-  getAllPackageInVenueByVenueId,
-  getAllPackageInVenueNotChoose,
+  getAllPackageDecor,
+  getAllPackageFood,
   getPackageById,
 } from "../action/package.action";
 import {
   PackageArrayResponse,
   PackageDataResponse,
-  PackageInVenueDataResponse,
 } from "@/dtos/response/package.response";
 import { getAllThemeInVenueNotChoose } from "../action/theme.action";
 
@@ -16,8 +15,8 @@ interface AuthState {
   packageReponse: PackageArrayResponse;
   packageList: PackageDataResponse[] | [];
   packageById: any;
-  packageInVenueList: PackageInVenueDataResponse[] | [];
-  packageInVenueNotChooseList: PackageInVenueDataResponse[] | [];
+  packageDecorList: PackageDataResponse[] | [];
+  packageFoodList: PackageDataResponse[] | [];
   createPackage: any;
   updatePackage: any;
   loading: boolean;
@@ -30,8 +29,8 @@ const initialState: AuthState = {
     data: [],
   },
   packageList: [],
-  packageInVenueList: [],
-  packageInVenueNotChooseList: [],
+  packageDecorList: [],
+  packageFoodList: [],
   packageById: null,
   createPackage: null,
   updatePackage: null,
@@ -55,6 +54,27 @@ export const packageSlice = createSlice({
       .addCase(getAllPackage.rejected, (state, action) => {
         state.loading = false;
       })
+      .addCase(getAllPackageDecor.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getAllPackageDecor.fulfilled, (state, action) => {
+        state.packageDecorList = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(getAllPackageDecor.rejected, (state, action) => {
+        state.loading = false;
+      })
+      //
+      .addCase(getAllPackageFood.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getAllPackageFood.fulfilled, (state, action) => {
+        state.packageFoodList = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(getAllPackageFood.rejected, (state, action) => {
+        state.loading = false;
+      })
       //
       .addCase(getPackageById.pending, (state, action) => {
         state.loading = true;
@@ -65,30 +85,8 @@ export const packageSlice = createSlice({
       })
       .addCase(getPackageById.rejected, (state, action) => {
         state.loading = false;
-      })
-      //
-      .addCase(getAllPackageInVenueByVenueId.pending, (state, action) => {
-        state.loading = true;
-        state.packageInVenueList = [];
-      })
-      .addCase(getAllPackageInVenueByVenueId.fulfilled, (state, action) => {
-        state.packageInVenueList = action.payload.data || [];
-        state.loading = false;
-      })
-      .addCase(getAllPackageInVenueByVenueId.rejected, (state, action) => {
-        state.loading = false;
-      })
-      .addCase(getAllPackageInVenueNotChoose.pending, (state, action) => {
-        state.loading = true;
-        state.packageInVenueNotChooseList = [];
-      })
-      .addCase(getAllPackageInVenueNotChoose.fulfilled, (state, action) => {
-        state.packageInVenueNotChooseList = action.payload.data;
-        state.loading = false;
-      })
-      .addCase(getAllPackageInVenueNotChoose.rejected, (state, action) => {
-        state.loading = false;
       });
+    //
     //
   },
 });
