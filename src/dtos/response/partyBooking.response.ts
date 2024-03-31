@@ -1,12 +1,21 @@
-import { message } from "antd";
-import { USERINFO } from "./auth.response";
-import { PackageInVenueDataResponse } from "./package.response";
-import { SlotInVenueDataResponse } from "./slot.response";
+import { AccountDataResponse } from "./auth.response";
+import {
+  PackageDataResponse,
+  PackageInVenueDataResponse,
+} from "./package.response";
+import { PartyDatedDataResponse } from "./partyDated.response";
+import { SlotInRoomDataResponse } from "./slot.response";
 import { ThemeInVenueDataResponse } from "./theme.response";
 import { UpgradeServiceDataResponse } from "./upgradeService.response";
 import { VenueDataResponse } from "./venue.response";
-import { PartyDatedDataResponse } from "./partyDated.response";
-import { ReviewDataResponse } from "./review.response";
+
+export interface PackageInBookingDataResponse {
+  id: number;
+  createAt: string;
+  updateAt: string;
+  deleteAt: string;
+  apackage: PackageDataResponse;
+}
 
 export interface PartyBookingDataResponse {
   id: number;
@@ -18,28 +27,27 @@ export interface PartyBookingDataResponse {
   email: string;
   phone: string;
   status: string;
-  themeInVenue: ThemeInVenueDataResponse;
-  packageInVenue: PackageInVenueDataResponse;
-  account: USERINFO;
-  upgradeServices: UpgradeServiceDataResponse[] | [];
+  participantAmount: number;
+  date: string;
+  account: AccountDataResponse;
+  upgradeServices: UpgradeServiceDataResponse;
+  packageInBookings: PackageInBookingDataResponse;
+  review: any;
+  slotInRoom: SlotInRoomDataResponse;
   active: boolean;
-  slotInVenueObject: SlotInVenueDataResponse;
-  reviewList: any;
-  partyDated: PartyDatedDataResponse;
-  venue: VenueDataResponse;
-  pricingTotal: number;
+  venueObject: VenueDataResponse;
   isPayment: boolean;
-  review: ReviewDataResponse;
-}
-
-export interface PartyBookingArrayResponse {
-  status: string;
-  message: string;
-  data: PartyBookingDataResponse[] | [];
+  pricingTotal: number;
 }
 
 export interface PartyBookingObjectResponse {
   status: string;
   message: string;
   data: PartyBookingDataResponse;
+}
+
+export interface PartyBookingArrayResponse {
+  status: string;
+  message: string;
+  data: PartyBookingDataResponse[] | [];
 }

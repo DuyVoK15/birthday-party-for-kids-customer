@@ -73,3 +73,30 @@ export interface LOGIN_GOOGLE_RES {
   apiKey: string;
   appName: [];
 }
+
+export interface AccountDataResponse {
+  id: number
+  username: string
+  password: string
+  fullName: string
+  email: string
+  phone: string
+  avatarUrl: string
+  authorities: [
+    {
+      authority: string
+    }
+  ]
+  enabled: boolean
+  accountNonExpired: boolean
+  accountNonLocked: boolean
+  credentialsNonExpired: boolean
+  active: boolean
+}
+
+export interface AccountObjectResponse {
+  status: string
+  message: string
+  data: AccountDataResponse
+}
+
