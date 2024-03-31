@@ -5,31 +5,33 @@ import Meta from "antd/es/card/Meta";
 import { ClockCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { VenueDataResponse } from "@/dtos/response/venue.response";
 import { BookingRequest } from "@/context/BookingContext";
-import { SlotInVenueDataResponse } from "@/dtos/response/slot.response";
 const VenueCard = ({
   venue,
   bookingData,
   setItem,
 }: {
   venue: VenueDataResponse;
-  bookingData: BookingRequest | null;
-  setItem: ({
+  bookingData?: BookingRequest | null;
+  setItem?: ({
     venue,
     slotInVenue,
   }: {
     venue: VenueDataResponse;
-    slotInVenue: SlotInVenueDataResponse;
+    slotInVenue: any;
   }) => void;
 }) => {
   const {
     venueName,
     venueImgUrl,
-    location,
     active,
-    capacity,
     id,
-    slotInVenueList,
     venueDescription,
+    account,
+    city,
+    district,
+    street,
+    ward,
+    roomList,
   } = venue;
 
   return (
@@ -39,8 +41,8 @@ const VenueCard = ({
         title={venueName}
         description={
           <Space direction="vertical">
-            <div>Capacity: {capacity}</div>
-            <div>Location: {location}</div>
+            <div>Capacity: {"capacity"}</div>
+            <div>Location: {"location"}</div>
             <div style={{ width: 700 }}>
               <Popover
                 content={<div style={{ width: 900 }}>{venueDescription}</div>}
@@ -55,8 +57,8 @@ const VenueCard = ({
             <Flex vertical gap={5}>
               <Typography.Title level={5}>Time Slots:</Typography.Title>
               <Space direction="horizontal">
-                {slotInVenueList.map((slotInVenue, index: number) =>
-                  slotInVenue?.status === true ? (
+                {roomList.map((slotInVenue, index: number) =>
+                  slotInVenue?.active === true ? (
                     <Tag
                       key={index}
                       icon={<ClockCircleOutlined />}
@@ -68,7 +70,7 @@ const VenueCard = ({
                   ) : (
                     <Tag
                       onClick={() => {
-                        setItem({ venue, slotInVenue });
+                        // setItem({ venue, slotInVenue });
                       }}
                       key={index}
                       icon={<ClockCircleOutlined />}
@@ -79,8 +81,8 @@ const VenueCard = ({
                       }
                       style={{ padding: "4px 6px" }}
                     >
-                      {slotInVenue?.slot?.timeStart.substring(0, 5)} -{" "}
-                      {slotInVenue?.slot?.timeEnd.substring(0, 5)}
+                      {/* {slotInVenue?.slot?.timeStart.substring(0, 5)} -{" "}
+                      {slotInVenue?.slot?.timeEnd.substring(0, 5)} */}
                     </Tag>
                   ),
                 )}

@@ -1,4 +1,3 @@
-import { BookingRequest, useBookingContext } from "@/context/BookingContext";
 import { ServiceDataResponse } from "@/dtos/response/service.response";
 import { getServiceById } from "@/lib/features/action/service.action";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
@@ -17,7 +16,9 @@ import {
 } from "antd";
 import Meta from "antd/es/card/Meta";
 import { useEffect, useState } from "react";
-import { BookingDataDisplay } from "./booking/page";
+import { BookingDataDisplay } from "./booking/[venueId]/page";
+import { BookingRequest } from "@/dtos/request/partyBooking.request";
+import React from "react";
 
 const ServiceCards = ({
   setBookingData,
@@ -131,7 +132,9 @@ const ServiceCards = ({
           );
           const _totalPriceBooking: number =
             _totalPriceService +
-            Number(bookingDataDisplay?.packageInVenue?.apackage?.pricing);
+            Number(bookingDataDisplay?.packageDeco?.pricing) +
+            Number(bookingDataDisplay?.packageFood?.pricing) +
+            Number(bookingDataDisplay?.room?.pricing);
           setTotalPriceService(_totalPriceService);
           setBookingDataDisplay((prev) => ({
             ...prev,
@@ -149,7 +152,10 @@ const ServiceCards = ({
           }, 0);
           const _totalPriceBooking: number =
             _totalPriceService +
-            Number(bookingDataDisplay?.packageInVenue?.apackage?.pricing);
+            Number(bookingDataDisplay?.packageDeco?.pricing) +
+            Number(bookingDataDisplay?.packageFood?.pricing) +
+            Number(bookingDataDisplay?.room?.pricing);
+          setTotalPriceService(_totalPriceService);
 
           setTotalPriceService(_totalPriceService);
           setBookingDataDisplay((prev) => ({
@@ -166,6 +172,9 @@ const ServiceCards = ({
 
     setOpen(false);
   };
+
+  
+
   console.log("Upgrade:", dataUpgrade);
   console.log("Services:", services);
   const dispatch = useAppDispatch();
@@ -183,81 +192,85 @@ const ServiceCards = ({
     }
   }, [service]);
 
-  return serviceList.map((item, index) => (
-    <Col key={index} span={8}>
-      <Card
-        hoverable
-        style={{ width: 280, alignItems: "center" }}
-        cover={
-          <Avatar
-            style={{ width: 280, height: 300, borderRadius: 0 }}
-            alt="example"
-            src={item?.serviceImgUrl || ""}
-          />
-        }
+  return (
+    <React.Fragment>
+      <Modal
+        open={open}
+        onCancel={() => setOpen(false)}
+        onOk={() => handleOk(service, count)}
       >
-        <Meta
-          title={item?.serviceName || ""}
-          description={`Đơn giá: ${item?.pricing?.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`}
-        />
-        <Modal
-          open={open}
-          onCancel={() => setOpen(false)}
-          onOk={() => handleOk(service, count)}
-        >
-          {!loading ? (
-            <div>
-              <div className="mt-5 bg-cyan-200 p-1">
-                <Avatar
-                  style={{ width: 280, height: 300, borderRadius: 0 }}
-                  alt="example"
-                  src={serviceById?.serviceImgUrl || ""}
-                />
-              </div>
-
-              <Flex className="mt-5 items-center" gap={10}>
-                <Typography>Enter count: </Typography>
-                <InputNumber
-                  size="large"
-                  defaultValue={1}
-                  value={count}
-                  onChange={(e) => setCount(e)}
-                />
-              </Flex>
+        {!loading ? (
+          <div>
+            <div className="mt-5 bg-cyan-200 p-1">
+              <Avatar
+                style={{ width: 280, height: 300, borderRadius: 0 }}
+                alt="example"
+                src={serviceById?.serviceImgUrl || ""}
+              />
             </div>
-          ) : (
-            <Skeleton active style={{ height: 350 }} />
-          )}
-        </Modal>
 
-        <Button
-          onClick={() => {
-            setService(item);
-            setOpen(true);
-          }}
-          type="default"
-          className="mt-5 bg-blue-gray-500"
-          size="large"
-          style={{
-            fontWeight: 700,
-            backgroundColor: "orange",
-            color: "white",
-            alignSelf: "center",
-          }}
-        >
-          ADD{" "}
-          <PlusOutlined
-            color="white"
-            style={{
-              marginLeft: 8,
-              fontWeight: 700,
-              color: "white",
-            }}
-          />
-        </Button>
-      </Card>
-    </Col>
-  ));
+            <Flex className="mt-5 items-center" gap={10}>
+              <Typography>Enter count: </Typography>
+              <InputNumber
+                size="large"
+                defaultValue={1}
+                value={count}
+                onChange={(e) => setCount(e)}
+              />
+            </Flex>
+          </div>
+        ) : (
+          <Skeleton active style={{ height: 350 }} />
+        )}
+      </Modal>
+      {serviceList.map((item, index) => (
+        <Col key={index} span={8}>
+          <Card
+            hoverable
+            style={{ width: 280, alignItems: "center" }}
+            cover={
+              <Avatar
+                style={{ width: 280, height: 300, borderRadius: 0 }}
+                alt="example"
+                src={item?.serviceImgUrl || ""}
+              />
+            }
+          >
+            <Meta
+              title={item?.serviceName || ""}
+              description={`Đơn giá: ${item?.pricing?.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`}
+            />
+
+            <Button
+              onClick={() => {
+                setService(item);
+                setOpen(true);
+              }}
+              type="default"
+              className="mt-5 bg-blue-gray-500"
+              size="large"
+              style={{
+                fontWeight: 700,
+                backgroundColor: "orange",
+                color: "white",
+                alignSelf: "center",
+              }}
+            >
+              ADD{" "}
+              <PlusOutlined
+                color="white"
+                style={{
+                  marginLeft: 8,
+                  fontWeight: 700,
+                  color: "white",
+                }}
+              />
+            </Button>
+          </Card>
+        </Col>
+      ))}
+    </React.Fragment>
+  );
 };
 
 export default ServiceCards;

@@ -34,7 +34,7 @@ export function VenueCards() {
         </Title>
       </div>
       <div className="container mx-auto mt-10">
-        <Carousel autoplay autoplaySpeed={2000}>
+        <Carousel infinite={false} autoplay autoplaySpeed={2000}>
           {venueList.map((venue, idx) => (
             <VenueCard key={idx} venue={venue} />
           ))}

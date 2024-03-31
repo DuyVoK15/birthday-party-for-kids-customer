@@ -1,5 +1,6 @@
 "use client";
 
+import AllVenue from "@/components/all-venues";
 import CourseCard, {
   PackageCard,
 } from "@/components/package-card/package-card";
@@ -57,9 +58,7 @@ const COURSES = [
 export function PackageCards() {
   // ** Disptach API
   const dispatch = useAppDispatch();
-  const packageList = useAppSelector(
-    (state) => state.packageReducer.packageList,
-  );
+  const venueList = useAppSelector((state) => state.venueReducer.venueList);
   const fetchAllPackage = async () => {
     await dispatch(getAllPackage()).then((res) => {
       console.log(JSON.stringify(res, null, 2));
@@ -84,10 +83,8 @@ export function PackageCards() {
           được quyền nâng cấp thêm các dịch vụ{" "}
         </Title>
       </div>
-      <div className="container mx-auto mt-12 grid grid-cols-1 gap-x-10 gap-y-24 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-14">
-        {packageList?.map((item, idx) => (
-          <PackageCard key={idx} pkg={item} />
-        ))}
+      <div className="container mx-auto mt-12">
+        <AllVenue venueList={venueList} />
       </div>
     </section>
   );
