@@ -4,9 +4,9 @@ import { AxiosError } from "axios";
 
 export const getAllService = createAsyncThunk(
   "service/getAllService",
-  async (_, { rejectWithValue }) => {
+  async (id: number, { rejectWithValue }) => {
     try {
-      const response = await serviceService.getAllService();
+      const response = await serviceService.getAllService(id);
       return response.data;
     } catch (error: any) {
       const axiosError = error as AxiosError;

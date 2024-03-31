@@ -6,8 +6,8 @@ import {
 } from "@/dtos/response/service.response";
 
 export const serviceService = {
-  getAllService: (): Promise<AxiosResponse<ServiceArrayResponse>> => {
-    const url = `/api/services/getAll-service`;
+  getAllService: (id: number): Promise<AxiosResponse<ServiceArrayResponse>> => {
+    const url = `/api/services/getAll-service-for-customer-by-venue/${id}`;
     return axiosClient.get(url);
   },
   getServiceById: (
