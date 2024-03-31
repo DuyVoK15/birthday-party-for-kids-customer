@@ -7,6 +7,7 @@ export interface SlotDataResponse {
   active: boolean
 }
 export interface SlotInRoomDataResponse {
+  capacity: any
   id: number
   active: boolean
   status: boolean

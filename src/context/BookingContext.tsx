@@ -3,11 +3,11 @@ import { ServiceDataResponse } from "@/dtos/response/service.response";
 import { VenueDataResponse } from "@/dtos/response/venue.response";
 import React, { createContext, useState, useContext, FC } from "react";
 
-export interface DataUpgrade {
+interface DataUpgrade {
   serviceId: number;
   count: number;
 }
-export interface BookingRequest {
+interface BookingRequest {
   kidName?: string;
   kidDOB?: string;
   email?: string;

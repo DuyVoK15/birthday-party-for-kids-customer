@@ -2,12 +2,9 @@ import React from "react";
 import VenueCard from "./VenueCard";
 import { Empty, Flex, Spin } from "antd";
 import { VenueDataResponse } from "@/dtos/response/venue.response";
-import { BookingRequest, useBookingContext } from "@/context/BookingContext";
+import { BookingRequest } from "@/context/BookingContext";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { getAllThemeInVenueByVenueId } from "@/lib/features/action/theme.action";
-import { BookingDataDisplay } from "@/app/booking/page";
-import { ThemeInVenueDataResponse } from "@/dtos/response/theme.response";
-import { SlotInVenueDataResponse } from "@/dtos/response/slot.response";
 
 const VenueList = ({
   venueList,
@@ -21,9 +18,9 @@ const VenueList = ({
   bookingData: BookingRequest | null;
   setBookingData: React.Dispatch<React.SetStateAction<BookingRequest | null>>;
   setVenue: React.Dispatch<React.SetStateAction<VenueDataResponse | null>>;
-  bookingDataDisplay: BookingDataDisplay | null;
+  bookingDataDisplay: any | null;
   setBookingDataDisplay: React.Dispatch<
-    React.SetStateAction<BookingDataDisplay | null>
+    React.SetStateAction<any | null>
   >;
 }) => {
   const dispatch = useAppDispatch();
@@ -40,11 +37,11 @@ const VenueList = ({
     slotInVenue,
   }: {
     venue: VenueDataResponse;
-    slotInVenue: SlotInVenueDataResponse;
+    slotInVenue: any;
   }) => {
     setVenue(venue);
     setBookingData((prev) => ({ ...prev, slotInVenueId: slotInVenue?.id }));
-    setBookingDataDisplay((prev) => ({ ...prev, slotInVenue }));
+    setBookingDataDisplay((prev: any) => ({ ...prev, slotInVenue }));
   };
 
   return (
