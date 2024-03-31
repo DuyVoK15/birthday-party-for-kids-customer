@@ -31,6 +31,7 @@ export const roomSlice = createSlice({
     builder
       .addCase(getAllRoomCheckSlot.pending, (state, action) => {
         state.loading = true;
+        state.roomList = [];
       })
       .addCase(getAllRoomCheckSlot.fulfilled, (state, action) => {
         state.roomReponse = action.payload;

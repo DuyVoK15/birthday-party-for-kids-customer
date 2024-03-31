@@ -1,4 +1,5 @@
 import { SlotInRoomDataResponse } from "./slot.response";
+import { VenueDataResponse } from "./venue.response";
 
 export interface RoomDataResponse {
   id: number;
@@ -11,6 +12,7 @@ export interface RoomDataResponse {
   pricing: number;
   slotInRoomList: SlotInRoomDataResponse[] | [];
   active: boolean;
+  venueInfo: VenueDataResponse;
 }
 
 export interface RoomArrayResponse {
