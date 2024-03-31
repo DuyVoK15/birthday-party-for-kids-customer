@@ -1,8 +1,5 @@
 import { AccountDataResponse } from "./auth.response";
-import {
-  PackageDataResponse,
-  PackageInVenueDataResponse,
-} from "./package.response";
+import { PackageDataResponse } from "./package.response";
 import { PartyDatedDataResponse } from "./partyDated.response";
 import { SlotInRoomDataResponse } from "./slot.response";
 import { ThemeInVenueDataResponse } from "./theme.response";
@@ -18,6 +15,7 @@ export interface PackageInBookingDataResponse {
 }
 
 export interface PartyBookingDataResponse {
+  themeInVenue: ThemeInVenueDataResponse | undefined;
   id: number;
   createAt: string;
   updateAt: string;
@@ -30,8 +28,8 @@ export interface PartyBookingDataResponse {
   participantAmount: number;
   date: string;
   account: AccountDataResponse;
-  upgradeServices: UpgradeServiceDataResponse;
-  packageInBookings: PackageInBookingDataResponse;
+  upgradeServices: UpgradeServiceDataResponse[] | [];
+  packageInBookings: PackageInBookingDataResponse[] | [];
   review: any;
   slotInRoom: SlotInRoomDataResponse;
   active: boolean;

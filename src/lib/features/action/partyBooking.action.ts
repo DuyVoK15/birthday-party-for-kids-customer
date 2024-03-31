@@ -1,4 +1,4 @@
-import { BookingRequest } from "@/context/BookingContext";
+import { BookingRequest } from "@/dtos/request/partyBooking.request";
 import { partyBookingService } from "@/lib/service/partyBooking.service";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";

@@ -1,10 +1,10 @@
 import { AxiosResponse } from "axios";
 import axiosClient from "./axiosClient";
-import { BookingRequest } from "@/context/BookingContext";
 import {
   PartyBookingArrayResponse,
   PartyBookingObjectResponse,
 } from "@/dtos/response/partyBooking.response";
+import { BookingRequest } from "@/dtos/request/partyBooking.request";
 
 export const partyBookingService = {
   createPartyBooking: (
@@ -20,11 +20,11 @@ export const partyBookingService = {
   getBookingById: (
     id: number,
   ): Promise<AxiosResponse<PartyBookingObjectResponse>> => {
-    const url = `/api/party-booking/get-party-booking-for-customer-id/${id}`;
+    const url = `/api/party-booking/get-by-id-for-customer/${id}`;
     return axiosClient.get(url);
   },
   cancelBooking: (id: number): Promise<AxiosResponse<any>> => {
-    const url = `/api/party-booking/party-booking-cancel-for-customer/${id}`
-    return axiosClient.put(url)
-  }
+    const url = `/api/party-booking/cancel-party-booking-for-customer/${id}`;
+    return axiosClient.put(url);
+  },
 };
