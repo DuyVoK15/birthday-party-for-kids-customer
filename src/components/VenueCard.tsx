@@ -4,7 +4,6 @@ import { Avatar, Card, Flex, Popover, Space, Tag, Typography } from "antd";
 import Meta from "antd/es/card/Meta";
 import { ClockCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { VenueDataResponse } from "@/dtos/response/venue.response";
-import { BookingRequest } from "@/context/BookingContext";
 import Link from "next/link";
 const VenueCard = ({ venue }: { venue: VenueDataResponse }) => {
   const {
