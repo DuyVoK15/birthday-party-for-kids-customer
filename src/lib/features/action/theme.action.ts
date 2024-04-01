@@ -101,20 +101,6 @@ export const getAllThemeInVenueById = createAsyncThunk(
   },
 );
 
-export const getAllThemeInVenueByVenueId = createAsyncThunk(
-  "theme/getAllThemeInVenueByVenueId",
-  async (id: number, { rejectWithValue }) => {
-    try {
-      const response = await venueService.getAllThemeInVenueByVenueId(id);
-      return response.data;
-    } catch (error: any) {
-      const axiosError = error as AxiosError;
-      console.log(axiosError);
-      return rejectWithValue(axiosError.response?.data);
-    }
-  },
-);
-
 export const getAllThemeInVenueNotChoose = createAsyncThunk(
   "theme/getAllThemeInVenueNotChoose",
   async (id: number, { rejectWithValue }) => {
