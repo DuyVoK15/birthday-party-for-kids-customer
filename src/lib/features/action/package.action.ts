@@ -6,9 +6,9 @@ import { AxiosError } from "axios";
 
 export const getAllPackage = createAsyncThunk(
   "package/getAllPackage",
-  async (payload: GetPackageRequest, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await packageService.getAllPackage(payload);
+      const response = await packageService.getAllPackage();
       return response.data;
     } catch (error: any) {
       const axiosError = error as AxiosError;
