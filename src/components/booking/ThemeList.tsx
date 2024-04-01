@@ -2,10 +2,10 @@
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import React from "react";
 import { Row, Spin, Typography } from "antd";
-import { BookingRequest, useBookingContext } from "@/context/BookingContext";
 import ThemeCard from "./ThemeCard";
-import { BookingDataDisplay } from "@/app/booking/page";
 import { ThemeInVenueDataResponse } from "@/dtos/response/theme.response";
+import { BookingRequest } from "@/dtos/request/partyBooking.request";
+import { BookingDataDisplay } from "@/app/booking/[venueId]/page";
 
 const { Title } = Typography;
 
