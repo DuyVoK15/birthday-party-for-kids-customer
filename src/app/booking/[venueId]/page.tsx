@@ -503,7 +503,7 @@ export default function Booking({ params }: { params: any }) {
             </React.Fragment>
           ) : (
             <React.Fragment>
-              {activeStep + 1 === 1? (
+              {activeStep + 1 === 1 ? (
                 <div className="container mx-auto">
                   <Typography.Title level={3}>Chọn một ngày</Typography.Title>
                   <DatePicker
@@ -568,11 +568,13 @@ export default function Booking({ params }: { params: any }) {
                       email,
                       phone,
                       participantAmount,
+                      reservationAgent,
                     }: {
                       kidName: string;
                       kidDOB: string;
                       email: string;
                       phone: string;
+                      reservationAgent: string;
                       participantAmount: number;
                     }) => {
                       console.log(kidName, kidDOB, email, phone);
@@ -582,6 +584,7 @@ export default function Booking({ params }: { params: any }) {
                         kidDOB,
                         email,
                         phone,
+                        reservationAgent,
                         participantAmount: Number(participantAmount),
                       }));
                       setBookingDataDisplay((prev) => ({
@@ -590,6 +593,7 @@ export default function Booking({ params }: { params: any }) {
                         kidDOB,
                         email,
                         phone,
+                        reservationAgent,
                         participantAmount: Number(participantAmount),
                       }));
                       handleNext();
@@ -666,6 +670,23 @@ export default function Booking({ params }: { params: any }) {
                       />
                     </ProForm.Group>
                     <ProForm.Group>
+                      <ProFormText
+                        name={"reservationAgent"}
+                        label={"Tên của bạn"}
+                        width={"sm"}
+                        placeholder={"Tên của bạn"}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng nhập trường này",
+                          },
+                        ]}
+                        initialValue={
+                          typeof bookingData?.reservationAgent !== "undefined"
+                            ? bookingData?.reservationAgent
+                            : userInfo?.data?.fullName ?? ""
+                        }
+                      />
                       <ProFormText
                         name={"email"}
                         label={"Email của bạn"}
@@ -791,7 +812,7 @@ export default function Booking({ params }: { params: any }) {
                                 padding: 4,
                                 backgroundColor: "red",
                                 borderRadius: 100,
-                                color: 'white'
+                                color: "white",
                               }}
                             />
                           </Card>

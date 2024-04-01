@@ -25,6 +25,7 @@ export interface PartyBookingDataResponse {
   email: string;
   phone: string;
   status: string;
+  reservationAgent: string;
   participantAmount: number;
   date: string;
   account: AccountDataResponse;

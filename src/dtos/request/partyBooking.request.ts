@@ -5,9 +5,10 @@ export interface DataUpgrade {
 export interface BookingRequest {
   kidName?: string;
   kidDOB?: string;
+  participantAmount?: number;
+  reservationAgent?: string;
   email?: string;
   phone?: string;
-  participantAmount?: number;
   packageDecoId?: number;
   packageFoodId?: number;
   slotInRoomId?: number;
