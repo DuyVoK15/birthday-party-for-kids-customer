@@ -2,9 +2,9 @@ import React from "react";
 import VenueCard from "./VenueCard";
 import { Empty, Flex, Spin } from "antd";
 import { VenueDataResponse } from "@/dtos/response/venue.response";
-import { BookingRequest } from "@/context/BookingContext";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { getAllThemeInVenueByVenueId } from "@/lib/features/action/theme.action";
+import { BookingRequest } from "@/dtos/request/partyBooking.request";
+import { SlotInRoomDataResponse } from "@/dtos/response/slot.response";
 
 const VenueList = ({
   venueList,
@@ -19,29 +19,21 @@ const VenueList = ({
   setBookingData: React.Dispatch<React.SetStateAction<BookingRequest | null>>;
   setVenue: React.Dispatch<React.SetStateAction<VenueDataResponse | null>>;
   bookingDataDisplay: any | null;
-  setBookingDataDisplay: React.Dispatch<
-    React.SetStateAction<any | null>
-  >;
+  setBookingDataDisplay: React.Dispatch<React.SetStateAction<any | null>>;
 }) => {
   const dispatch = useAppDispatch();
   const loading = useAppSelector((state) => state.venueReducer.loading);
 
-  const fetchAllThemeInVenue = async (id: number) => {
-    await dispatch(getAllThemeInVenueByVenueId(id)).then((res) => {
-      console.log(JSON.stringify(res, null, 2));
-    });
-  };
-
   const setItem = ({
     venue,
-    slotInVenue,
+    slotInRoom,
   }: {
     venue: VenueDataResponse;
-    slotInVenue: any;
+    slotInRoom: SlotInRoomDataResponse;
   }) => {
     setVenue(venue);
-    setBookingData((prev) => ({ ...prev, slotInVenueId: slotInVenue?.id }));
-    setBookingDataDisplay((prev: any) => ({ ...prev, slotInVenue }));
+    setBookingData((prev) => ({ ...prev, slotInRoomId: slotInRoom?.id }));
+    setBookingDataDisplay((prev: any) => ({ ...prev, slotInRoom }));
   };
 
   return (
