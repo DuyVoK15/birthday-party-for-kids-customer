@@ -4,7 +4,7 @@ import { Avatar, Card, Flex, Popover, Space, Tag, Typography } from "antd";
 import Meta from "antd/es/card/Meta";
 import { ClockCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { VenueDataResponse } from "@/dtos/response/venue.response";
-import { BookingRequest } from "@/context/BookingContext";
+import { BookingRequest } from "@/dtos/request/partyBooking.request";
 const VenueCard = ({
   venue,
   bookingData,
@@ -14,10 +14,10 @@ const VenueCard = ({
   bookingData?: BookingRequest | null;
   setItem?: ({
     venue,
-    slotInVenue,
+    slotInRoom,
   }: {
     venue: VenueDataResponse;
-    slotInVenue: any;
+    slotInRoom: any;
   }) => void;
 }) => {
   const {
@@ -57,8 +57,8 @@ const VenueCard = ({
             <Flex vertical gap={5}>
               <Typography.Title level={5}>Time Slots:</Typography.Title>
               <Space direction="horizontal">
-                {roomList.map((slotInVenue, index: number) =>
-                  slotInVenue?.active === true ? (
+                {roomList.map((slotInRoomId, index: number) =>
+                  slotInRoomId?.active === true ? (
                     <Tag
                       key={index}
                       icon={<ClockCircleOutlined />}
@@ -75,7 +75,7 @@ const VenueCard = ({
                       key={index}
                       icon={<ClockCircleOutlined />}
                       color={
-                        slotInVenue?.id === bookingData?.slotInVenueId
+                        slotInRoomId?.id === bookingData?.slotInRoomId
                           ? "gold-inverse"
                           : "cyan"
                       }
