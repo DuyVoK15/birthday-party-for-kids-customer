@@ -1,4 +1,4 @@
-import { DataUpgradeDisplay } from "@/app/booking/page";
+import { DataUpgradeDisplay } from "@/app/booking/[venueId]/page";
 import { Card, Flex, Image, Space, Typography } from "antd";
 import React from "react";
 
