@@ -8,10 +8,8 @@ import { GetPackageRequest } from "@/dtos/request/package.request";
 import { SERVICE_ENUM } from "@/enums/service";
 
 export const packageService = {
-  getAllPackage: (
-    payload: GetPackageRequest,
-  ): Promise<AxiosResponse<PackageArrayResponse>> => {
-    const url = `/api/package/get-all-package-for-customer/${payload.venueId}?packageType=${payload.packageType}`;
+  getAllPackage: (): Promise<AxiosResponse<PackageArrayResponse>> => {
+    const url = `/api/package/get-all-package-for-customer`;
     return axiosClient.get(url);
   },
 
