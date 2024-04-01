@@ -1,4 +1,3 @@
-import { BookingRequest } from "@/context/BookingContext";
 import { ThemeInVenueDataResponse } from "@/dtos/response/theme.response";
 import { imageUrlIfUndefined } from "@/utils/images";
 import { EyeOutlined } from "@ant-design/icons";
@@ -6,6 +5,7 @@ import { ModalForm } from "@ant-design/pro-components";
 import { Button, Card, Col, Flex, Image } from "antd";
 import Meta from "antd/es/card/Meta";
 import ThemeDetail from "./ThemeDetail";
+import { BookingRequest } from "@/dtos/request/partyBooking.request";
 
 const ThemeCard = ({
   themeInVenue,
@@ -20,7 +20,7 @@ const ThemeCard = ({
 
   return (
     <Col span={6}>
-      <Card
+      {/* <Card
         hoverable
         style={{
           bottom: id === bookingData?.themeInVenueId ? 10 : 0,
@@ -70,7 +70,7 @@ const ThemeCard = ({
             {id === bookingData?.themeInVenueId ? "Đang chọn" : "Chọn"}
           </Button>
         </Flex>
-      </Card>
+      </Card> */}
     </Col>
   );
 };
