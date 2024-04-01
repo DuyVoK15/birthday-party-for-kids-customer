@@ -5,7 +5,6 @@ import {
   getAllTheme,
   getAllThemeInVenue,
   getAllThemeInVenueById,
-  getAllThemeInVenueByVenueId,
   getAllThemeInVenueNotChoose,
   getThemeById,
   updateTheme,
@@ -22,7 +21,7 @@ interface State {
   themeById: any;
   themeInVenueList: ThemeInVenueDataResponse[] | [];
   themeInVenueByVenueId: any;
-  themeInVenueNotChooseList: ThemeInVenueDataResponse[] | []
+  themeInVenueNotChooseList: ThemeInVenueDataResponse[] | [];
   createTheme: any;
   updateTheme: any;
   loading: boolean;
@@ -122,17 +121,6 @@ export const themeSlice = createSlice({
         state.loading = false;
       })
       .addCase(getAllThemeInVenueById.rejected, (state, action) => {
-        state.loading = false;
-      })
-      .addCase(getAllThemeInVenueByVenueId.pending, (state, action) => {
-        state.loading = true;
-        state.themeInVenueList = [];
-      })
-      .addCase(getAllThemeInVenueByVenueId.fulfilled, (state, action) => {
-        state.themeInVenueList = action.payload.data;
-        state.loading = false;
-      })
-      .addCase(getAllThemeInVenueByVenueId.rejected, (state, action) => {
         state.loading = false;
       })
       .addCase(getAllThemeInVenueNotChoose.pending, (state, action) => {
