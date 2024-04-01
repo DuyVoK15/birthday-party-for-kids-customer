@@ -1,8 +1,6 @@
-"use client";
+"use client";;
 import { ChildItem, Item } from "@/components/booking/Item";
 import PackageDetail from "@/components/booking/PackageDetail";
-import PackageInVenueDetail from "@/components/booking/PackageInVenueDetail";
-import ThemeInVenueDetail from "@/components/booking/ThemeInVenueDetail";
 import UpgradeServiceBookingDetail from "@/components/booking/UpgradeServiceBookingDetail";
 import {
   createInquiryForChangePackageInVenue,
@@ -14,7 +12,6 @@ import {
 } from "@/lib/features/action/partyBooking.action";
 import { createPaymentByBookingId } from "@/lib/features/action/payment.action";
 import { createReview } from "@/lib/features/action/review.action";
-import { getAllThemeInVenueNotChoose } from "@/lib/features/action/theme.action";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { formatDateto } from "@/utils/format";
 import {
@@ -23,15 +20,9 @@ import {
   EyeOutlined,
   SwapOutlined,
 } from "@ant-design/icons";
+import { ModalForm } from "@ant-design/pro-components";
 import {
-  ModalForm,
-  ProFormCheckbox,
-  ProFormRadio,
-} from "@ant-design/pro-components";
-import {
-  Avatar,
   Button,
-  Card,
   Divider,
   Empty,
   Flex,
@@ -45,7 +36,7 @@ import {
   Typography,
   message,
 } from "antd";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 
 export default function BookingDetail({ params }: { params: any }) {
