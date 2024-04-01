@@ -503,7 +503,7 @@ export default function Booking({ params }: { params: any }) {
             </React.Fragment>
           ) : (
             <React.Fragment>
-              {activeStep + 1 === 111 ? (
+              {activeStep + 1 === 1? (
                 <div className="container mx-auto">
                   <Typography.Title level={3}>Chọn một ngày</Typography.Title>
                   <DatePicker
@@ -735,7 +735,7 @@ export default function Booking({ params }: { params: any }) {
                     />
                   </div>
                 </React.Fragment>
-              ) : activeStep + 1 === 1 ? (
+              ) : activeStep + 1 === 5 ? (
                 <div className="mt-10 w-full">
                   <Title level={3}>Nâng cấp dịch vụ</Title>
                   <Flex gap={10} justify="space-between">
