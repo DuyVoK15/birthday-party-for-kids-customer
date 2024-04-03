@@ -10,13 +10,10 @@ export default function RootApplication() {
     <div className="container mx-auto">
       <Hero />
 
-      <div className="mt-80">   
-        <VenueCards />
-        <Divider className="mt-10" />
-        <PackageCards />
-        <Divider className="mt-10" />
-        <ThemeCards />
-      </div>
+      <VenueCards />
+      <Divider className="mt-10" />
+      <PackageCards />
+      <Divider className="mt-10" />
     </div>
   );
 }

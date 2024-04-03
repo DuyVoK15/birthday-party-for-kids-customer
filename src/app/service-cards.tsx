@@ -21,6 +21,7 @@ import { BookingRequest } from "@/dtos/request/partyBooking.request";
 import React from "react";
 
 const ServiceCards = ({
+  venueId,
   setBookingData,
   services,
   setServices,
@@ -33,6 +34,7 @@ const ServiceCards = ({
   totalPriceBooking,
   setTotalPriceBooking,
 }: {
+  venueId: number;
   setBookingData: React.Dispatch<React.SetStateAction<BookingRequest | null>>;
   services: { service: ServiceDataResponse; count: number }[] | [];
   setServices: React.Dispatch<
@@ -173,8 +175,6 @@ const ServiceCards = ({
     setOpen(false);
   };
 
-  
-
   console.log("Upgrade:", dataUpgrade);
   console.log("Services:", services);
   const dispatch = useAppDispatch();
@@ -183,7 +183,7 @@ const ServiceCards = ({
     (state) => state.serviceReducer.serviceByIdList,
   );
   const openAndServiceOptionById = async (id: number) => {
-    await dispatch(getServiceById(id));
+    await dispatch(getServiceById({ venueId, serviceId: id }));
   };
 
   useEffect(() => {
@@ -210,7 +210,7 @@ const ServiceCards = ({
             </div>
 
             <Flex className="mt-5 items-center" gap={10}>
-              <Typography>Enter count: </Typography>
+              <Typography>Số lượng: </Typography>
               <InputNumber
                 size="large"
                 defaultValue={1}

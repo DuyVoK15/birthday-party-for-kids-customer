@@ -11,6 +11,7 @@ import AuthProvider from "./AuthProvider";
 import { BookingProvider } from "@/context/BookingContext";
 import { ConfigProvider } from "antd";
 import en_US from "antd/locale/en_US";
+import vi_VN from "antd/locale/vi_VN";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -41,7 +42,7 @@ export default function RootLayout({
       </head>
       <ThemeProvider theme={theme}>
         <body className={roboto.className}>
-          <ConfigProvider locale={en_US}>
+          <ConfigProvider locale={vi_VN}>
             <MessageProvider>
               <StoreProvider>
                 <AuthProvider>
