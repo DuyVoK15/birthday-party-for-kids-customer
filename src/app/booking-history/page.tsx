@@ -109,7 +109,7 @@ const BookingHistory = () => {
                     style={{ alignSelf: "flex-end", margin: 0 }}
                     level={3}
                   >
-                    {item?.pricingTotal?.toLocaleString("vi-VN", {
+                    {item?.totalPrice?.toLocaleString("vi-VN", {
                       style: "currency",
                       currency: "VND",
                     })}

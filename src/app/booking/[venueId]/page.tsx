@@ -149,13 +149,13 @@ export default function Booking({ params }: { params: any }) {
 
   const fetchAllRoomCheckSlot = async () => {
     const res = await dispatch(
-      getAllRoomCheckSlot({ date: dateQuery, venueId: params.venueId }),
+      getAllRoomCheckSlot({ date: dateQuery, venueId }),
     );
   };
 
   React.useEffect(() => {
     fetchAllRoomCheckSlot();
-  }, [dateQuery, params?.venueId]);
+  }, [dateQuery, venueId]);
 
   React.useEffect(() => {
     setBookingData((prev) => ({
@@ -506,15 +506,26 @@ export default function Booking({ params }: { params: any }) {
               {activeStep + 1 === 1 ? (
                 <div className="container mx-auto">
                   <Typography.Title level={3}>Chọn một ngày</Typography.Title>
-                  <DatePicker
-                    format="YYYY-MM-DD"
-                    // disabledDate={disabledDate}
-                    // disabledTime={disabledDateTime}
-                    // showTime={{ defaultValue: dayjs("00:00:00", "HH:mm:ss") }}
-                    // defaultValue={dayjs(dateQuery)}
-                    value={dayjs(dateQuery)}
-                    onChange={onChange}
-                  />
+                  <Flex align="center" gap={20}>
+                    <DatePicker
+                      format="YYYY-MM-DD"
+                      // disabledDate={disabledDate}
+                      // disabledTime={disabledDateTime}
+                      // showTime={{ defaultValue: dayjs("00:00:00", "HH:mm:ss") }}
+                      // defaultValue={dayjs(dateQuery)}
+                      value={dayjs(dateQuery)}
+                      onChange={onChange}
+                    />
+                    <Flex gap={10}>
+                      {/* <Typography.Title style={{margin: 0}} level={4}>
+                        Ngày được chọn:{" "}
+                      </Typography.Title> */}
+                      <Typography.Title style={{margin: 0}} level={4}>
+                        {bookingDataDisplay?.date}
+                      </Typography.Title>
+                    </Flex>
+                  </Flex>
+
                   <Typography.Title level={3}>
                     Chọn phòng và khung giờ
                   </Typography.Title>
@@ -774,6 +785,7 @@ export default function Booking({ params }: { params: any }) {
                         setTotalPriceService={setTotalPriceService}
                         totalPriceBooking={totalPriceBooking}
                         setTotalPriceBooking={setTotalPriceBooking}
+                        venueId={venueId}
                       />
                     </Row>
                     <Flex vertical gap={15}>

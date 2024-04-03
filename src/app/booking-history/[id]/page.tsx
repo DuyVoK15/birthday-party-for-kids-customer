@@ -600,7 +600,7 @@ export default function BookingDetail({ params }: { params: any }) {
               <Flex className="my-5" justify="space-between">
                 <Typography style={{ fontSize: 19 }}>Tổng số tiền:</Typography>
                 <Typography style={{ fontSize: 19 }} className="font-medium">
-                  {(100000000).toLocaleString("vi-VN", {
+                  {booking?.totalPrice?.toLocaleString("vi-VN", {
                     style: "currency",
                     currency: "VND",
                   })}
