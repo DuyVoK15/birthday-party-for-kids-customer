@@ -36,7 +36,7 @@ export interface PartyBookingDataResponse {
   active: boolean;
   venueObject: VenueDataResponse;
   isPayment: boolean;
-  pricingTotal: number;
+  totalPrice: number;
 }
 
 export interface PartyBookingObjectResponse {

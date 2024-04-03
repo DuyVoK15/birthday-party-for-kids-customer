@@ -18,9 +18,12 @@ export const getAllService = createAsyncThunk(
 
 export const getServiceById = createAsyncThunk(
   "service/getServiceById",
-  async (id: number | null, { rejectWithValue }) => {
+  async (
+    params: { venueId: number; serviceId: number },
+    { rejectWithValue },
+  ) => {
     try {
-      const response = await serviceService.getServiceById(id);
+      const response = await serviceService.getServiceById(params);
       return response.data;
     } catch (error: any) {
       const axiosError = error as AxiosError;

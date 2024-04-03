@@ -10,10 +10,11 @@ export const serviceService = {
     const url = `/api/services/getAll-service-for-customer-by-venue/${id}`;
     return axiosClient.get(url);
   },
-  getServiceById: (
-    id: number | null,
-  ): Promise<AxiosResponse<ServiceObjectResponse>> => {
-    const url = `/api/services/getId-service/${id}`;
+  getServiceById: (params: {
+    venueId: number;
+    serviceId: number;
+  }): Promise<AxiosResponse<ServiceObjectResponse>> => {
+    const url = `/api/services/getId-service-by-id-for-customer/${params.venueId}/${params.serviceId}`;
     return axiosClient.get(url);
   },
   createService: (payload: any): Promise<AxiosResponse<any>> => {
