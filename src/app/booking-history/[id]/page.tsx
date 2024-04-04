@@ -1,7 +1,12 @@
-"use client";;
+"use client";
+import RoomCard from "@/components/booking-history/RoomCard";
 import { ChildItem, Item } from "@/components/booking/Item";
 import PackageDetail from "@/components/booking/PackageDetail";
 import UpgradeServiceBookingDetail from "@/components/booking/UpgradeServiceBookingDetail";
+import { BookingUpdateOrganzationTimeRequest } from "@/dtos/request/partyBooking.request";
+import { RoomDataResponse } from "@/dtos/response/room.response";
+import { SlotInRoomDataResponse } from "@/dtos/response/slot.response";
+import { PARTYB_BOOKING_STATUS } from "@/enums/partyBooking";
 import {
   createInquiryForChangePackageInVenue,
   createInquiryForChangeThemeInVenue,
@@ -9,9 +14,12 @@ import {
 import {
   cancelBooking,
   getBookingById,
+  updateOrganizationTime,
+  updatePackage,
 } from "@/lib/features/action/partyBooking.action";
 import { createPaymentByBookingId } from "@/lib/features/action/payment.action";
 import { createReview } from "@/lib/features/action/review.action";
+import { getAllRoomCheckSlot } from "@/lib/features/action/room.action";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { formatDateto } from "@/utils/format";
 import {
@@ -19,10 +27,14 @@ import {
   EnvironmentOutlined,
   EyeOutlined,
   SwapOutlined,
+  HomeTwoTone,
+  HomeOutlined,
 } from "@ant-design/icons";
 import { ModalForm } from "@ant-design/pro-components";
 import {
   Button,
+  DatePicker,
+  DatePickerProps,
   Divider,
   Empty,
   Flex,
@@ -33,9 +45,11 @@ import {
   Rate,
   Skeleton,
   Space,
+  Spin,
   Typography,
   message,
 } from "antd";
+import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
@@ -46,17 +60,18 @@ export default function BookingDetail({ params }: { params: any }) {
   const booking = useAppSelector(
     (state) => state.partyBookingReducer.bookingById,
   );
-  const themeInVenueNotChooseList = useAppSelector(
-    (state) => state.themeReducer.themeInVenueNotChooseList,
-  );
+  const roomList = useAppSelector((state) => state.roomReducer.roomList);
+  const loadingRoomList = useAppSelector((state) => state.roomReducer.loading);
+
+  const [dateQuery, setDateQuery] = React.useState<string | null>(null);
+  const [slotInRoom, setSlotInRoom] =
+    React.useState<SlotInRoomDataResponse | null>(null);
 
   const fetchBookingById = async () => {
     await dispatch(getBookingById(params?.id)).then((res) => {
       console.log(JSON.stringify(res, null, 2));
     });
   };
-
-
 
   const fetchInQueue = async () => {
     await fetchBookingById();
@@ -65,6 +80,31 @@ export default function BookingDetail({ params }: { params: any }) {
   React.useEffect(() => {
     fetchInQueue();
   }, []);
+
+  const fetchAllRoom = async () => {
+    if (
+      typeof booking?.venueObject?.id !== "undefined" &&
+      booking?.venueObject?.id !== null &&
+      dateQuery !== null
+    ) {
+      const res = await dispatch(
+        getAllRoomCheckSlot({
+          venueId: booking?.venueObject?.id,
+          date: dateQuery,
+        }),
+      );
+    }
+  };
+
+  React.useEffect(() => {
+    if (dateQuery !== null) {
+      fetchAllRoom();
+    }
+  }, [dateQuery]);
+
+  const onChange: DatePickerProps["onChange"] = (date, dateString) => {
+    setDateQuery(dateString);
+  };
 
   const createOnePayment = async () => {
     const res = await dispatch(createPaymentByBookingId(params?.id));
@@ -76,19 +116,63 @@ export default function BookingDetail({ params }: { params: any }) {
     }
   };
 
-  const createOneInquiryForChangeThemeInVenue = async (id: number) => {
+  const updateSlotInRoomAndDate = async (params: {
+    slotInRoomId: number | null;
+    date: string | null;
+  }) => {
     if (typeof booking?.id !== "undefined") {
       const res = await dispatch(
-        createInquiryForChangeThemeInVenue({
-          bookingId: booking?.id,
-          themeInVenueId: id,
+        updateOrganizationTime({
+          partyBookingId: booking?.id,
+          slotInRoomId: params.slotInRoomId,
+          date: params.date,
         }),
       );
       if (res?.meta?.requestStatus === "fulfilled") {
-        message.success("Gửi yêu cầu thay đổi chủ đề thành công!");
+        message.success("Thay đổi thành công!");
+        await fetchBookingById();
         return true;
       } else {
-        message.error("Lỗi khi gửi yêu cầu!");
+        message.error("Lỗi khi gửi yêu cầu. Vui lòng thử lại!");
+        return false;
+      }
+    }
+  };
+
+  const updatePackageDeco = async (packageDecoId: number | null) => {
+    if (typeof booking?.id !== "undefined") {
+      const res = await dispatch(
+        updatePackage({
+          partyBookingId: booking?.id,
+          packageDecoId: params.packageDecoId,
+          // packageFoodId: params.packageFoodId,
+        }),
+      );
+      if (res?.meta?.requestStatus === "fulfilled") {
+        message.success("Thay đổi thành công!");
+        await fetchBookingById();
+        return true;
+      } else {
+        message.error("Lỗi khi gửi yêu cầu. Vui lòng thử lại!");
+        return false;
+      }
+    }
+  };
+  const updatePackageFood = async (packageFoodId: number | null) => {
+    if (typeof booking?.id !== "undefined") {
+      const res = await dispatch(
+        updatePackage({
+          partyBookingId: booking?.id,
+          // packageDecoId: params.packageDecoId,
+          packageFoodId: params.packageFoodId,
+        }),
+      );
+      if (res?.meta?.requestStatus === "fulfilled") {
+        message.success("Thay đổi thành công!");
+        await fetchBookingById();
+        return true;
+      } else {
+        message.error("Lỗi khi gửi yêu cầu. Vui lòng thử lại!");
         return false;
       }
     }
@@ -143,7 +227,7 @@ export default function BookingDetail({ params }: { params: any }) {
       return false;
     }
   };
-
+  console.log(slotInRoom);
   if (loading || booking === null) {
     return (
       <React.Fragment>
@@ -165,6 +249,94 @@ export default function BookingDetail({ params }: { params: any }) {
   //   );
   // }
 
+  const renderTitle = () => {
+    switch (booking?.status) {
+      case PARTYB_BOOKING_STATUS.PENDING:
+        return (
+          <React.Fragment>
+            Bữa tệc của bạn đang chờ{" "}
+            <Typography.Title style={{ margin: 0, color: "blue" }} level={3}>
+              xác nhận
+            </Typography.Title>
+          </React.Fragment>
+        );
+      case PARTYB_BOOKING_STATUS.CONFIRMED:
+        return (
+          <React.Fragment>
+            Bữa tệc của bạn đã được{" "}
+            <Typography.Title style={{ margin: 0, color: "orange" }} level={3}>
+              xác nhận
+            </Typography.Title>
+          </React.Fragment>
+        );
+      case PARTYB_BOOKING_STATUS.COMPLETED:
+        return (
+          <React.Fragment>
+            Bữa tệc của bạn đã{" "}
+            <Typography.Title style={{ margin: 0, color: "green" }} level={3}>
+              hoàn thành
+            </Typography.Title>
+          </React.Fragment>
+        );
+      case PARTYB_BOOKING_STATUS.CANCELLED:
+        return (
+          <React.Fragment>
+            Bữa tệc của bạn đã{" "}
+            <Typography.Title style={{ margin: 0, color: "red" }} level={3}>
+              bị huỷ
+            </Typography.Title>
+          </React.Fragment>
+        );
+      default:
+        return <React.Fragment>Đang tải...</React.Fragment>;
+    }
+  };
+  const renderHTitle = () => {
+    switch (booking?.status) {
+      case PARTYB_BOOKING_STATUS.PENDING:
+        return (
+          <Typography.Title style={{ margin: 0, color: "blue" }} level={3}>
+            Chờ xác nhận
+          </Typography.Title>
+        );
+
+      case PARTYB_BOOKING_STATUS.CONFIRMED:
+        return (
+          <Typography.Title style={{ margin: 0, color: "orange" }} level={3}>
+            Đã xác nhận
+          </Typography.Title>
+        );
+      case PARTYB_BOOKING_STATUS.COMPLETED:
+        return (
+          <Typography.Title style={{ margin: 0, color: "green" }} level={3}>
+            Đã hoàn thành
+          </Typography.Title>
+        );
+      case PARTYB_BOOKING_STATUS.CANCELLED:
+        return (
+          <Typography.Title style={{ margin: 0, color: "red" }} level={3}>
+            Đã huỷ
+          </Typography.Title>
+        );
+      default:
+        return <React.Fragment>Đang tải...</React.Fragment>;
+    }
+  };
+  const renderColor = () => {
+    switch (booking?.status) {
+      case PARTYB_BOOKING_STATUS.PENDING:
+        return "blue";
+      case PARTYB_BOOKING_STATUS.CONFIRMED:
+        return "orange";
+      case PARTYB_BOOKING_STATUS.COMPLETED:
+        return "green";
+      case PARTYB_BOOKING_STATUS.CANCELLED:
+        return "red";
+      default:
+        return "black";
+    }
+  };
+
   return booking !== null ? (
     <div className="container mx-auto mt-10">
       <div className="">
@@ -177,63 +349,115 @@ export default function BookingDetail({ params }: { params: any }) {
             >
               <Typography.Title
                 style={{
-                  color:
-                    booking?.status === "PENDING"
-                      ? "blue"
-                      : booking?.status === "CANCELLED"
-                        ? "red"
-                        : booking?.status === "COMPLETED"
-                          ? "green"
-                          : "orange",
-                  margin: 0,
+                  color: renderColor(),
                 }}
                 level={5}
               >
-                {booking?.status === "PENDING"
-                  ? "Đang chờ xác nhận"
-                  : booking?.status === "CANCELLED"
-                    ? "Đã huỷ"
-                    : booking?.status === "COMPLETED"
-                      ? "Đã hoàn thành"
-                      : "Đã được xác nhận"}
+                {renderHTitle()}
               </Typography.Title>
 
               <Typography.Title style={{ margin: 0 }} level={3}>
-                {booking?.status === "PENDING"
-                  ? "Bữa tệc của bạn đang chờ xác nhận"
-                  : booking?.status === "CANCELLED"
-                    ? "Bữa tiệc của bạn đã bị huỷ"
-                    : booking?.status === "COMPLETED"
-                      ? "Bữa tiệc của bạn đã hoàn thành"
-                      : "Bữa tiệc của bạn đã được xác nhận"}
+                {renderTitle()}
               </Typography.Title>
 
               <Space direction="vertical" size={"middle"}>
+                <Flex justify="space-around" gap={20}>
+                  <Flex gap={20} align="center">
+                    <HomeOutlined style={{ fontSize: 30 }} />
+                    <div>Phòng: </div>
+                    <div className="font-bold">
+                      {booking?.roomObject?.roomName}
+                    </div>
+                  </Flex>
+                  {booking?.status === PARTYB_BOOKING_STATUS.PENDING && (
+                    <ModalForm
+                      title="Đổi ngày và phòng"
+                      trigger={
+                        <Button
+                          onClick={() => {
+                            if (dateQuery !== null) {
+                              fetchAllRoom();
+                            } else {
+                              setDateQuery(booking?.date);
+                            }
+                          }}
+                          style={{ padding: 0 }}
+                          type="link"
+                        >
+                          <SwapOutlined />
+                          Đổi thời gian tổ chức
+                        </Button>
+                      }
+                      style={{ padding: 0 }}
+                      width={window.innerWidth - 300}
+                      onFinish={async () => {
+                        if (slotInRoom !== null && dateQuery !== null) {
+                          const result = updateSlotInRoomAndDate({
+                            slotInRoomId: slotInRoom?.id,
+                            date: dateQuery,
+                          });
+                          return result;
+                        }
+                      }}
+                    >
+                      <Space direction="vertical">
+                        <DatePicker
+                          defaultValue={dayjs(booking?.date)}
+                          onChange={onChange}
+                        />
+                        <Flex vertical>
+                          {roomList && roomList?.length > 0 ? (
+                            roomList?.map((room, index: number) =>
+                              !loadingRoomList ? (
+                                <RoomCard
+                                  key={index}
+                                  room={room}
+                                  slotInRoom={slotInRoom}
+                                  setSlotInRoom={setSlotInRoom}
+                                />
+                              ) : (
+                                <>
+                                  <Skeleton
+                                    style={{ height: 100, width: 1020 }}
+                                    active
+                                  />
+                                  <Skeleton
+                                    style={{ height: 100, width: 1020 }}
+                                    active
+                                  />
+                                </>
+                              ),
+                            )
+                          ) : (
+                            <Empty description="Không có dữ liệu" />
+                          )}
+                        </Flex>
+                      </Space>
+                    </ModalForm>
+                  )}{" "}
+                </Flex>
+
                 <Flex align="start" gap={20}>
                   <CalendarOutlined style={{ fontSize: 30 }} />
-                  <Flex vertical gap={4}>
+                  <Space direction="vertical">
                     <div>Thời gian check-in</div>
                     <div className="font-bold">
-                      {formatDateto(
-                        booking?.date
-                      )}
+                      {formatDateto(booking?.date)}
                     </div>
                     <div className="text-sm font-thin text-gray-700">
                       {`vào lúc ${booking?.slotInRoom?.slot?.timeStart}`}
                     </div>
-                  </Flex>
+                  </Space>
                   <Divider className="mx-0 mt-2 h-16" type="vertical" />
-                  <Flex vertical gap={4}>
+                  <Space direction="vertical">
                     <div>Thời gian check-out</div>
                     <div className="font-bold">
-                      {formatDateto(
-                        booking?.date
-                      )}
+                      {formatDateto(booking?.date)}
                     </div>
                     <div className="text-sm font-thin text-gray-700">
                       {`vào lúc ${booking?.slotInRoom?.slot?.timeEnd}`}
                     </div>
-                  </Flex>
+                  </Space>
                 </Flex>
 
                 <Flex align="start" gap={20}>
@@ -277,14 +501,14 @@ export default function BookingDetail({ params }: { params: any }) {
                 />
                 <Item
                   title="Sức chứa tối đa"
-                  description={`${booking?.participantAmount} người`}
+                  description={`${booking?.roomObject?.capacity} người`}
                 />
                 <Item
                   title="Chi tiết địa điểm"
                   description={booking?.venueObject?.venueDescription}
                 />
                 <Item
-                  title="Chi tiết gói dịch vụ"
+                  title="Chi tiết gói Trang trí"
                   description={
                     <Flex gap={5}>
                       <ModalForm
@@ -298,7 +522,9 @@ export default function BookingDetail({ params }: { params: any }) {
                         style={{ padding: 0 }}
                       >
                         <PackageDetail
-                          packageInVenue={booking?.packageInBookings?.[0]?.apackage}
+                          packageInVenue={
+                            booking?.packageInBookings?.[0]?.apackage
+                          }
                         />
                       </ModalForm>
                       {booking?.status === "CONFIRMED" ||
@@ -389,7 +615,7 @@ export default function BookingDetail({ params }: { params: any }) {
                   align={"center"}
                 />
                 <Item
-                  title="Chi tiết gói dịch vụ"
+                  title="Chi tiết gói Món ăn"
                   description={
                     <Flex gap={5}>
                       <ModalForm
@@ -403,7 +629,9 @@ export default function BookingDetail({ params }: { params: any }) {
                         style={{ padding: 0 }}
                       >
                         <PackageDetail
-                          packageInVenue={booking?.packageInBookings?.[1]?.apackage}
+                          packageInVenue={
+                            booking?.packageInBookings?.[1]?.apackage
+                          }
                         />
                       </ModalForm>
                       {booking?.status === "CONFIRMED" ||
@@ -529,6 +757,10 @@ export default function BookingDetail({ params }: { params: any }) {
                         title="Ngày sinh của bé:"
                         description={booking?.kidDOB}
                       />
+                      <ChildItem
+                        title="Số người tham gia:"
+                        description={booking?.participantAmount + " người"}
+                      />
                     </Space>
                   }
                 />
@@ -574,20 +806,6 @@ export default function BookingDetail({ params }: { params: any }) {
             )}
           </div>
           <div className="w-1/3" style={{ borderWidth: 2 }}>
-            <div className="h-50 rounded-lg p-6 shadow">
-              <Typography.Title
-                style={{ color: "rgb(41 182 246 / var(--tw-bg-opacity))" }}
-                className="m-0"
-                level={4}
-              >
-                Thông tin liên hệ
-              </Typography.Title>
-              <Space direction="vertical">
-                <div className="text-gray-600">Hotline: 0909900009</div>
-                <div className="text-gray-600">Fanpage: lovekids@123</div>
-                <div className="text-gray-600">Email: lovekids@gmail.com</div>
-              </Space>
-            </div>
             <div className="h-50 mt-5 rounded-lg p-6 shadow">
               <Typography.Title
                 style={{ color: "rgb(41 182 246 / var(--tw-bg-opacity))" }}
@@ -679,6 +897,20 @@ export default function BookingDetail({ params }: { params: any }) {
                 </Form>
               </div>
             )}
+            <div className="h-50 mt-5 rounded-lg p-6 shadow">
+              <Typography.Title
+                style={{ color: "rgb(41 182 246 / var(--tw-bg-opacity))" }}
+                className="m-0"
+                level={4}
+              >
+                Thông tin liên hệ
+              </Typography.Title>
+              <Space direction="vertical">
+                <div className="text-gray-600">Hotline: 0909900009</div>
+                <div className="text-gray-600">Fanpage: lovekids@123</div>
+                <div className="text-gray-600">Email: lovekids@gmail.com</div>
+              </Space>
+            </div>
           </div>
         </Flex>
       </div>

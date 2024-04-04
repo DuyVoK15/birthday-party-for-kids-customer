@@ -46,8 +46,8 @@ const BookingHistory = () => {
   };
 
   const fetchInQueue = async () => {
-    await fetchAllVenue();
-    await fetchAllBooking();
+    fetchAllBooking();
+    fetchAllVenue();
   };
 
   useEffect(() => {
@@ -57,8 +57,8 @@ const BookingHistory = () => {
   return (
     <div className="container mx-auto mt-10">
       <div className="mx-auto max-w-5xl">
-        <Typography.Title level={2}>Đặt chỗ bữa tiệc</Typography.Title>
-        <Carousel className="rounded-xl shadow" autoplay>
+        <Typography.Title level={2}>Lịch sử đặt chỗ</Typography.Title>
+        {/* <Carousel className="rounded-xl shadow" autoplay>
           {venueList.map((item, index) => (
             <div className="rounded-xl" style={{ overflow: "hidden" }}>
               <img
@@ -73,7 +73,7 @@ const BookingHistory = () => {
               />
             </div>
           ))}
-        </Carousel>
+        </Carousel> */}
         {bookingList && bookingList?.length > 0 ? (
           bookingList?.map((item, index) => (
             <Link href={`/booking-history/${item?.id}`}>
@@ -92,15 +92,15 @@ const BookingHistory = () => {
                       <Space direction="vertical" size={"middle"}>
                         <div>{`Thời gian: ${item?.slotInRoom?.slot?.timeStart} - ${item?.slotInRoom?.slot?.timeEnd}, ${item?.date}`}</div>
                         {item?.status === "PENDING" ? (
-                          <div className="text-blue-300">
-                            Đang chờ xác nhận
-                          </div>
+                          <div className="text-blue-300">Đang chờ xác nhận</div>
                         ) : item?.status === "CANCELLED" ? (
                           <div className="text-red-300">Đã huỷ</div>
                         ) : item?.status === "COMPLETED" ? (
                           <div className="text-green-300">Đã hoàn thành</div>
                         ) : (
-                          <div className="text-orange-300">Đã được xác nhận</div>
+                          <div className="text-orange-300">
+                            Đã được xác nhận
+                          </div>
                         )}
                       </Space>
                     }
