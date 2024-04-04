@@ -15,3 +15,15 @@ export interface BookingRequest {
   dataUpgrade?: DataUpgrade[] | [];
   date?: string;
 }
+
+export interface BookingUpdateOrganzationTimeRequest {
+  partyBookingId: number;
+  slotInRoomId?: number | null;
+  date?: string | null;
+}
+
+export interface BookingUpdatePackage {
+  partyBookingId: number;
+  packageDecoId?: number | null;
+  packageFoodId?: number | null;
+}

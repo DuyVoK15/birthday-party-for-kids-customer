@@ -1,6 +1,7 @@
 import { AccountDataResponse } from "./auth.response";
 import { PackageDataResponse } from "./package.response";
 import { PartyDatedDataResponse } from "./partyDated.response";
+import { RoomDataResponse } from "./room.response";
 import { SlotInRoomDataResponse } from "./slot.response";
 import { ThemeInVenueDataResponse } from "./theme.response";
 import { UpgradeServiceDataResponse } from "./upgradeService.response";
@@ -35,6 +36,7 @@ export interface PartyBookingDataResponse {
   slotInRoom: SlotInRoomDataResponse;
   active: boolean;
   venueObject: VenueDataResponse;
+  roomObject: RoomDataResponse;
   isPayment: boolean;
   totalPrice: number;
 }

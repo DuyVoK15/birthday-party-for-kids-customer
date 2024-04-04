@@ -4,7 +4,11 @@ import {
   PartyBookingArrayResponse,
   PartyBookingObjectResponse,
 } from "@/dtos/response/partyBooking.response";
-import { BookingRequest } from "@/dtos/request/partyBooking.request";
+import {
+  BookingRequest,
+  BookingUpdateOrganzationTimeRequest,
+  BookingUpdatePackage,
+} from "@/dtos/request/partyBooking.request";
 
 export const partyBookingService = {
   createPartyBooking: (
@@ -25,6 +29,18 @@ export const partyBookingService = {
   },
   cancelBooking: (id: number): Promise<AxiosResponse<any>> => {
     const url = `/api/party-booking/cancel-party-booking-for-customer/${id}`;
+    return axiosClient.put(url);
+  },
+  updateOrganizationTime: (
+    params: BookingUpdateOrganzationTimeRequest,
+  ): Promise<AxiosResponse<any>> => {
+    const url = `/api/party-booking/update-organization-time/${params.partyBookingId}?${params.slotInRoomId !== null ? `slotInRoomId=${params.slotInRoomId}` : ""}${params.date !== null ? `&date=${params.date}` : ""}`;
+    return axiosClient.put(url);
+  },
+  updatePackage: (
+    params: BookingUpdatePackage,
+  ): Promise<AxiosResponse<any>> => {
+    const url = `/api/party-booking/update-package/${params.partyBookingId}?${params.packageDecoId !== null ? `packageDecoId=${params.packageDecoId}` : ""}${params.packageFoodId !== null ? `&packageFoodId=${params.packageFoodId}` : ""}`;
     return axiosClient.put(url);
   },
 };
