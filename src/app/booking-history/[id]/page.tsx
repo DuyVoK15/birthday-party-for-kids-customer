@@ -111,7 +111,10 @@ export default function BookingDetail({ params }: { params: any }) {
   }, [dateQuery]);
 
   const onChange: DatePickerProps["onChange"] = (date, dateString) => {
-    setDateQuery(dateString);
+    if (date !== null) {
+      const partDate = date.format("YYYY-MM-DD");
+      setDateQuery(partDate);
+    }
   };
 
   const createOnePayment = async () => {
