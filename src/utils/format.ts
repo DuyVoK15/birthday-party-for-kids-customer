@@ -24,3 +24,9 @@ export function formatDateto(inputDate: string) {
   }
   return null;
 }
+
+export function getDecimalDigit(number: number) {
+  const decimalPart = number % 1;
+  const digit = Math.floor(decimalPart * 10);
+  return digit;
+}

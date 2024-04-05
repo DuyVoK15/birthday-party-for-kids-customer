@@ -7,6 +7,7 @@ import { BookingUpdateOrganzationTimeRequest } from "@/dtos/request/partyBooking
 import { RoomDataResponse } from "@/dtos/response/room.response";
 import { SlotInRoomDataResponse } from "@/dtos/response/slot.response";
 import { PARTYB_BOOKING_STATUS } from "@/enums/partyBooking";
+import { SERVICE_ENUM } from "@/enums/service";
 import {
   createInquiryForChangePackageInVenue,
   createInquiryForChangeThemeInVenue,
@@ -46,6 +47,7 @@ import {
   Skeleton,
   Space,
   Spin,
+  Tooltip,
   Typography,
   message,
 } from "antd";
@@ -254,7 +256,7 @@ export default function BookingDetail({ params }: { params: any }) {
       case PARTYB_BOOKING_STATUS.PENDING:
         return (
           <React.Fragment>
-            Bữa tệc của bạn đang chờ{" "}
+            Bữa tiệc của bạn đang chờ{" "}
             <Typography.Title style={{ margin: 0, color: "blue" }} level={3}>
               xác nhận
             </Typography.Title>
@@ -263,7 +265,7 @@ export default function BookingDetail({ params }: { params: any }) {
       case PARTYB_BOOKING_STATUS.CONFIRMED:
         return (
           <React.Fragment>
-            Bữa tệc của bạn đã được{" "}
+            Bữa tiệc của bạn đã được{" "}
             <Typography.Title style={{ margin: 0, color: "orange" }} level={3}>
               xác nhận
             </Typography.Title>
@@ -272,7 +274,7 @@ export default function BookingDetail({ params }: { params: any }) {
       case PARTYB_BOOKING_STATUS.COMPLETED:
         return (
           <React.Fragment>
-            Bữa tệc của bạn đã{" "}
+            Bữa tiệc của bạn đã{" "}
             <Typography.Title style={{ margin: 0, color: "green" }} level={3}>
               hoàn thành
             </Typography.Title>
@@ -281,7 +283,7 @@ export default function BookingDetail({ params }: { params: any }) {
       case PARTYB_BOOKING_STATUS.CANCELLED:
         return (
           <React.Fragment>
-            Bữa tệc của bạn đã{" "}
+            Bữa tiệc của bạn đã{" "}
             <Typography.Title style={{ margin: 0, color: "red" }} level={3}>
               bị huỷ
             </Typography.Title>
@@ -361,7 +363,7 @@ export default function BookingDetail({ params }: { params: any }) {
               </Typography.Title>
 
               <Space direction="vertical" size={"middle"}>
-                <Flex justify="space-around" gap={20}>
+                <Flex justify="space-between" gap={20}>
                   <Flex gap={20} align="center">
                     <HomeOutlined style={{ fontSize: 30 }} />
                     <div>Phòng: </div>
@@ -816,6 +818,74 @@ export default function BookingDetail({ params }: { params: any }) {
               </Typography.Title>
 
               <Flex className="my-5" justify="space-between">
+                <Typography style={{ fontSize: 15 }}>Phí phòng:</Typography>
+                <Typography style={{ fontSize: 15 }} className="font-medium">
+                  {booking?.roomObject?.pricing?.toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  })}
+                </Typography>
+              </Flex>
+
+              <Flex className="my-5" justify="space-between">
+                <Typography style={{ fontSize: 15 }}>
+                  Phí dịch vụ decor:
+                </Typography>
+                <Typography style={{ fontSize: 15 }} className="font-medium">
+                  {booking?.packageInBookings
+                    .find(
+                      (item) =>
+                        item?.apackage?.packageType === SERVICE_ENUM.DECORATION,
+                    )
+                    ?.apackage?.pricing?.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    })}
+                </Typography>
+              </Flex>
+
+              <Flex className="my-5" justify="space-between">
+                <Typography style={{ fontSize: 15 }}>
+                  Phí dịch vụ food({booking?.participantAmount} người):
+                </Typography>
+                <Typography style={{ fontSize: 15 }} className="font-medium">
+                  {(
+                    Number(
+                      booking?.packageInBookings.find(
+                        (item) =>
+                          item?.apackage?.packageType === SERVICE_ENUM.FOOD,
+                      )?.apackage?.pricing,
+                    ) * booking?.participantAmount
+                  )?.toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  })}
+                </Typography>
+              </Flex>
+
+              <Flex className="my-5" justify="space-between">
+                <Typography style={{ fontSize: 15 }}>
+                  Phí nâng cấp dịch vụ:
+                </Typography>
+                <Typography style={{ fontSize: 15 }} className="font-medium">
+                  {booking?.upgradeServices
+                    .reduce(
+                      (
+                        accumulator: number,
+                        current: { pricing: number; count: number },
+                      ) => {
+                        return accumulator + current.pricing * current.count;
+                      },
+                      0,
+                    )
+                    ?.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    })}
+                </Typography>
+              </Flex>
+
+              <Flex className="my-5" justify="space-between">
                 <Typography style={{ fontSize: 19 }}>Tổng số tiền:</Typography>
                 <Typography style={{ fontSize: 19 }} className="font-medium">
                   {booking?.totalPrice?.toLocaleString("vi-VN", {
@@ -825,9 +895,11 @@ export default function BookingDetail({ params }: { params: any }) {
                 </Typography>
               </Flex>
 
-              {booking?.status === "PENDING" ? (
+              {booking?.status !== PARTYB_BOOKING_STATUS.CANCELLED ? (
                 <Space direction="vertical">
-                  {booking?.isPayment ? (
+                  {booking?.paymentList?.some(
+                    (item) => item.status === "SUCCESS",
+                  ) ? (
                     <Typography.Title
                       style={{ color: "green" }}
                       className="m-0"
@@ -844,7 +916,7 @@ export default function BookingDetail({ params }: { params: any }) {
                       okText="Đồng ý"
                       cancelText="Huỷ"
                     >
-                      <Button type="primary">Thanh toán</Button>
+                      <Button type="primary">Thanh toán cọc (50%)</Button>
                     </Popconfirm>
                   )}
                 </Space>
@@ -859,44 +931,45 @@ export default function BookingDetail({ params }: { params: any }) {
               )}
             </div>
 
-            {!booking?.review && booking?.status === "COMPLETED" && (
-              <div className="h-50 mt-5 rounded-lg p-6 shadow">
-                <Typography.Title
-                  style={{ color: "rgb(41 182 246 / var(--tw-bg-opacity))" }}
-                  className="m-0"
-                  level={4}
-                >
-                  Viết đánh giá
-                </Typography.Title>
-                <Form
-                  onFinish={async (values) => {
-                    let result: undefined | boolean = false;
-                    if (typeof booking?.id !== "undefined") {
-                      result = await createOneReview({
-                        id: booking?.id,
-                        payload: {
-                          reviewMessage: values?.reviewMessage,
-                          rating: values?.rating,
-                        },
-                      });
-                    }
-                    return result;
-                  }}
-                >
-                  <Form.Item name={"reviewMessage"}>
-                    <Input.TextArea placeholder="Viết đánh giá ..." />
-                  </Form.Item>
-                  <Form.Item name={"rating"}>
-                    <Rate />
-                  </Form.Item>
-                  <Form.Item>
-                    <Button htmlType="submit" type="primary">
-                      Gửi đánh giá
-                    </Button>
-                  </Form.Item>
-                </Form>
-              </div>
-            )}
+            {!booking?.review &&
+              booking?.status === PARTYB_BOOKING_STATUS.COMPLETED && (
+                <div className="h-50 mt-5 rounded-lg p-6 shadow">
+                  <Typography.Title
+                    style={{ color: "rgb(41 182 246 / var(--tw-bg-opacity))" }}
+                    className="m-0"
+                    level={4}
+                  >
+                    Viết đánh giá
+                  </Typography.Title>
+                  <Form
+                    onFinish={async (values) => {
+                      let result: undefined | boolean = false;
+                      if (typeof booking?.id !== "undefined") {
+                        result = await createOneReview({
+                          id: booking?.id,
+                          payload: {
+                            reviewMessage: values?.reviewMessage,
+                            rating: values?.rating,
+                          },
+                        });
+                      }
+                      return result;
+                    }}
+                  >
+                    <Form.Item name={"reviewMessage"}>
+                      <Input.TextArea placeholder="Viết đánh giá ..." />
+                    </Form.Item>
+                    <Form.Item name={"rating"}>
+                      <Rate />
+                    </Form.Item>
+                    <Form.Item>
+                      <Button htmlType="submit" type="primary">
+                        Gửi đánh giá
+                      </Button>
+                    </Form.Item>
+                  </Form>
+                </div>
+              )}
             <div className="h-50 mt-5 rounded-lg p-6 shadow">
               <Typography.Title
                 style={{ color: "rgb(41 182 246 / var(--tw-bg-opacity))" }}

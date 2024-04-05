@@ -1,6 +1,7 @@
 import { AccountDataResponse } from "./auth.response";
 import { PackageDataResponse } from "./package.response";
 import { PartyDatedDataResponse } from "./partyDated.response";
+import { PaymentDataResponse } from "./payment.response";
 import { RoomDataResponse } from "./room.response";
 import { SlotInRoomDataResponse } from "./slot.response";
 import { ThemeInVenueDataResponse } from "./theme.response";
@@ -30,8 +31,9 @@ export interface PartyBookingDataResponse {
   participantAmount: number;
   date: string;
   account: AccountDataResponse;
-  upgradeServices: UpgradeServiceDataResponse[] | [];
+  upgradeServices: UpgradeServiceDataResponse[];
   packageInBookings: PackageInBookingDataResponse[] | [];
+  paymentList: PaymentDataResponse[] | [];
   review: any;
   slotInRoom: SlotInRoomDataResponse;
   active: boolean;

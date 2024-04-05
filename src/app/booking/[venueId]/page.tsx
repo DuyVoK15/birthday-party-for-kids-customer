@@ -121,7 +121,7 @@ export default function Booking({ params }: { params: any }) {
   // Dispatch API
   const dispatch = useAppDispatch();
 
-  const [dateQuery, setDateQuery] = React.useState("2024-04-01");
+  const [dateQuery, setDateQuery] = React.useState(dayjs(tomorrow).format('YYYY-MM-DD'));
 
   const roomList = useAppSelector((state) => state.roomReducer.roomList);
   const loading = useAppSelector((state) => state.roomReducer.loading);
@@ -273,6 +273,19 @@ export default function Booking({ params }: { params: any }) {
         }
         break;
       case 4:
+        scrollToTop();
+        if (typeof bookingData?.packageFoodId !== "undefined") {
+          setActiveStep((prevActiveStep) => prevActiveStep + 1);
+          setSkipped(newSkipped);
+          // fetchAllService();
+          scrollToTop();
+        } else {
+          message.error(
+            "Vui lòng tích chọn đầy đủ thông tin trước khi đến bước tiếp theo!",
+          );
+        }
+        break;
+      case 5:
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
         setSkipped(newSkipped);
         scrollToTop();
@@ -280,12 +293,6 @@ export default function Booking({ params }: { params: any }) {
           setBookingData((prev) => ({ ...prev, dataUpgrade: [] }));
           setBookingDataDisplay((prev) => ({ ...prev, dataUpgrade: [] }));
         }
-        break;
-      case 5:
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        setSkipped(newSkipped);
-        scrollToTop();
-
         break;
 
       default:
@@ -450,6 +457,39 @@ export default function Booking({ params }: { params: any }) {
     },
   ];
 
+
+  const removeOneService = (id: number) => {
+    const newArrayService = services.filter(item => item.service.id !== id)
+    setServices(newArrayService);
+    const newArrayDataUpgrade = dataUpgrade.filter(item => item.serviceId !== id);
+    setDataUpgrade(newArrayDataUpgrade);
+    
+    const _totalPriceService: number = newArrayService.reduce((accumulator, current) => {
+      return accumulator + current.service.pricing * current.count;
+    }, 0);
+    const _totalPriceBooking: number =
+      _totalPriceService +
+      Number(bookingDataDisplay?.packageDeco?.pricing) +
+      Number(bookingDataDisplay?.packageFood?.pricing)*
+      Number(bookingDataDisplay?.participantAmount) +
+      Number(bookingDataDisplay?.room?.pricing);
+      setTotalPriceService(_totalPriceService);
+
+      setBookingData((prev) => ({
+        ...prev,
+        dataUpgrade: newArrayDataUpgrade,
+        totalPriceService: _totalPriceService,
+        totalPriceBooking: _totalPriceBooking,
+      }));
+      setBookingDataDisplay((prev) => ({
+        ...prev,
+        dataUpgrade: newArrayService,
+        totalPriceService: _totalPriceService,
+        totalPriceBooking: _totalPriceBooking,
+      }));
+    
+  }
+
   return (
     <AuthGuard>
       <div className="container mx-auto mt-10">
@@ -520,7 +560,7 @@ export default function Booking({ params }: { params: any }) {
                       {/* <Typography.Title style={{margin: 0}} level={4}>
                         Ngày được chọn:{" "}
                       </Typography.Title> */}
-                      <Typography.Title style={{margin: 0}} level={4}>
+                      <Typography.Title style={{ margin: 0 }} level={4}>
                         {bookingDataDisplay?.date}
                       </Typography.Title>
                     </Flex>
@@ -548,17 +588,6 @@ export default function Booking({ params }: { params: any }) {
                   </Flex>
                 </div>
               ) : activeStep + 1 === 2 ? (
-                // <React.Fragment>
-                //   <Title level={3}>Chọn chủ đề</Title>
-                //   <div className="mt-10">
-                //     <ThemeList
-                //       bookingData={bookingData}
-                //       setBookingData={setBookingData}
-                //       bookingDataDisplay={bookingDataDisplay}
-                //       setBookingDataDisplay={setBookingDataDisplay}
-                //     />
-                //   </div>
-                // </React.Fragment>
                 <div
                   style={{
                     display: "flex",
@@ -816,7 +845,7 @@ export default function Booking({ params }: { params: any }) {
                               </div>
                             </Flex>
                             <CloseOutlined
-                              onClick={() => null}
+                              onClick={() => removeOneService(item?.service?.id)}
                               style={{
                                 position: "absolute",
                                 top: -10,

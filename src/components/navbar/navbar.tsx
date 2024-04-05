@@ -21,7 +21,11 @@ import { redirect, usePathname, useRouter } from "next/navigation";
 import { Button, Typography } from "antd";
 import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { getUserInfo, loadAuthState, logout } from "@/lib/features/slice/auth.slice";
+import {
+  getUserInfo,
+  loadAuthState,
+  logout,
+} from "@/lib/features/slice/auth.slice";
 import { APP_CONSTANTS } from "@/enums/app";
 import UserDropdown from "./UserDropdown";
 
@@ -110,17 +114,18 @@ export function Navbar() {
           className="relative z-50 mt-6 border-0 py-3 pl-0 pr-0"
         >
           <div className="flex items-center justify-between">
-            <div className="ml-5 flex items-center space-x-2">
-              <Image
-                width={35}
-                height={35}
-                style={{ width: 35, height: 35, borderRadius: 10 }}
-                src="/image/icon.png"
-                alt="logo"
-              />
-              <h3 className="font-bold text-blue-900">LOVEKIDS</h3>
-            </div>
-
+            <Link href={"/"}>
+              <div className="ml-5 flex items-center space-x-2">
+                <Image
+                  width={35}
+                  height={35}
+                  style={{ width: 35, height: 35, borderRadius: 10 }}
+                  src="/image/icon.png"
+                  alt="logo"
+                />
+                <h3 className="font-bold text-blue-900">LOVEKIDS</h3>
+              </div>
+            </Link>
             <ul className="hidden items-center gap-8 lg:flex">
               {NAV_MENU.map(({ name, icon: Icon, href }) => {
                 const isActive = pathName === href; // check active nav bar

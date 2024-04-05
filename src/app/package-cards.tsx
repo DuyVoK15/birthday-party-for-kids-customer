@@ -59,15 +59,15 @@ export function PackageCards() {
   // ** Disptach API
   const dispatch = useAppDispatch();
   const venueList = useAppSelector((state) => state.venueReducer.venueList);
-  const fetchAllPackage = async () => {
-    await dispatch(getAllPackage()).then((res) => {
-      console.log(JSON.stringify(res, null, 2));
-    });
-  };
+  // const fetchAllPackage = async () => {
+  //   await dispatch(getAllPackage()).then((res) => {
+  //     console.log(JSON.stringify(res, null, 2));
+  //   });
+  // };
 
-  useEffect(() => {
-    fetchAllPackage();
-  }, []);
+  // useEffect(() => {
+  //   fetchAllPackage();
+  // }, []);
 
   return (
     <section className="px-0">

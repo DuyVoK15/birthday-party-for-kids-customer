@@ -9,6 +9,6 @@ export interface ReviewDataResponse {
   replyMessage: string;
   rating: number;
   account: USERINFO;
-  accountReply: string;
+  accountReply: USERINFO;
   active: string;
 }

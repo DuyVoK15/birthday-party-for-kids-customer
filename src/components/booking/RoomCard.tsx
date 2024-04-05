@@ -102,6 +102,7 @@ const RoomCard = ({
                         }));
                       }}
                       key={index}
+                      
                       icon={<ClockCircleOutlined />}
                       color={
                         slotInRoom?.id === bookingData?.slotInRoomId

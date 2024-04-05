@@ -135,7 +135,8 @@ const ServiceCards = ({
           const _totalPriceBooking: number =
             _totalPriceService +
             Number(bookingDataDisplay?.packageDeco?.pricing) +
-            Number(bookingDataDisplay?.packageFood?.pricing) +
+            Number(bookingDataDisplay?.packageFood?.pricing)*
+            Number(bookingDataDisplay?.participantAmount) +
             Number(bookingDataDisplay?.room?.pricing);
           setTotalPriceService(_totalPriceService);
           setBookingDataDisplay((prev) => ({
@@ -155,7 +156,8 @@ const ServiceCards = ({
           const _totalPriceBooking: number =
             _totalPriceService +
             Number(bookingDataDisplay?.packageDeco?.pricing) +
-            Number(bookingDataDisplay?.packageFood?.pricing) +
+            Number(bookingDataDisplay?.packageFood?.pricing)*
+            Number(bookingDataDisplay?.participantAmount) +
             Number(bookingDataDisplay?.room?.pricing);
           setTotalPriceService(_totalPriceService);
 
@@ -173,6 +175,42 @@ const ServiceCards = ({
     }
 
     setOpen(false);
+  };
+
+  const removeOneService = (id: number) => {
+    const newArrayService = services.filter((item) => item.service.id !== id);
+    setServices(newArrayService);
+    const newArrayDataUpgrade = dataUpgrade.filter(
+      (item) => item.serviceId !== id,
+    );
+    setDataUpgrade(newArrayDataUpgrade);
+
+    const _totalPriceService: number = newArrayService.reduce(
+      (accumulator, current) => {
+        return accumulator + current.service.pricing * current.count;
+      },
+      0,
+    );
+    const _totalPriceBooking: number =
+      _totalPriceService +
+      Number(bookingDataDisplay?.packageDeco?.pricing) +
+      Number(bookingDataDisplay?.packageFood?.pricing) *
+        Number(bookingDataDisplay?.participantAmount) +
+      Number(bookingDataDisplay?.room?.pricing);
+    setTotalPriceService(_totalPriceService);
+
+    setBookingData((prev) => ({
+      ...prev,
+      dataUpgrade: newArrayDataUpgrade,
+      totalPriceService: _totalPriceService,
+      totalPriceBooking: _totalPriceBooking,
+    }));
+    setBookingDataDisplay((prev) => ({
+      ...prev,
+      dataUpgrade: newArrayService,
+      totalPriceService: _totalPriceService,
+      totalPriceBooking: _totalPriceBooking,
+    }));
   };
 
   console.log("Upgrade:", dataUpgrade);
@@ -256,7 +294,7 @@ const ServiceCards = ({
                 alignSelf: "center",
               }}
             >
-              ADD{" "}
+              Thêm{" "}
               <PlusOutlined
                 color="white"
                 style={{
