@@ -55,6 +55,9 @@ import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
+const today = new Date();
+const tomorrow = new Date(today);
+tomorrow.setDate(today.getDate() + 1);
 export default function BookingDetail({ params }: { params: any }) {
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -65,7 +68,10 @@ export default function BookingDetail({ params }: { params: any }) {
   const roomList = useAppSelector((state) => state.roomReducer.roomList);
   const loadingRoomList = useAppSelector((state) => state.roomReducer.loading);
 
-  const [dateQuery, setDateQuery] = React.useState<string | null>(null);
+  const [dateQuery, setDateQuery] = React.useState(
+    dayjs(tomorrow).format("YYYY-MM-DD"),
+  );
+
   const [slotInRoom, setSlotInRoom] =
     React.useState<SlotInRoomDataResponse | null>(null);
 
