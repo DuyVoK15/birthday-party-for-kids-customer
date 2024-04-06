@@ -1,8 +1,10 @@
 "use client"
 import { Button, Result } from 'antd'
+import { redirect, useRouter } from 'next/navigation'
 import React from 'react'
 
 const FailPayment = () => {
+  const router = useRouter()
   return (
     <div
       style={{
@@ -16,7 +18,7 @@ const FailPayment = () => {
         status="error"
         title={`Thanh toán thất bại`}
         extra={[
-          <Button type="primary" key="ok" onClick={() => null}>
+          <Button type="primary" key="ok" onClick={() => redirect('/booking-history')}>
             OK
           </Button>,
         ]}
