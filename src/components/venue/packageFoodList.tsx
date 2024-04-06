@@ -1,11 +1,7 @@
-"use client";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import React from "react";
-import { Row, Spin, Typography } from "antd";
+"use client";;
+import { Row, Typography } from "antd";
 import { PackageDataResponse } from "@/dtos/response/package.response";
-import { BookingRequest } from "@/dtos/request/partyBooking.request";
-import { BookingDataDisplay } from "@/app/booking/[venueId]/page";
-import PackageCard from "./PackageCard";
+import PackageFoodCard from "./PackageFoodCard";
 
 const { Title } = Typography;
 
@@ -17,7 +13,7 @@ export function PackageFoodList({
   return (
     <Row gutter={[16, 16]}>
       {packageFoodList.map((pkg: PackageDataResponse, idx: number) => (
-        <PackageCard key={idx} pkg={pkg} />
+        <PackageFoodCard key={idx} pkg={pkg} />
       ))}
     </Row>
   );

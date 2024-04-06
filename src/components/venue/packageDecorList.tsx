@@ -5,7 +5,7 @@ import { Row, Spin, Typography } from "antd";
 import { PackageDataResponse } from "@/dtos/response/package.response";
 import { BookingRequest } from "@/dtos/request/partyBooking.request";
 import { BookingDataDisplay } from "@/app/booking/[venueId]/page";
-import PackageCard from "./PackageCard";
+import PackageCard from "./PackageDecorCard";
 
 const { Title } = Typography;
 
