@@ -7,12 +7,16 @@ import {
   getAllVenue,
   getAllVenueCheckSlotByDate,
 } from "../action/venue.action";
+import { ReviewDataResponse } from "@/dtos/response/review.response";
+import { getAllReview } from "../action/review.action";
 
 interface State {
   venueCheckSlotByDateResponse: VenueArrayResponse;
   venueCheckSlotByDateList: VenueDataResponse[] | [];
   venueList: VenueDataResponse[] | [];
+  reviewList: ReviewDataResponse[];
   loading: boolean;
+  loadingReview: boolean;
 }
 const initialState: State = {
   venueCheckSlotByDateResponse: {
@@ -22,7 +26,9 @@ const initialState: State = {
   },
   venueCheckSlotByDateList: [],
   venueList: [],
+  reviewList: [],
   loading: false,
+  loadingReview: false,
 };
 
 export const venueSlice = createSlice({
@@ -51,6 +57,16 @@ export const venueSlice = createSlice({
       })
       .addCase(getAllVenueCheckSlotByDate.rejected, (state, action) => {
         state.loading = false;
+      })
+      .addCase(getAllReview.pending, (state) => {
+        state.loadingReview = true;
+      })
+      .addCase(getAllReview.fulfilled, (state, action) => {
+        state.reviewList = action.payload?.data || [];
+        state.loadingReview = false;
+      })
+      .addCase(getAllReview.rejected, (state, action) => {
+        state.loadingReview = false;
       });
   },
 });

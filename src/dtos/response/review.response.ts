@@ -12,3 +12,15 @@ export interface ReviewDataResponse {
   accountReply: USERINFO;
   active: string;
 }
+
+export interface ReviewArrayResponse {
+  status: string;
+  message: string;
+  data: ReviewDataResponse[] | [];
+}
+
+export interface ReviewObjectResponse {
+  status: string;
+  message: string;
+  data: ReviewDataResponse;
+}

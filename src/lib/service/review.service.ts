@@ -1,14 +1,14 @@
 import { AxiosResponse } from "axios";
 import axiosClient from "./axiosClient";
+import { ReviewArrayResponse } from "@/dtos/response/review.response";
 
 export const reviewService = {
-  getAllInquiryByAuthor: (): Promise<AxiosResponse<any>> => {
-    const url = "/api/inquiry/get-all-question";
-    return axiosClient.get(url);
-  },
-  getInquiryById: (id: number): Promise<AxiosResponse<any>> => {
-    const url = `/api/inquiry/get-question-by-id/${id}`;
-    return axiosClient.get(url);
+  getAllReview: (request: {
+    venueId: number;
+    fitler?: { rating?: number | null };
+  }): Promise<AxiosResponse<ReviewArrayResponse>> => {
+    const url = `/api/review/get-all-reviews/${request.venueId}`;
+    return axiosClient.get(url, { params: request.fitler });
   },
   createReview: (request: {
     id: number;

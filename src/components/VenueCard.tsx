@@ -7,6 +7,7 @@ import {
   Carousel,
   Flex,
   Popover,
+  Rate,
   Space,
   Tag,
   Typography,
@@ -26,6 +27,9 @@ import { useRouter } from "next/navigation";
 import PackageDecorList from "./venue/packageDecorList";
 import PackageFoodList from "./venue/packageFoodList";
 import ReviewsList from "./venue/ReviewList";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { getAllReview } from "@/lib/features/action/review.action";
+import React from "react";
 const VenueCard = ({ venue }: { venue: VenueDataResponse }) => {
   const {
     venueName,
@@ -42,6 +46,39 @@ const VenueCard = ({ venue }: { venue: VenueDataResponse }) => {
     reviewList,
   } = venue;
   const router = useRouter();
+  const dispatch = useAppDispatch();
+
+  const reviewListt = useAppSelector((state) => state.venueReducer.reviewList);
+  const loading = useAppSelector((state) => state.venueReducer.loadingReview);
+
+  const [rating, setRating] = React.useState<number>(0);
+
+  const fetchAllReview = async () => {
+    if (id !== null) {
+      const res = await dispatch(
+        getAllReview({ venueId: id, fitler: { rating: rating } }),
+      );
+    }
+  };
+
+  const fetchRefreshAllReview = async () => {
+    if (id !== null) {
+      if (rating !== 0) {
+        setRating(0);
+      } else {
+        const res = await dispatch(
+          getAllReview({ venueId: id, fitler: { rating: 0 } }),
+        );
+      }
+    }
+  };
+
+  React.useEffect(() => {
+    fetchAllReview();
+  }, [rating]);
+
+  const desc = ["Rất tệ", "Tệ", "Bình thường", "Tốt", "Tuyệt vời"];
+
   return (
     <Card className="shadow-md" style={{ marginTop: 16 }}>
       <Meta
@@ -114,32 +151,49 @@ const VenueCard = ({ venue }: { venue: VenueDataResponse }) => {
               title="Các bài đánh giá"
               trigger={
                 <Button
+                  onClick={() => {
+                    fetchAllReview();
+                  }}
                   style={{
                     position: "absolute",
                     top: 20,
                     right: 30,
                     zIndex: 999,
-                    backgroundColor: 'white',
+                    backgroundColor: "white",
                     fontSize: 28,
-                    color: '#ffe234',
-                    padding: 0
+                    color: "#ffe234",
+                    padding: 0,
                   }}
                   type="text"
                 >
                   {reviewList?.length > 0
-                    ? (reviewList?.reduce(
-                        (total, obj) => total + obj.rating,
-                        0,
-                      ) / reviewList?.length).toFixed(1) + " "
+                    ? (
+                        reviewList?.reduce(
+                          (total, obj) => total + obj.rating,
+                          0,
+                        ) / reviewList?.length
+                      ).toFixed(1) + " "
                     : "Chưa có đánh giá"}
                   <StarFilled />
                 </Button>
               }
               style={{ padding: 0 }}
               width={800}
-              submitter={{render: false}}
+              submitter={{ render: false }}
             >
-              <ReviewsList reviewList={reviewList} />
+              <Flex gap="middle" align="center">
+                <Typography.Title style={{ margin: 0 }} level={4}>
+                  Lọc theo đánh giá:
+                </Typography.Title>
+                <Rate tooltips={desc} onChange={setRating} value={rating} />
+                {rating ? <span>{desc[rating - 1]}</span> : null}
+                <Button onClick={() => fetchRefreshAllReview()}>Làm lại</Button>
+              </Flex>
+              <ReviewsList
+                reviewList={reviewListt}
+                setRating={setRating}
+                rating={rating}
+              />
             </ModalForm>
           </Space>
         }

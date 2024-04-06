@@ -24,3 +24,23 @@ export const createReview = createAsyncThunk(
     }
   },
 );
+
+export const getAllReview = createAsyncThunk(
+  "review/getAllReview",
+  async (
+    request: {
+      venueId: number;
+      fitler?: { rating?: number | null };
+    },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await reviewService.getAllReview(request);
+      return response.data;
+    } catch (error: any) {
+      const axiosError = error as AxiosError;
+      console.log(axiosError);
+      return rejectWithValue(axiosError.response?.data);
+    }
+  },
+);
