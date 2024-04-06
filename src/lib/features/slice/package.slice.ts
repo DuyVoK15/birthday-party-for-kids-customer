@@ -2,7 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   getAllPackage,
   getAllPackageDecor,
+  getAllPackageDecorNotChoose,
   getAllPackageFood,
+  getAllPackageFoodNotChoose,
   getPackageById,
 } from "../action/package.action";
 import {
@@ -17,6 +19,8 @@ interface AuthState {
   packageById: any;
   packageDecorList: PackageDataResponse[] | [];
   packageFoodList: PackageDataResponse[] | [];
+  packageDecorNotChooseList: PackageDataResponse[] | [];
+  packageFoodNotChooseList: PackageDataResponse[] | [];
   createPackage: any;
   updatePackage: any;
   loading: boolean;
@@ -31,6 +35,8 @@ const initialState: AuthState = {
   packageList: [],
   packageDecorList: [],
   packageFoodList: [],
+  packageDecorNotChooseList: [],
+  packageFoodNotChooseList: [],
   packageById: null,
   createPackage: null,
   updatePackage: null,
@@ -73,6 +79,28 @@ export const packageSlice = createSlice({
         state.loading = false;
       })
       .addCase(getAllPackageFood.rejected, (state, action) => {
+        state.loading = false;
+      })
+      //
+      .addCase(getAllPackageDecorNotChoose.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getAllPackageDecorNotChoose.fulfilled, (state, action) => {
+        state.packageDecorNotChooseList = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(getAllPackageDecorNotChoose.rejected, (state, action) => {
+        state.loading = false;
+      })
+      //
+      .addCase(getAllPackageFoodNotChoose.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getAllPackageFoodNotChoose.fulfilled, (state, action) => {
+        state.packageFoodNotChooseList = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(getAllPackageFoodNotChoose.rejected, (state, action) => {
         state.loading = false;
       })
       //

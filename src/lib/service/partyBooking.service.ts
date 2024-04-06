@@ -40,7 +40,7 @@ export const partyBookingService = {
   updatePackage: (
     params: BookingUpdatePackage,
   ): Promise<AxiosResponse<any>> => {
-    const url = `/api/party-booking/update-package/${params.partyBookingId}?${params.packageDecoId !== null ? `packageDecoId=${params.packageDecoId}` : ""}${params.packageFoodId !== null ? `&packageFoodId=${params.packageFoodId}` : ""}`;
+    const url = `/api/party-booking/update-package/${params.partyBookingId}?${`packageDecoId=${params.packageDecoId}`}&packageFoodId=${params.packageFoodId}`;
     return axiosClient.put(url);
   },
 };

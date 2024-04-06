@@ -26,6 +26,19 @@ export const packageService = {
     const url = `/api/package/get-all-package-for-customer/${id}?packageType=${SERVICE_ENUM.FOOD}`;
     return axiosClient.get(url);
   },
+  getAllPackageDecorNotChoose: (
+    partyBookingId: number,
+  ): Promise<AxiosResponse<PackageArrayResponse>> => {
+    const url = `/api/package/get-all-package/${partyBookingId}?packageType=${SERVICE_ENUM.DECORATION}`;
+    return axiosClient.get(url);
+  },
+
+  getAllPackageFoodNotChoose: (
+    partyBookingId: number,
+  ): Promise<AxiosResponse<PackageArrayResponse>> => {
+    const url = `/api/package/get-all-package/${partyBookingId}?packageType=${SERVICE_ENUM.FOOD}`;
+    return axiosClient.get(url);
+  },
   getPackageById: (
     id: number,
   ): Promise<AxiosResponse<PackageObjectResponse>> => {

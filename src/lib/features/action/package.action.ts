@@ -46,6 +46,34 @@ export const getAllPackageFood = createAsyncThunk(
   },
 );
 
+export const getAllPackageDecorNotChoose = createAsyncThunk(
+  "package/getAllPackageDecorNotChoose",
+  async (id: number, { rejectWithValue }) => {
+    try {
+      const response = await packageService.getAllPackageDecorNotChoose(id);
+      return response.data;
+    } catch (error: any) {
+      const axiosError = error as AxiosError;
+      console.log(axiosError);
+      return rejectWithValue(axiosError.response?.data);
+    }
+  },
+);
+
+export const getAllPackageFoodNotChoose = createAsyncThunk(
+  "package/getAllPackageFoodNotChoose",
+  async (id: number, { rejectWithValue }) => {
+    try {
+      const response = await packageService.getAllPackageFoodNotChoose(id);
+      return response.data;
+    } catch (error: any) {
+      const axiosError = error as AxiosError;
+      console.log(axiosError);
+      return rejectWithValue(axiosError.response?.data);
+    }
+  },
+);
+
 export const getPackageById = createAsyncThunk(
   "package/getPackageById",
   async (id: number, { rejectWithValue }) => {

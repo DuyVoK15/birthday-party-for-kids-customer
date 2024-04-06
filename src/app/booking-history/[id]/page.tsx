@@ -13,6 +13,10 @@ import {
   createInquiryForChangeThemeInVenue,
 } from "@/lib/features/action/inquiry.action";
 import {
+  getAllPackageDecorNotChoose,
+  getAllPackageFoodNotChoose,
+} from "@/lib/features/action/package.action";
+import {
   cancelBooking,
   getBookingById,
   updateOrganizationTime,
@@ -31,9 +35,10 @@ import {
   HomeTwoTone,
   HomeOutlined,
 } from "@ant-design/icons";
-import { ModalForm } from "@ant-design/pro-components";
+import { ModalForm, ProFormRadio } from "@ant-design/pro-components";
 import {
   Button,
+  Card,
   DatePicker,
   DatePickerProps,
   Divider,
@@ -67,6 +72,12 @@ export default function BookingDetail({ params }: { params: any }) {
   );
   const roomList = useAppSelector((state) => state.roomReducer.roomList);
   const loadingRoomList = useAppSelector((state) => state.roomReducer.loading);
+  const packageDecorNotChooseList = useAppSelector(
+    (state) => state.packageReducer.packageDecorNotChooseList,
+  );
+  const packageFoodNotChooseList = useAppSelector(
+    (state) => state.packageReducer.packageFoodNotChooseList,
+  );
 
   const [dateQuery, setDateQuery] = React.useState(
     dayjs(tomorrow).format("YYYY-MM-DD"),
@@ -117,6 +128,23 @@ export default function BookingDetail({ params }: { params: any }) {
     }
   };
 
+  const fetchAllPackageDecorNotChoose = async () => {
+    await dispatch(getAllPackageDecorNotChoose(params?.id)).then((res) => {
+      console.log(JSON.stringify(res, null, 2));
+    });
+  };
+
+  const fetchAllPackageFoodrNotChoose = async () => {
+    await dispatch(getAllPackageFoodNotChoose(params?.id)).then((res) => {
+      console.log(JSON.stringify(res, null, 2));
+    });
+  };
+
+  React.useEffect(() => {
+    fetchAllPackageDecorNotChoose();
+    fetchAllPackageFoodrNotChoose();
+  }, [params?.id]);
+
   const createOnePayment = async () => {
     const res = await dispatch(createPaymentByBookingId(params?.id));
     if (res?.meta?.requestStatus === "fulfilled") {
@@ -155,8 +183,8 @@ export default function BookingDetail({ params }: { params: any }) {
       const res = await dispatch(
         updatePackage({
           partyBookingId: booking?.id,
-          packageDecoId: params.packageDecoId,
-          // packageFoodId: params.packageFoodId,
+          packageDecoId,
+          packageFoodId: booking?.packageInBookings?.find(item => item?.apackage?.packageType === SERVICE_ENUM.FOOD)?.apackage?.id,
         }),
       );
       if (res?.meta?.requestStatus === "fulfilled") {
@@ -174,8 +202,8 @@ export default function BookingDetail({ params }: { params: any }) {
       const res = await dispatch(
         updatePackage({
           partyBookingId: booking?.id,
-          // packageDecoId: params.packageDecoId,
-          packageFoodId: params.packageFoodId,
+          packageDecoId: booking?.packageInBookings?.find(item => item?.apackage?.packageType === SERVICE_ENUM.DECORATION)?.apackage?.id,
+          packageFoodId,
         }),
       );
       if (res?.meta?.requestStatus === "fulfilled") {
@@ -541,11 +569,11 @@ export default function BookingDetail({ params }: { params: any }) {
                       {booking?.status === "CONFIRMED" ||
                         (booking?.status === "PENDING" && (
                           <ModalForm
-                            title="Các gói dịch vụ khác"
+                            title="Các gói dịch vụ trang trí khác"
                             trigger={
                               <Button type="link">
                                 <SwapOutlined />
-                                Gửi yêu cầu thay đổi
+                                Thay đổi
                               </Button>
                             }
                             // form={form}
@@ -556,20 +584,17 @@ export default function BookingDetail({ params }: { params: any }) {
                             }}
                             onFinish={async (values) => {
                               let result: boolean | undefined = false;
-                              result =
-                                await createOneInquiryForChangePackageInVenue(
-                                  values?.id,
-                                );
+                              result = await updatePackageDeco(values?.id);
 
                               return result;
                             }}
                           >
-                            {/* {packageInVenueNotChooseList?.length > 0 ? (
+                            {packageDecorNotChooseList?.length > 0 ? (
                               <ProFormRadio.Group
                                 name="id"
                                 layout="horizontal"
                                 style={{ marginBottom: 10 }}
-                                options={packageInVenueNotChooseList?.map(
+                                options={packageDecorNotChooseList?.map(
                                   (item, index) => ({
                                     label: (
                                       <Card
@@ -584,13 +609,13 @@ export default function BookingDetail({ params }: { params: any }) {
                                               objectFit: "cover",
                                             }}
                                             alt="example"
-                                            src={item?.apackage?.packageImgUrl}
+                                            src={item?.packageImgUrl}
                                           />
                                         }
                                       >
                                         <Space direction="vertical">
                                           <Card.Meta
-                                            title={item?.apackage?.packageName}
+                                            title={item?.packageName}
                                           />
                                           <ModalForm
                                             title="Chi tiết gói dịch vụ"
@@ -600,12 +625,12 @@ export default function BookingDetail({ params }: { params: any }) {
                                                 type="link"
                                               >
                                                 <EyeOutlined />
-                                                Chi tiết gói dịch vụ
+                                                Chi tiết
                                               </Button>
                                             }
                                             style={{ padding: 0 }}
                                           >
-                                            <PackageInVenueDetail
+                                            <PackageDetail
                                               packageInVenue={item}
                                             />
                                           </ModalForm>
@@ -618,7 +643,7 @@ export default function BookingDetail({ params }: { params: any }) {
                               />
                             ) : (
                               <Empty style={{ margin: "auto" }} />
-                            )} */}
+                            )}
                           </ModalForm>
                         ))}
                     </Flex>
@@ -652,7 +677,7 @@ export default function BookingDetail({ params }: { params: any }) {
                             trigger={
                               <Button type="link">
                                 <SwapOutlined />
-                                Gửi yêu cầu thay đổi
+                                Thay đổi
                               </Button>
                             }
                             // form={form}
@@ -663,20 +688,17 @@ export default function BookingDetail({ params }: { params: any }) {
                             }}
                             onFinish={async (values) => {
                               let result: boolean | undefined = false;
-                              result =
-                                await createOneInquiryForChangePackageInVenue(
-                                  values?.id,
-                                );
+                              result = await updatePackageFood(values?.id);
 
                               return result;
                             }}
                           >
-                            {/* {packageInVenueNotChooseList?.length > 0 ? (
+                            {packageFoodNotChooseList?.length > 0 ? (
                               <ProFormRadio.Group
                                 name="id"
                                 layout="horizontal"
                                 style={{ marginBottom: 10 }}
-                                options={packageInVenueNotChooseList?.map(
+                                options={packageFoodNotChooseList?.map(
                                   (item, index) => ({
                                     label: (
                                       <Card
@@ -691,13 +713,13 @@ export default function BookingDetail({ params }: { params: any }) {
                                               objectFit: "cover",
                                             }}
                                             alt="example"
-                                            src={item?.apackage?.packageImgUrl}
+                                            src={item?.packageImgUrl}
                                           />
                                         }
                                       >
                                         <Space direction="vertical">
                                           <Card.Meta
-                                            title={item?.apackage?.packageName}
+                                            title={item?.packageName}
                                           />
                                           <ModalForm
                                             title="Chi tiết gói dịch vụ"
@@ -712,7 +734,7 @@ export default function BookingDetail({ params }: { params: any }) {
                                             }
                                             style={{ padding: 0 }}
                                           >
-                                            <PackageInVenueDetail
+                                            <PackageDetail
                                               packageInVenue={item}
                                             />
                                           </ModalForm>
@@ -725,7 +747,7 @@ export default function BookingDetail({ params }: { params: any }) {
                               />
                             ) : (
                               <Empty style={{ margin: "auto" }} />
-                            )} */}
+                            )}
                           </ModalForm>
                         ))}
                     </Flex>
